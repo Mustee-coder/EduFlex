@@ -11,22 +11,6 @@ const api = axios.create({
 });
 
 /* =========================
-   TOKEN INTERCEPTOR
-========================= */
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-/* =========================
    AUTH ENDPOINTS
 ========================= */
 export const authEndpoints = {
@@ -38,7 +22,6 @@ export const authEndpoints = {
   RESET_PASSWORD: "/auth/reset-password",
   CHANGE_PASSWORD: "/auth/change-password",
 };
-
 
 /* =========================
    PROFILE ENDPOINTS
@@ -61,7 +44,7 @@ export const adminEndpoints = {
 };
 
 /* =========================
-   STUDENT / PAYMENT
+   PAYMENT ENDPOINTS
 ========================= */
 export const paymentEndpoints = {
   CAPTURE_PAYMENT: "/payment/capturePayment",
@@ -78,19 +61,15 @@ export const courseEndpoints = {
   CREATE_COURSE: "/course/createCourse",
   EDIT_COURSE: "/course/editCourse",
   DELETE_COURSE: "/course/deleteCourse",
-
   CREATE_SECTION: "/course/addSection",
   UPDATE_SECTION: "/course/updateSection",
   DELETE_SECTION: "/course/deleteSection",
-
   CREATE_SUBSECTION: "/course/addSubSection",
   UPDATE_SUBSECTION: "/course/updateSubSection",
   DELETE_SUBSECTION: "/course/deleteSubSection",
-
   COURSE_CATEGORIES: "/course/showAllCategories",
   CREATE_CATEGORY: "/course/createCategory",
   DELETE_CATEGORY: "/course/deleteCategory",
-
   INSTRUCTOR_COURSES: "/course/getInstructorCourses",
   FULL_COURSE_DETAILS: "/course/getFullCourseDetails",
   UPDATE_PROGRESS: "/course/updateCourseProgress",
@@ -105,6 +84,5 @@ export const courseEndpoints = {
 export const contactEndpoints = {
   CONTACT_US: "/reach/contact",
 };
-
 
 export default api;

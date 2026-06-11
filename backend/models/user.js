@@ -44,11 +44,9 @@ const userSchema = new mongoose.Schema(
     },
 
     approved: {
-      type: Boolean,
-      default: function () {
-        return this.accountType !== "Instructor";
-      },
-    },
+  type: Boolean,
+  default: true,
+},
 
     additionalDetails: {
       type: mongoose.Schema.Types.ObjectId,

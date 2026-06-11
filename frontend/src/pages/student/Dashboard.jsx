@@ -5,23 +5,19 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 
-
-
-const AdminDashboard = () => {
+const Dashboard = () => {
 const { logout } = useAuth();
   const navigate = useNavigate();
   
   const handleLogout = () => {
-  logout();
-  toast.success("Logged out successfully");
-  navigate("/login");
-};
-
+    logout();
+    navigate("/login");
+  };
   return (
     <div>
 
       <h1 className="text-3xl font-bold">
-        Admin Dashboard
+        Student Dashboard
       </h1>
 
       <p className="mt-2 text-gray-500">
@@ -38,5 +34,8 @@ const { logout } = useAuth();
   );
 };
 
-export default AdminDashboard;
+export default Dashboard;
+
+
+
 

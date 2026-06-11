@@ -1,4 +1,3 @@
-
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -7,7 +6,8 @@ import { toast } from "sonner";
 
 
 
-const AdminDashboard = () => {
+
+const InstructorDashboard = () => {
 const { logout } = useAuth();
   const navigate = useNavigate();
   
@@ -18,10 +18,10 @@ const { logout } = useAuth();
 };
 
   return (
-    <div>
+     <div>
 
       <h1 className="text-3xl font-bold">
-        Admin Dashboard
+        instructor Dashboard
       </h1>
 
       <p className="mt-2 text-gray-500">
@@ -38,5 +38,4 @@ const { logout } = useAuth();
   );
 };
 
-export default AdminDashboard;
-
+export default InstructorDashboard;

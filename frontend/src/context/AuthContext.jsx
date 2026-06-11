@@ -4,52 +4,56 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // LOAD ON START
+  // Load user from localStorage on refresh
   useEffect(() => {
+  try {
     const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-    if (storedUser) setUser(JSON.parse(storedUser));
-    if (storedToken) setToken(storedToken);
+    if (storedUser && token) {
+      setUser(JSON.parse(storedUser));
+    }
+  } catch (err) {
+    console.log("Auth parse error:", err);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+  }
 
-    setLoading(false);
-  }, []);
+  setLoading(false);
+}, []);
 
-  // LOGIN
-  const login = (data) => {
-    setUser(data.user);
-    setToken(data.token);
-
-    localStorage.setItem("user", JSON.stringify(data.user));
-    localStorage.setItem("token", data.token);
+  // LOGIN FUNCTION
+  const login = (userData, token) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", token);
   };
 
-  // LOGOUT
+  // LOGOUT FUNCTION
   const logout = () => {
     setUser(null);
-    setToken(null);
-
     localStorage.removeItem("user");
     localStorage.removeItem("token");
   };
 
+  const value = {
+    user,
+    setUser,
+    login,
+    logout,
+    isAuthenticated: !!user,
+    loading,
+  };
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        login,
-        logout,
-        loading,
-        isAuthenticated: !!token,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
 
+// custom hook
 export const useAuth = () => useContext(AuthContext);
+

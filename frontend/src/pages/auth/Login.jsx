@@ -1,18 +1,29 @@
 import { useState } from "react";
 import { useLogin } from "@/hooks/useLogin";
-import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { useNavigate, Navigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 
 const Login = () => {
   const { mutate, isPending, error } = useLogin();
+  const { user, login, loading } = useAuth();
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+
+  // prevent flicker while loading auth state
+  if (loading) return null;
+
+  // auto redirect if already logged in
+  if (user) {
+    const role = user?.accountType;
+
+    if (role === "Admin") return <Navigate to="/admin" replace />;
+    if (role === "Instructor") return <Navigate to="/instructor" replace />;
+
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const submit = (e) => {
     e.preventDefault();
@@ -23,11 +34,20 @@ const Login = () => {
         onSuccess: (data) => {
           toast.success("Welcome back 🚀");
 
-          // save user to context
-          login(data?.user);
+          // FIXED: correct login usage
+          login(data.user, data.token);
 
-          navigate("/dashboard");
+          const role = data?.user?.accountType;
+
+          if (role === "Admin") {
+            navigate("/admin", { replace: true });
+          } else if (role === "Instructor") {
+            navigate("/instructor", { replace: true });
+          } else {
+            navigate("/dashboard", { replace: true });
+          }
         },
+
         onError: (err) => {
           toast.error(
             err?.response?.data?.message || "Login failed"
@@ -39,10 +59,9 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB] px-4">
+      <div className="w-full max-w-md bg-white border shadow-lg rounded-2xl p-8">
 
-      <div className="w-full max-w-md bg-white border border-[#E5E7EB] shadow-lg rounded-2xl p-8">
-
-        <h2 className="text-2xl font-bold text-center text-[#111827] mb-2">
+        <h2 className="text-2xl font-bold text-center mb-2">
           Welcome back
         </h2>
 
@@ -59,25 +78,13 @@ const Login = () => {
             className="w-full px-4 py-3 border rounded-lg"
           />
 
-          <div className="relative">
-
-            <input
-              value={password}
-              type={showPassword ? "text" : "password"}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className="w-full px-4 py-3 border rounded-lg"
-            />
-
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2"
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
-
-          </div>
+          <input
+            value={password}
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="w-full px-4 py-3 border rounded-lg"
+          />
 
           <button
             disabled={isPending || !email || !password}
@@ -99,5 +106,4 @@ const Login = () => {
   );
 };
 
-
-export default Login
+export default Login;

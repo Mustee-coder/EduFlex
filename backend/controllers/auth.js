@@ -164,6 +164,7 @@ export const signup = async (req, res) => {
       accountType,
     } = req.body;
 
+    // 1. Validate required fields
     if (
       !firstName ||
       !lastName ||
@@ -178,17 +179,9 @@ export const signup = async (req, res) => {
       });
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
 
-const userEmail = await User.findOne({ email });
-
-if (!userEmail?.isVerified) {
-  return res.status(403).json({
-    success: false,
-    message: "Please verify your email first",
-  });
-}
-    const normalizedEmail = email.toLowerCase();
-
+    // 2. Password match check
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
@@ -196,6 +189,7 @@ if (!userEmail?.isVerified) {
       });
     }
 
+    // 3. Check existing user
     const existingUser = await User.findOne({ email: normalizedEmail });
 
     if (existingUser) {
@@ -205,26 +199,31 @@ if (!userEmail?.isVerified) {
       });
     }
 
+    // 4. Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // 5. Create profile safely
     const profile = await Profile.create({
-      gender: null,
-      dateOfBirth: null,
-      about: null,
-      contactNumber: null,
+      gender: "",
+      dateOfBirth: "",
+      about: "",
+      contactNumber: "",
     });
 
+    // 6. Create user
     const user = await User.create({
-      firstName,
-      lastName,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
       email: normalizedEmail,
       password: hashedPassword,
       accountType,
       additionalDetails: profile._id,
       approved: accountType === "Instructor" ? false : true,
       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
+      isVerified: false,
     });
 
+    // 7. Remove password before sending response
     const userObj = user.toObject();
     delete userObj.password;
 
@@ -235,13 +234,16 @@ if (!userEmail?.isVerified) {
     });
 
   } catch (error) {
+    console.error("SIGNUP ERROR:", error); // 🔥 important for debugging
+
     return res.status(500).json({
       success: false,
-      message: "Signup failed",
-      error: error.message,
+      message: error.message || "Internal Server Error",
     });
   }
 };
+
+
 
 //export LOGIN
  export const login = async (req, res) => {

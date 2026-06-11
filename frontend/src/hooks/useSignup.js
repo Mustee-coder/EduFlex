@@ -14,7 +14,14 @@ export const useSignup = (options) => {
     },
 
     onError: (error) => {
-      toast.error(error?.response?.data?.message || "Signup failed ❌");
+      console.log("SIGNUP ERROR FULL:", error); // 🔥 IMPORTANT DEBUG
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Signup failed ❌";
+
+      toast.error(message);
       onError?.(error);
     },
   });

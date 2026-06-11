@@ -1,37 +1,55 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import RoleRoute from "@/components/RoleRoute";
 
+// Auth
 import Login from "@/pages/auth/Login";
 import Signup from "@/pages/auth/Signup";
 import SendOtp from "@/pages/auth/SendOtp";
 import ForgotPassword from "@/pages/auth/ForgotPassword";
 import VerifyEmail from "@/pages/auth/VerifyEmail";
 
-import StudentDashboard from "@/pages/student/StudentDashboard";
-import RoleRoute from "@/components/RoleRoute";
+// Layout
+import DashboardLayout from "@/components/layouts/DashboardLayout";
+
+// Pages
+import Dashboard from "@/pages/student/Dashboard";
+import InstructorDashboard from "@/pages/instructor/InstructorDashboard";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
 
 const App = () => {
-return (
-<Routes>
+  return (
+    <Routes>
 
-{/* DEFAULT ROUTE 
-  <Route path="/" element={<Navigate to="/login" />} />  */}  
+      {/* AUTH ROUTES */}
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/send-otp" element={<SendOtp />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
 
-  {/* AUTH ROUTES */}  
-  <Route path="/signup" element={<Signup />} />  
-  <Route path="/verify-email" element={<VerifyEmail />} />  
-  <Route path="/login" element={<Login />} />  
-  <Route path="/forgot-password" element={<ForgotPassword />} />  
-  <Route path="/send-otp" element={<SendOtp />} />  
+      {/* UNAUTHORIZED */}
+      <Route path="/unauthorized" element={<h1>Access Denied 🚫</h1>} />
 
-  {/* STUDENT PROTECTED ROUTE   */}  
-  <Route element={<RoleRoute allowedRoles={["Student"]} />}>  
-    <Route path="/dashboard" element={<StudentDashboard />} />  
-  </Route>
+      {/* PROTECTED DASHBOARD AREA (WITH LAYOUT + ROLES) */}
+      <Route
+        element={
+          <RoleRoute allowedRoles={["Student", "Admin", "Instructor"]} />
+        }
+      >
+        <Route element={<DashboardLayout />}>
 
-</Routes>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/instructor" element={<InstructorDashboard />} />
 
-);
+        </Route>
+      </Route>
+
+      {/* DEFAULT ROUTE */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
+    </Routes>
+  );
 };
 
 export default App;
-
