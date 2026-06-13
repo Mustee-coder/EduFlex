@@ -11,6 +11,36 @@ const Sidebar = ({ closeSidebar }) => {
       ? "bg-purple-600 text-white px-4 py-2 rounded-lg block"
       : "text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-lg block";
 
+  const studentLinks = [
+  { path: "/dashboard", label: "🏠 Dashboard" },
+  { path: "/courses", label: "📚 My Courses" },
+  { path: "/learning", label: "🎓 My Learning" },
+  { path: "/profile", label: "👤 Profile" },
+];
+
+  const instructorLinks = [
+    { path: "/instructor", label: "🎓 Instructor Dashboard" },
+    { path: "/courses", label: "📚 My Courses" },
+    { path: "/profile", label: "👤 Profile" },
+  ];
+
+  const adminLinks = [
+    { path: "/admin", label: "⚙️ Admin Dashboard" },
+    { path: "/admin/users", label: "👥 Users" },
+    { path: "/admin/courses", label: "📚 Courses" },
+    { path: "/admin/settings", label: "⚙️ Settings" },
+    { path: "/profile", label: "👤 Profile" },
+  ];
+
+  const links =
+    role === "Student"
+      ? studentLinks
+      : role === "Instructor"
+      ? instructorLinks
+      : role === "Admin"
+      ? adminLinks
+      : [];
+
   return (
     <aside>
       <div className="mb-6">
@@ -18,33 +48,17 @@ const Sidebar = ({ closeSidebar }) => {
         <p className="text-sm text-gray-500 mt-1">{role}</p>
       </div>
 
-      {/* Navigation */}
       <nav className="space-y-2">
-        {role === "Student" && (
-          <NavLink to="/dashboard" onClick={closeSidebar} className={linkStyle}>
-            🏠 Dashboard
+        {links.map((link) => (
+          <NavLink
+            key={link.path}
+            to={link.path}
+            onClick={closeSidebar}
+            className={linkStyle}
+          >
+            {link.label}
           </NavLink>
-        )}
-
-        {role === "Instructor" && (
-          <NavLink to="/instructor" onClick={closeSidebar} className={linkStyle}>
-            🎓 Instructor Dashboard
-          </NavLink>
-        )}
-
-        {role === "Admin" && (
-          <NavLink to="/admin" onClick={closeSidebar} className={linkStyle}>
-            ⚙️ Admin Dashboard
-          </NavLink>
-        )}
-
-        <NavLink to="/courses" onClick={closeSidebar} className={linkStyle}>
-          📚 My Courses
-        </NavLink>
-
-        <NavLink to="/profile" onClick={closeSidebar} className={linkStyle}>
-          👤 Profile
-        </NavLink>
+        ))}
       </nav>
     </aside>
   );

@@ -11,45 +11,74 @@ import VerifyEmail from "@/pages/auth/VerifyEmail";
 // Layout
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 
-// Pages
+// Student Pages
 import Dashboard from "@/pages/student/Dashboard";
+import CourseDetails from "@/pages/student/CourseDetails";
+
+// Instructor Pages
 import InstructorDashboard from "@/pages/instructor/InstructorDashboard";
+
+// Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 
 const App = () => {
-  return (
-    <Routes>
+return (
+<Routes>
+{/* DEFAULT */}
+<Route
+path="/"
+element={<Navigate to="/login" replace />}
+/>
 
-      {/* AUTH ROUTES */}
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/send-otp" element={<SendOtp />} />
-      <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
+  {/* AUTH ROUTES */}
+  <Route path="/login" element={<Login />} />
+  <Route path="/signup" element={<Signup />} />
+  <Route path="/send-otp" element={<SendOtp />} />
+  <Route path="/verify-email" element={<VerifyEmail />} />
+  <Route path="/forgot-password" element={<ForgotPassword />} />
 
-      {/* UNAUTHORIZED */}
-      <Route path="/unauthorized" element={<h1>Access Denied 🚫</h1>} />
+  {/* UNAUTHORIZED */}
+  <Route
+    path="/unauthorized"
+    element={<h1>Access Denied 🚫</h1>}
+  />
 
-      {/* PROTECTED DASHBOARD AREA (WITH LAYOUT + ROLES) */}
+  {/* PROTECTED ROUTES */}
+  <Route
+    element={
+      <RoleRoute
+        allowedRoles={["Student", "Instructor", "Admin"]}
+      />
+    }
+  >
+    <Route element={<DashboardLayout />}>
+      {/* Student */}
       <Route
-        element={
-          <RoleRoute allowedRoles={["Student", "Admin", "Instructor"]} />
-        }
-      >
-        <Route element={<DashboardLayout />}>
+        path="/dashboard"
+        element={<Dashboard />}
+      />
 
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/instructor" element={<InstructorDashboard />} />
+      <Route
+        path="/course/:courseId"
+        element={<CourseDetails />}
+      />
 
-        </Route>
-      </Route>
+      {/* Instructor */}
+      <Route
+        path="/instructor"
+        element={<InstructorDashboard />}
+      />
 
-      {/* DEFAULT ROUTE */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      {/* Admin */}
+      <Route
+        path="/admin"
+        element={<AdminDashboard />}
+      />
+    </Route>
+  </Route>
+</Routes>
 
-    </Routes>
-  );
+);
 };
 
 export default App;

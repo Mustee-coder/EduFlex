@@ -14,22 +14,31 @@ const courseProgressSchema = new mongoose.Schema(
       required: true,
     },
 
-    completedVideos: [
+    //  last video user stopped at
+    lastWatched: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubSection",
+      default: null,
+    },
+
+    //  all completed lessons
+    completedLessons: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "SubSection",
       },
     ],
+
+    //  percentage progress (0 - 100)
+    progressPercentage: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
 
-// Prevent duplicate progress records
+//  prevent duplicate progress per user per course
 courseProgressSchema.index({ userId: 1, courseId: 1 }, { unique: true });
 
-const CourseProgress = mongoose.model(
-  "CourseProgress",
-  courseProgressSchema
-);
-
-export default CourseProgress;
+export default mongoose.model("CourseProgress", courseProgressSchema);

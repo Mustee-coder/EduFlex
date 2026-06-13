@@ -1,7 +1,7 @@
 
 import Course from "../models/course.js";
 
-export function convertSecondsToDuration(totalSeconds) {
+/* export function convertSecondsToDuration(totalSeconds) {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
@@ -14,6 +14,26 @@ export function convertSecondsToDuration(totalSeconds) {
     return `${seconds}s`;
   }
 }
+ */
+
+
+export const convertSecondsToDuration = (seconds) => {
+  seconds = Math.round(seconds); // 🔥 FIX FLOAT ISSUE
+
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  if (hrs > 0) {
+    return `${hrs}h ${mins}m`;
+  }
+
+  if (mins > 0) {
+    return `${mins}m ${secs}s`;
+  }
+
+  return `${secs}s`;
+};
 
 
 export const calculateCourseDuration = async (courseId) => {

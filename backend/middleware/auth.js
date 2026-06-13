@@ -5,31 +5,25 @@ dotenv.config();
 
 //  AUTH
 export const auth = (req, res, next) => {
-  try {
-    const token = req.cookies?.token;
+  console.log("COOKIES RECEIVED:", req.cookies); // 🔥 ADD THIS
 
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Token is missing",
-      });
-    }
+  const token = req.cookies?.token;
 
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded;
-      next();
-    } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: "Token expired or invalid",
-      });
-    }
-  } catch (error) {
-    return res.status(500).json({
+  if (!token) {
+    return res.status(401).json({
       success: false,
-      message: "Auth error",
-      error: error.message,
+      message: "Token is missing",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Token expired or invalid",
     });
   }
 };

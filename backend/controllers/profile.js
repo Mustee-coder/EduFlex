@@ -4,6 +4,10 @@ import Course from "../models/course.js";
 import CourseProgress from "../models/courseProgress.js";
 import { deleteResourceFromCloudinary } from "../utils/imageUploader.js";
 
+import { convertSecondsToDuration } from "../utils/secToDuration.js";
+
+
+
 //  UPDATE PROFILE 
 export const updateProfile = async (req, res) => {
   try {
@@ -193,15 +197,8 @@ export const getEnrolledCourses = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const user = await User.findById(userId).populate({
-      path: "courses",
-      populate: {
-        path: "courseContent",
-        populate: {
-          path: "subSection",
-        },
-      },
-    });
+    // 1. Get user + courses
+    const user = await User.findById(userId).populate("courses");
 
     if (!user) {
       return res.status(404).json({
@@ -210,42 +207,57 @@ export const getEnrolledCourses = async (req, res) => {
       });
     }
 
+    // 2. Enrich courses
     const enrichedCourses = await Promise.all(
       user.courses.map(async (course) => {
+
+        // 🔥 FULL POPULATE (IMPORTANT FIX)
+        const fullCourse = await Course.findById(course._id).populate({
+          path: "sections",
+          populate: {
+            path: "subSections",
+          },
+        });
+
         let totalSeconds = 0;
         let lectureCount = 0;
 
-        course.courseContent.forEach((section) => {
-          section.subSection.forEach((sub) => {
-            totalSeconds += Number(sub.timeDuration) || 0;
+        // 3. SAFE LOOP
+        (fullCourse.sections || []).forEach((section) => {
+          (section.subSections || []).forEach((sub) => {
+            totalSeconds += Number(sub.timeDuration || 0);
             lectureCount++;
           });
         });
 
+        // 4. Progress
         const progress = await CourseProgress.findOne({
           courseID: course._id,
           userId,
         });
 
-        const completed = progress?.completedVideos.length || 0;
+        const completed = progress?.completedVideos?.length || 0;
 
         const progressPercentage =
           lectureCount === 0
             ? 100
             : Math.round((completed / lectureCount) * 100);
 
+        // 5. Return clean object
         return {
-          ...course.toObject(),
+          ...fullCourse.toObject(),
           totalDuration: convertSecondsToDuration(totalSeconds),
           progressPercentage,
         };
       })
     );
 
+    // 6. Response
     return res.status(200).json({
       success: true,
       data: enrichedCourses,
     });
+
   } catch (error) {
     return res.status(500).json({
       success: false,

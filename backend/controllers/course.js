@@ -240,8 +240,7 @@ export const getCourseDetails = async (req, res) => {
       .populate({
         path: "sections",
         populate: {
-          path: "subSections",
-          select: "-videoUrl",
+          path: "subSections"
         },
       });
 

@@ -1,4 +1,4 @@
-import api, { authEndpoints } from "../api/apis";
+import api, { authEndpoints ,profileEndpoints} from "../api/apis";
 
 // LOGIN
 export const loginUser = async (data) => {
@@ -23,3 +23,4 @@ export const verifyOtp = async (data) => {
   const res = await api.post(authEndpoints.VERIFY_OTP, data);
   return res.data;
 };
+

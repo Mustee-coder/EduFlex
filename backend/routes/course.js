@@ -77,6 +77,7 @@ router.get("/getAllCourses", auth, getAllCourses);
 router.get("/getCourseDetails/:courseId", auth, getCourseDetails);
 
 router.get("/getFullCourseDetails/:courseId", auth, getFullCourseDetails);
+
 router.patch("/editCourse/:courseId", auth, isInstructor, editCourse);
 
 router.delete("/deleteCourse/:courseId", auth, isInstructor, deleteCourse);

@@ -1,8 +1,6 @@
-
 import CourseProgress from "../models/courseProgress.js";
 import SubSection from "../models/subSection.js";
 import Course from "../models/course.js";
-import mongoose from "mongoose";
 
 export const updateCourseProgress = async (req, res) => {
   try {
@@ -26,12 +24,10 @@ export const updateCourseProgress = async (req, res) => {
       });
     }
 
-    // fetch course with sections
+    // get course structure
     const course = await Course.findById(courseId).populate({
       path: "sections",
-      populate: {
-        path: "subSections",
-      },
+      populate: { path: "subSections" },
     });
 
     if (!course) {
@@ -55,54 +51,52 @@ export const updateCourseProgress = async (req, res) => {
       });
     }
 
-    // find or create progress (ATOMIC FIX)
-    let courseProgress = await CourseProgress.findOneAndUpdate(
-      { courseId, userId },
-      {
-        $setOnInsert: {
-          courseId,
-          userId,
-          completedVideos: [],
-        },
-      },
-      { new: true, upsert: true }
-    );
-
-    // add progress safely (NO duplicates)
-    await CourseProgress.updateOne(
-      { courseId, userId },
-      {
-        $addToSet: {
-          completedVideos: subSectionId,
-        },
-      }
-    );
-
-    // refresh updated progress
-    courseProgress = await CourseProgress.findOne({
+    // find or create progress
+    let progress = await CourseProgress.findOne({
       courseId,
       userId,
     });
 
-    // calculate progress
-    const totalVideos = course.sections.reduce(
+    if (!progress) {
+      progress = await CourseProgress.create({
+        courseId,
+        userId,
+        completedLessons: [],
+        lastWatched: null,
+        progressPercentage: 0,
+      });
+    }
+
+    // update progress safely
+    if (!progress.completedLessons.includes(subSectionId)) {
+      progress.completedLessons.push(subSectionId);
+    }
+
+    // update last watched
+    progress.lastWatched = subSectionId;
+
+    // calculate total lessons
+    const totalLessons = course.sections.reduce(
       (acc, section) => acc + section.subSections.length,
       0
     );
 
-    const completed = courseProgress.completedVideos.length;
+    const completedCount = progress.completedLessons.length;
 
-    const progressPercentage =
-      totalVideos === 0
+    progress.progressPercentage =
+      totalLessons === 0
         ? 0
-        : Math.round((completed / totalVideos) * 100);
+        : Math.round((completedCount / totalLessons) * 100);
+
+    await progress.save();
 
     return res.status(200).json({
       success: true,
       message: "Course progress updated successfully",
       data: {
-        completedVideos: courseProgress.completedVideos,
-        progressPercentage,
+        completedLessons: progress.completedLessons,
+        progressPercentage: progress.progressPercentage,
+        lastWatched: progress.lastWatched,
       },
     });
 
