@@ -399,3 +399,83 @@ export const getAllInstructors = async (req, res) => {
     });
   }
 };
+
+
+
+export const getMyLearning = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findById(userId)
+      .populate({
+        path: "courses",
+        populate: {
+          path: "sections",
+          populate: {
+            path: "subSections",
+            select: "title timeDuration videoUrl",
+          },
+        },
+      })
+      .populate("courseProgress");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const courses = user.courses || [];
+
+    const enriched = courses.map((course) => {
+      const totalVideos = course.sections?.reduce(
+        (acc, sec) => acc + (sec.subSections?.length || 0),
+        0
+      );
+
+      const progress = user.courseProgress?.find(
+        (p) =>
+          p.courseId?.toString() === course._id.toString()
+      );
+
+      const completed = progress?.completedLessons?.length || 0;
+
+      const progressPercent =
+        totalVideos === 0
+          ? 0
+          : Math.round((completed / totalVideos) * 100);
+
+      return {
+        _id: course._id,
+        courseName: course.courseName,
+        thumbnail: course.thumbnail,
+        instructor: course.instructor,
+        price: course.price,
+        status: course.status,
+
+        progress: {
+          completed,
+          totalVideos,
+          progressPercent,
+        },
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: enriched,
+    });
+
+  } catch (error) {
+    console.error("[MY_LEARNING_ERROR]", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch My Learning",
+    });
+  }
+};
+
+
+

@@ -231,10 +231,10 @@ export const getCourseDetails = async (req, res) => {
     }
 
     const courseDetails = await Course.findById(courseId)
-      .populate({
-        path: "instructor",
-        select: "firstName lastName email image additionalDetails",
-      })
+  .populate({
+    path: "instructor",
+    select: "-password -token",
+  })
       .populate("category")
       .populate("ratingAndReviews")
       .populate({
@@ -422,15 +422,15 @@ export const getFullCourseDetails = async (req, res) => {
       userId,
     });
 
-    const completedVideos =
-      courseProgress?.completedVideos || [];
+    const completedLessons =
+      courseProgress?.completedLessons || [];
 
     const totalVideos = courseDetails.allSubSections.length;
 
     const progressPercentage =
       totalVideos === 0
         ? 0
-        : Math.round((completedVideos.length / totalVideos) * 100);
+        : Math.round((completedLessons.length / totalVideos) * 100);
 
     return res.status(200).json({
       success: true,
@@ -439,7 +439,7 @@ export const getFullCourseDetails = async (req, res) => {
         totalDuration: convertSecondsToDuration(
           courseDetails.totalSeconds || 0
         ),
-        completedVideos,
+        completedLessons,
         progressPercentage,
       },
       message: "Course details fetched successfully",
@@ -728,3 +728,5 @@ export const publishCourse = async (req, res) => {
     });
   }
 };
+
+

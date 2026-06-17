@@ -13,8 +13,9 @@ const Sidebar = ({ closeSidebar }) => {
 
   const studentLinks = [
   { path: "/dashboard", label: "🏠 Dashboard" },
-  { path: "/courses", label: "📚 My Courses" },
-  { path: "/learning", label: "🎓 My Learning" },
+  { path: "/my-courses", label: "📚 My Courses" },
+  { path: "/my-learning", label: "🎓 My Learning" },
+  { path: "/browse-courses", label: "🔍 Browse Courses" },
   { path: "/profile", label: "👤 Profile" },
 ];
 

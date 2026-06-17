@@ -16,6 +16,13 @@ export const updateCourseProgress = async (courseId, subSectionId) => {
     subSectionId,
   });
 
-  // 🔥 safe return (handles all backend formats)
+  
   return res?.data?.data || res?.data;
 };
+
+export const getAllCourses = async () => {
+  const res = await api.get(courseEndpoints.GET_ALL_COURSES);
+  return res.data;
+};
+
+

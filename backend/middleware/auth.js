@@ -5,9 +5,12 @@ dotenv.config();
 
 //  AUTH
 export const auth = (req, res, next) => {
-  console.log("COOKIES RECEIVED:", req.cookies); // 🔥 ADD THIS
+  console.log("COOKIES RECEIVED:", req.cookies);
 
-  const token = req.cookies?.token;
+  // ✅ SUPPORT BOTH COOKIE + HEADER
+  const token =
+    req.cookies?.token ||
+    req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
     return res.status(401).json({
@@ -18,6 +21,7 @@ export const auth = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     req.user = decoded;
     next();
   } catch (error) {
@@ -27,6 +31,7 @@ export const auth = (req, res, next) => {
     });
   }
 };
+
 //IS STUDENT 
 export const isStudent = (req, res, next) => {
 	try {

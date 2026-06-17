@@ -86,12 +86,12 @@ export const initializePayment = async (req, res) => {
 };
 
 
-// ─────────────────────────────
+
 //  VERIFY PAYMENT
-// ─────────────────────────────
+
 export const verifyPayment = async (req, res) => {
   try {
-    const reference = req.params.reference;
+    const { reference } = req.params;
 
     if (!reference) {
       return res.status(400).json({
@@ -100,6 +100,16 @@ export const verifyPayment = async (req, res) => {
       });
     }
 
+    // Prevent duplicate verification
+    const existingPayment = await Payment.findOne({ reference });
+    if (existingPayment) {
+      return res.status(200).json({
+        success: true,
+        message: "Payment already verified.",
+      });
+    }
+
+    // Verify with Paystack
     const response = await paystack.get(
       `/transaction/verify/${reference}`
     );
@@ -115,13 +125,23 @@ export const verifyPayment = async (req, res) => {
 
     const { userId, coursesId } = paymentData.metadata || {};
 
-    if (!userId || !Array.isArray(coursesId) || coursesId.length === 0) {
+    if (!userId || !Array.isArray(coursesId) || !coursesId.length) {
       return res.status(400).json({
         success: false,
         message: "Invalid payment metadata.",
       });
     }
 
+    // Save payment record (VERY IMPORTANT)
+    await Payment.create({
+      userId,
+      reference,
+      coursesId,
+      amount: paymentData.amount / 100,
+      status: "success",
+    });
+
+    // Enroll student safely
     await enrollStudents(coursesId, userId);
 
     return res.status(200).json({
@@ -130,13 +150,14 @@ export const verifyPayment = async (req, res) => {
     });
 
   } catch (error) {
-
-    //   (INSIDE VERIFY PAYMENT)
-    console.error("[PAYSTACK ERROR]", error.response?.data || error.message);
+    console.error(
+      "[PAYSTACK ERROR]",
+      error.response?.data || error.message
+    );
 
     return res.status(500).json({
       success: false,
-      message: error.response?.data?.message || error.message,
+      message: "Payment verification failed.",
     });
   }
 };

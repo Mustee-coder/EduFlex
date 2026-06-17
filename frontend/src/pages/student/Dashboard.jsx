@@ -2,11 +2,8 @@ import { Link } from "react-router-dom";
 import { useUserDetails, useEnrolledCourses } from "@/hooks/useProfile";
 
 const Dashboard = () => {
-  const {
-    data: user,
-    isLoading: userLoading,
-    isError: userError,
-  } = useUserDetails();
+  const { data: user, isLoading: userLoading, isError: userError } =
+    useUserDetails();
 
   const {
     data: courses,
@@ -17,11 +14,32 @@ const Dashboard = () => {
   const loading = userLoading || coursesLoading;
   const error = userError || coursesError;
 
+  const enrolledCourses = courses?.data || [];
+
+  // 🧠 SMART SORT: incomplete first
+  const sortedCourses = [...enrolledCourses].sort(
+    (a, b) => (b.progressPercentage || 0) - (a.progressPercentage || 0)
+  );
+
+  const completedCount = enrolledCourses.filter(
+    (c) => c.progressPercentage === 100
+  ).length;
+
+  const avgProgress =
+    enrolledCourses.length > 0
+      ? Math.round(
+          enrolledCourses.reduce(
+            (acc, c) => acc + (c.progressPercentage || 0),
+            0
+          ) / enrolledCourses.length
+        )
+      : 0;
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="h-screen flex items-center justify-center">
         <p className="text-gray-500 animate-pulse">
-          Loading dashboard...
+          Loading your learning dashboard...
         </p>
       </div>
     );
@@ -29,14 +47,14 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-center">
-        <div>
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
           <h2 className="text-red-500 text-2xl font-bold">
             Something went wrong ⚠️
           </h2>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
+            className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
           >
             Retry
           </button>
@@ -45,10 +63,8 @@ const Dashboard = () => {
     );
   }
 
-  const enrolledCourses = courses?.data || [];
-
   return (
-    <div className="space-y-6 p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-50 min-h-screen space-y-6">
 
       {/* HEADER */}
       <div className="bg-white p-6 rounded-xl shadow">
@@ -56,107 +72,98 @@ const Dashboard = () => {
           Welcome back 👋 {user?.data?.firstName}
         </h1>
         <p className="text-gray-500">
-          Continue your learning journey
+          Continue learning where you left off
         </p>
       </div>
 
-      {/* STATS */}
+      {/* STATS (UDACITY / UDEMY STYLE) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         <div className="bg-white p-5 rounded-xl shadow">
-          <p className="text-gray-500 text-sm">Enrolled Courses</p>
+          <p className="text-sm text-gray-500">Enrolled</p>
           <h2 className="text-2xl font-bold">
             {enrolledCourses.length}
           </h2>
         </div>
 
         <div className="bg-white p-5 rounded-xl shadow">
-          <p className="text-gray-500 text-sm">Completed</p>
+          <p className="text-sm text-gray-500">Completed</p>
           <h2 className="text-2xl font-bold">
-            {enrolledCourses.filter(c => c.progressPercentage === 100).length}
+            {completedCount}
           </h2>
         </div>
 
         <div className="bg-white p-5 rounded-xl shadow">
-          <p className="text-gray-500 text-sm">Avg Progress</p>
+          <p className="text-sm text-gray-500">Avg Progress</p>
           <h2 className="text-2xl font-bold">
-            {enrolledCourses.length
-              ? Math.round(
-                  enrolledCourses.reduce(
-                    (acc, c) => acc + (c.progressPercentage || 0),
-                    0
-                  ) / enrolledCourses.length
-                )
-              : 0}%
+            {avgProgress}%
           </h2>
         </div>
-
       </div>
 
-      {/* COURSES */}
+      {/* CONTINUE LEARNING (🔥 UDEMY STYLE CORE FEATURE) */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">
-          My Courses 📚
+        <h2 className="text-xl font-semibold mb-3">
+          Continue Learning 🚀
         </h2>
 
-        {enrolledCourses.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-xl shadow">
-            <h3 className="text-lg font-semibold">
-              No courses yet 📚
-            </h3>
-            <p className="text-gray-500 mt-2">
-              Start learning by enrolling in a course
+        {sortedCourses.length === 0 ? (
+          <div className="bg-white p-10 text-center rounded-xl shadow">
+            <p className="text-gray-500">
+              You haven't enrolled in any course yet
             </p>
-            <button className="mt-4 bg-purple-600 text-white px-4 py-2 rounded-lg">
+            <button className="mt-4 bg-purple-600 text-white px-4 py-2 rounded">
               Browse Courses
             </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-            {enrolledCourses.map((course) => (
+            {sortedCourses.map((course) => (
               <Link
                 key={course._id}
                 to={`/course/${course._id}`}
-                className="block"
+                className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
               >
-                <div className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden">
+                {/* HEADER BANNER */}
+                <div className="h-28 bg-gradient-to-r from-purple-500 to-indigo-500" />
 
-                  <div className="h-32 bg-gradient-to-r from-purple-500 to-indigo-500" />
+                <div className="p-4 space-y-2">
 
-                  <div className="p-4 space-y-2">
+                  <h3 className="font-semibold">
+                    {course.courseName}
+                  </h3>
 
-                    <h3 className="font-semibold">
-                      {course.courseName}
-                    </h3>
+                  <p className="text-sm text-gray-500">
+                    {course.courseDescription?.slice(0, 60)}...
+                  </p>
 
-                    <p className="text-sm text-gray-500">
-                      {course.courseDescription?.slice(0, 60)}...
-                    </p>
+                  {/* PROGRESS BAR */}
+                  <div className="w-full bg-gray-200 h-2 rounded">
+                    <div
+                      className="bg-purple-600 h-2 rounded"
+                      style={{
+                        width: `${course.progressPercentage || 0}%`,
+                      }}
+                    />
+                  </div>
 
-                    <div className="w-full bg-gray-200 h-2 rounded-full">
-                      <div
-                        className="bg-purple-600 h-2 rounded-full"
-                        style={{
-                          width: `${course.progressPercentage || 0}%`,
-                        }}
-                      />
-                    </div>
-
+                  <div className="flex justify-between items-center">
                     <p className="text-xs text-gray-500">
                       {course.progressPercentage || 0}% completed
                     </p>
 
+                    <button className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                      Continue
+                    </button>
                   </div>
 
                 </div>
               </Link>
             ))}
-
           </div>
         )}
       </div>
-
     </div>
   );
 };

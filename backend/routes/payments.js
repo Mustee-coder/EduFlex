@@ -14,7 +14,7 @@ import { auth, isStudent } from "../middleware/auth.js";
 // PAYMENT ROUTES
 router.post("/initialize", auth, isStudent, initializePayment);
 
-// FIXED: use params OR change controller
+//  use params OR change controller
 router.get("/verify/:reference", auth, isStudent, verifyPayment);
 
 router.post(

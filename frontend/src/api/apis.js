@@ -44,6 +44,7 @@ export const profileEndpoints = {
   UPDATE_PROFILE_IMAGE: "/profile/updateUserProfileImage",
   UPDATE_PROFILE: "/profile/updateProfile",
   DELETE_PROFILE: "/profile/deleteProfile",
+  GET_MYLEARNING: "/profile/my-learning"
 };
 
 // ADMIN ENDPOINTS
@@ -56,11 +57,10 @@ export const adminEndpoints = {
    
 
 export const paymentEndpoints = {
-  CAPTURE_PAYMENT: "/payment/capturePayment",
-  VERIFY_PAYMENT: "/payment/verifyPayment",
-  SEND_PAYMENT_SUCCESS_EMAIL: "/payment/sendPaymentSuccessEmail",
+  INITIALIZE_PAYMENT: "/payment/initialize",
+  VERIFY_PAYMENT: "/payment/verify",
+  SEND_PAYMENT_SUCCESS_EMAIL: "/payment/payment-success-email",
 };
-
 //COURSE ENDPOINTS
    
 
@@ -70,6 +70,7 @@ export const courseEndpoints = {
   COURSE_DETAILS: "/course/getCourseDetails",
   CREATE_COURSE: "/course/createCourse",
   EDIT_COURSE: "/course/editCourse",
+  
   DELETE_COURSE: "/course/deleteCourse",
   CREATE_SECTION: "/course/addSection",
   UPDATE_SECTION: "/course/updateSection",

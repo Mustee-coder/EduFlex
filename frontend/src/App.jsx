@@ -13,7 +13,18 @@ import DashboardLayout from "@/components/layouts/DashboardLayout";
 
 // Student Pages
 import Dashboard from "@/pages/student/Dashboard";
-import CourseDetails from "@/pages/student/CourseDetails";
+import CoursePlayer from "@/pages/student/CoursePlayer";
+import CoursePreview from "@/pages/student/CoursePreview";
+import BrowseCourses from "@/pages/student/BrowseCourses";
+import CheckoutPage from "@/pages/student/CheckoutPage";
+import MyLearning from "@/pages/student/MyLearning";
+
+
+
+
+
+
+
 
 // Instructor Pages
 import InstructorDashboard from "@/pages/instructor/InstructorDashboard";
@@ -57,11 +68,31 @@ element={<Navigate to="/login" replace />}
         path="/dashboard"
         element={<Dashboard />}
       />
+      <Route
+        path="/my-learning"
+        element={<MyLearning />}
+      />
+       <Route
+        path="/browse-courses"
+        element={<BrowseCourses />}
+      />
 
       <Route
         path="/course/:courseId"
-        element={<CourseDetails />}
+        element={<CoursePlayer />}
       />
+     
+<Route
+  path="/course-preview/:courseId"
+  element={<CoursePreview />}
+/>
+     
+<Route path="/checkout/:courseId" element={<CheckoutPage />} />
+
+
+
+
+
 
       {/* Instructor */}
       <Route

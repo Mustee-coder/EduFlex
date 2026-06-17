@@ -4,7 +4,8 @@ const router = express.Router();
 // middleware
 import {
     auth,
-    isInstructor
+    isInstructor,
+    isStudent 
 } from "../middleware/auth.js";
 
 // controllers
@@ -14,7 +15,8 @@ import {
     getUserDetails,
     getEnrolledCourses,
     deleteAccount,
-    instructorDashboard
+    instructorDashboard,
+    getMyLearning
 } from "../controllers/profile.js";
 
 // Delete User Account
@@ -28,6 +30,8 @@ router.get("/getUserDetails", auth, getUserDetails);
 
 // Enrolled courses
 router.get("/getEnrolledCourses", auth, getEnrolledCourses);
+// my learning 
+router.get("/my-learning", auth, isStudent, getMyLearning);
 
 // Update profile image
 router.put("/updateUserProfileImage", auth, updateUserProfileImage);

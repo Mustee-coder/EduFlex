@@ -11,24 +11,31 @@ export const useUpdateCourseProgress = () => {
     onSuccess: (data, variables) => {
       const courseId = variables.courseId;
 
-      // ✅ Update cache only — NO invalidateQueries
-      // invalidateQueries was overwriting our update with stale GET data
+      const progressData = data?.data ?? data;
+
+      // ✅ Instant UI update (no delay)
       queryClient.setQueryData(
         ["course-details", courseId],
         (oldData) => {
           if (!oldData) return oldData;
+
           return {
             ...oldData,
             data: {
               ...oldData.data,
               courseProgress: {
                 ...oldData.data?.courseProgress,
-                ...data,
+                ...progressData,
               },
             },
           };
         }
       );
+
+      // 🔄 Sync other pages (dashboard, enrolled courses)
+      queryClient.invalidateQueries({
+        queryKey: ["enrolled-courses"],
+      });
     },
 
     onError: (error) => {

@@ -12,7 +12,8 @@ import {
     publishCourse,
     editCourse,
     deleteCourse,
-    getInstructorCourses
+    getInstructorCourses,
+    
 } from "../controllers/course.js";
 import { updateCourseProgress } from "../controllers/courseProgress.js";
 
@@ -92,7 +93,6 @@ router.get("/instructor/courses", auth, isInstructor, getInstructorCourses);
 
 
 router.patch("/publishCourse/:courseId", auth, isInstructor, publishCourse);
-
 
 
 
