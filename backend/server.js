@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import dns from "dns";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
@@ -17,6 +18,13 @@ import courseRoutes from "./routes/course.js";
 import paymentRoutes from "./routes/payments.js";
 
 dotenv.config();
+
+// Force Node DNS to use public resolvers when local DNS is unavailable for SRV lookups.
+try {
+  dns.setServers(["8.8.8.8", "8.8.4.4"]);
+} catch (error) {
+  console.warn("Unable to set DNS servers:", error.message || error);
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
