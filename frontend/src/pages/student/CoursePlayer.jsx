@@ -1,179 +1,303 @@
+
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useFullCourseDetails } from "@/hooks/useFullCourseDetails";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const CoursePlayer = () => {
-  const { courseId } = useParams();
-  const { data, isLoading, error } = useFullCourseDetails(courseId);
+const { courseId } = useParams();
 
-  const courseDetails = data?.data?.courseDetails;
-  const sections = courseDetails?.sections || [];
+const { data, isLoading, isError } =
+useFullCourseDetails(courseId);
 
-  // flatten lessons while keeping section info
-  const lessons = sections.flatMap((sec) =>
-    (sec.subSections || []).map((s) => ({ ...s, sectionTitle: sec.title }))
-  );
+const course = data?.data?.courseDetails;
 
-  const initialCompleted = data?.data?.completedLessons || [];
-  const progressPercentage = data?.data?.progressPercentage || 0;
+const [currentLesson, setCurrentLesson] = useState(null);
+const [completedLessons, setCompletedLessons] = useState([]);
+const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [currentLesson, setCurrentLesson] = useState(null);
-  const [completedLessons, setCompletedLessons] = useState(initialCompleted);
-  const [showSidebar, setShowSidebar] = useState(true);
-  const videoRef = useRef(null);
+// Resume lesson
+useEffect(() => {
+if (!course?.allSubSections?.length) return;
 
-  useEffect(() => {
-    if (lessons.length > 0 && !currentLesson) {
-      setCurrentLesson(lessons[0]);
-    }
-  }, [lessons, currentLesson]);
+const savedLessonId = localStorage.getItem(
+  `lastLesson-${courseId}`
+);
 
-  useEffect(() => {
-    setCompletedLessons(initialCompleted || []);
-  }, [initialCompleted]);
+const startLesson =
+  course.allSubSections.find(
+    (lesson) => lesson._id === savedLessonId
+  ) || course.allSubSections[0];
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <div className="p-4">Error: {error.message}</div>;
+setCurrentLesson(startLesson);
+setCompletedLessons(course.completedLessons || []);
 
-  const handleSelectLesson = (lesson) => {
-    setCurrentLesson(lesson);
-    if (window.innerWidth < 1024) setShowSidebar(false);
-  };
+}, [course, courseId]);
 
-  const handleMarkCompleted = (lessonId) => {
-    setCompletedLessons((prev) => (prev.includes(lessonId) ? prev : [...prev, lessonId]));
-  };
+// Prevent background scroll
+useEffect(() => {
+document.body.style.overflow = sidebarOpen
+? "hidden"
+: "auto";
 
-  const currentIndex = lessons.findIndex((l) => l._id === currentLesson?._id);
+return () => {
+  document.body.style.overflow = "auto";
+};
 
-  const handleNext = () => {
-    if (currentIndex < lessons.length - 1) {
-      setCurrentLesson(lessons[currentIndex + 1]);
-    }
-  };
+}, [sidebarOpen]);
 
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentLesson(lessons[currentIndex - 1]);
-    }
-  };
+if (isLoading) return <LoadingSpinner />;
+if (isError) return <p>Failed to load course</p>;
 
-  return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-start gap-6">
-          {/* Video + controls */}
-          <div className="flex-1">
-            <div className="bg-black rounded-lg overflow-hidden">
-              {currentLesson?.videoUrl ? (
-                <video
-                  ref={videoRef}
-                  controls
-                  src={currentLesson.videoUrl}
-                  className="w-full h-[60vh] lg:h-[70vh] bg-black"
-                  onEnded={() => handleMarkCompleted(currentLesson._id)}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-[60vh] lg:h-[70vh] text-white">
-                  No video available for this lesson
-                </div>
+const syncProgress = (type, lessonId) => {
+console.log("sync:", type, lessonId);
+};
+
+const handleSelectLesson = (lesson) => {
+setCurrentLesson(lesson);
+
+localStorage.setItem(
+  `lastLesson-${courseId}`,
+  lesson._id
+);
+
+syncProgress("watching", lesson._id);
+
+setSidebarOpen(false);
+
+};
+
+const markAsCompleted = (lessonId) => {
+if (completedLessons.includes(lessonId)) return;
+
+const updated = [...completedLessons, lessonId];
+
+setCompletedLessons(updated);
+
+syncProgress("completed", lessonId);
+
+};
+
+const currentIndex =
+course?.allSubSections?.findIndex(
+(lesson) => lesson._id === currentLesson?._id
+) ?? 0;
+
+const goToNextLesson = () => {
+const nextLesson =
+course?.allSubSections?.[currentIndex + 1];
+
+if (nextLesson) {
+  handleSelectLesson(nextLesson);
+}
+
+};
+
+const goToPreviousLesson = () => {
+const previousLesson =
+course?.allSubSections?.[currentIndex - 1];
+
+if (previousLesson) {
+  handleSelectLesson(previousLesson);
+}
+
+};
+
+const handleVideoEnd = () => {
+markAsCompleted(currentLesson._id);
+
+const nextLesson =
+  course?.allSubSections?.[currentIndex + 1];
+
+if (nextLesson) {
+  handleSelectLesson(nextLesson);
+}
+
+};
+
+const progress =
+course?.progressPercentage ??
+(course?.allSubSections?.length
+? (completedLessons.length /
+course.allSubSections.length) *
+100
+: 0);
+
+const LessonSidebar = () => (
+<div className="h-full overflow-y-auto">
+<h2 className="p-4 text-lg font-bold border-b">
+{course?.courseName}
+</h2>
+
+  {course?.sections?.map((section) => (
+    <div key={section._id}>
+      <h3 className="px-4 py-2 font-semibold bg-gray-50">
+        {section.sectionName}
+      </h3>
+
+      {course?.allSubSections
+        ?.filter(
+          (lesson) => lesson.section === section._id
+        )
+        .map((lesson) => {
+          const isActive =
+            currentLesson?._id === lesson._id;
+
+          const isCompleted =
+            completedLessons.includes(lesson._id);
+
+          return (
+            <div
+              key={lesson._id}
+              onClick={() =>
+                handleSelectLesson(lesson)
+              }
+              className={`px-4 py-3 flex items-center justify-between cursor-pointer
+              ${
+                isActive
+                  ? "bg-blue-100"
+                  : "hover:bg-gray-100"
+              }`}
+            >
+              <span>{lesson.title}</span>
+
+              {isCompleted && (
+                <span>✔</span>
               )}
             </div>
+          );
+        })}
+    </div>
+  ))}
+</div>
 
-            <div className="mt-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handlePrev}
-                  disabled={currentIndex <= 0}
-                  className="px-3 py-2 bg-white border rounded disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={handleNext}
-                  disabled={currentIndex >= lessons.length - 1}
-                  className="px-3 py-2 bg-white border rounded disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
+);
 
-              <div className="text-sm text-gray-600">Progress: {progressPercentage}%</div>
-            </div>
-          </div>
+return (
+<div className="flex flex-col md:flex-row h-screen bg-gray-100">
+{/* MOBILE HEADER */}
+<div className="md:hidden flex items-center justify-between p-3 bg-white border-b">
+<h2 className="font-bold truncate">
+{course?.courseName}
+</h2>
 
-          {/* Sidebar */}
-          <aside className={`w-full lg:w-96 bg-white border rounded-lg p-3 ${showSidebar ? "block" : "hidden"}`}>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold">Lessons</h3>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">{completedLessons.length}/{lessons.length} completed</span>
-                <button
-                  className="lg:hidden px-2 py-1 text-sm bg-gray-100 rounded"
-                  onClick={() => setShowSidebar(false)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
+    <button
+      onClick={() => setSidebarOpen(true)}
+      className="px-3 py-1 rounded bg-blue-500 text-white"
+    >
+      Lessons
+    </button>
+  </div>
 
-            <div className="space-y-2 max-h-[70vh] overflow-auto">
-              {sections.map((sec) => (
-                <div key={sec._id} className="border-b pb-2">
-                  <div className="font-medium text-gray-700 mb-1">{sec.title}</div>
-                  <div className="space-y-1">
-                    {(sec.subSections || []).map((sub) => {
-                      const completed = completedLessons.includes(sub._id);
-                      return (
-                        <button
-                          key={sub._id}
-                          onClick={() => handleSelectLesson(sub)}
-                          className={`w-full text-left px-2 py-2 rounded flex items-center justify-between ${currentLesson?._id === sub._id ? "bg-blue-50" : "hover:bg-gray-50"}`}
-                        >
-                          <div>
-                            <div className="text-sm font-medium">{sub.title}</div>
-                            <div className="text-xs text-gray-500">{sub.timeDuration ? `${sub.timeDuration}s` : "—"}</div>
-                          </div>
-                          <div className="text-sm">
-                            {completed ? (
-                              <span className="text-green-600">✓</span>
-                            ) : (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleMarkCompleted(sub._id);
-                                }}
-                                className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded"
-                              >
-                                Mark
-                              </button>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </aside>
+  {/* DESKTOP SIDEBAR */}
+  <div className="hidden md:block md:w-1/3 lg:w-1/4 bg-white border-r">
+    <LessonSidebar />
+  </div>
 
-          {/* Mobile toggle */}
-          {!showSidebar && (
-            <div className="fixed bottom-6 right-6 lg:hidden">
-              <button
-                onClick={() => setShowSidebar(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-full shadow-lg"
-              >
-                Lessons
-              </button>
-            </div>
-          )}
+  {/* MOBILE SIDEBAR */}
+  {sidebarOpen && (
+    <div className="fixed inset-0 z-50 flex">
+      <div className="w-2/3 bg-white shadow-lg">
+        <LessonSidebar />
+      </div>
+
+      <div
+        className="flex-1 bg-black/50"
+        onClick={() =>
+          setSidebarOpen(false)
+        }
+      />
+    </div>
+  )}
+
+  {/* MAIN CONTENT */}
+  <div className="flex-1 flex flex-col">
+    {/* VIDEO */}
+    <div className="bg-black aspect-video md:h-[60%]">
+      {currentLesson?.videoUrl ? (
+        <video
+          src={currentLesson.videoUrl}
+          controls
+          onEnded={handleVideoEnd}
+          className="w-full h-full"
+        />
+      ) : (
+        <div className="h-full flex items-center justify-center text-white">
+          No video selected
         </div>
+      )}
+    </div>
+
+    {/* CONTENT */}
+    <div className="flex-1 overflow-y-auto bg-white p-4">
+      <h1 className="text-xl font-bold">
+        {currentLesson?.title}
+      </h1>
+
+      <p className="mt-2 text-gray-600">
+        {currentLesson?.description}
+      </p>
+
+      <div className="flex gap-3 mt-4">
+        <button
+          onClick={goToPreviousLesson}
+          disabled={currentIndex === 0}
+          className="px-4 py-2 border rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+
+        <button
+          onClick={goToNextLesson}
+          disabled={
+            currentIndex ===
+            course?.allSubSections?.length - 1
+          }
+          className="px-4 py-2 rounded bg-blue-500 text-white disabled:opacity-50"
+        >
+          Next Lesson
+        </button>
+      </div>
+
+      {!completedLessons.includes(
+        currentLesson?._id
+      ) && (
+        <button
+          onClick={() =>
+            markAsCompleted(
+              currentLesson._id
+            )
+          }
+          className="mt-4 px-4 py-2 rounded bg-green-500 text-white"
+        >
+          Mark Completed
+        </button>
+      )}
+
+      <div className="mt-6">
+        <div className="w-full h-2 rounded bg-gray-200">
+          <div
+            className="h-2 rounded bg-green-500 transition-all"
+            style={{
+              width: `${progress}%`,
+            }}
+          />
+        </div>
+
+        <p className="mt-2 text-sm text-gray-500">
+          Progress: {progress.toFixed(0)}%
+        </p>
+
+        <p className="text-sm text-gray-500">
+          Lesson {currentIndex + 1} of{" "}
+          {course?.allSubSections?.length}
+        </p>
       </div>
     </div>
-  );
+  </div>
+</div>
+
+);
 };
 
 export default CoursePlayer;

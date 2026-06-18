@@ -28,5 +28,12 @@ export const getAllCourses = async () => {
 
 
 
+export const getFullCourseDetails = async (courseId) => {
+  const res = await api.get(
+    `${courseEndpoints.FULL_COURSE_DETAILS}/${courseId}`
+  );
+
+  return res.data;
+};
 
 

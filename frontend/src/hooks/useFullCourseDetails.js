@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getFullCoursedetails } from "../services/courseService";
+import { getFullCourseDetails } from "@/services/courseService";
 
 export const useFullCourseDetails = (courseId) => {
   return useQuery({
-    queryKey: ["fullCourseDetails", courseId],
-    queryFn: () => getFullCoursedetails(courseId),
+    queryKey: ["full-course-details", courseId],
+    queryFn: () => getFullCourseDetails(courseId),
     enabled: !!courseId,
+    staleTime: 1000 * 60 * 5,
+    keepPreviousData: true,
   });
 };
