@@ -11,9 +11,9 @@ export const useUpdateCourseProgress = () => {
     onSuccess: (data, variables) => {
       const courseId = variables.courseId;
 
-      const progressData = data?.data ?? data;
+      const progressData = data;
 
-      // ✅ Instant UI update (no delay)
+      //  Instant update
       queryClient.setQueryData(
         ["course-details", courseId],
         (oldData) => {
@@ -23,16 +23,13 @@ export const useUpdateCourseProgress = () => {
             ...oldData,
             data: {
               ...oldData.data,
-              courseProgress: {
-                ...oldData.data?.courseProgress,
-                ...progressData,
-              },
+              ...progressData,
             },
           };
         }
       );
 
-      // 🔄 Sync other pages (dashboard, enrolled courses)
+      //  Sync other pages
       queryClient.invalidateQueries({
         queryKey: ["enrolled-courses"],
       });

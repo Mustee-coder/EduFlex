@@ -82,6 +82,7 @@ router.get("/getFullCourseDetails/:courseId", auth, getFullCourseDetails);
 router.patch("/editCourse/:courseId", auth, isInstructor, editCourse);
 
 router.delete("/deleteCourse/:courseId", auth, isInstructor, deleteCourse);
+
 router.patch(
   "/course-progress",
   auth,
