@@ -70,29 +70,30 @@ export const courseEndpoints = {
   COURSE_DETAILS: "/course/getCourseDetails",
   CREATE_COURSE: "/course/createCourse",
   EDIT_COURSE: "/course/editCourse",
-  
+
   DELETE_COURSE: "/course/deleteCourse",
+
   CREATE_SECTION: "/course/addSection",
   UPDATE_SECTION: "/course/updateSection",
   DELETE_SECTION: "/course/deleteSection",
+
   CREATE_SUBSECTION: "/course/addSubSection",
   UPDATE_SUBSECTION: "/course/updateSubSection",
   DELETE_SUBSECTION: "/course/deleteSubSection",
-  
+
   COURSE_CATEGORIES: "/course/showAllCategories",
-  
   CREATE_CATEGORY: "/course/createCategory",
   DELETE_CATEGORY: "/course/deleteCategory",
+
   INSTRUCTOR_COURSES: "/course/getInstructorCourses",
   FULL_COURSE_DETAILS: "/course/getFullCourseDetails",
-  
-  UPDATE_PROGRESS: "/course/updateCourseProgress",
-  
+
+  UPDATE_PROGRESS: "/course/course-progress",
+
   CREATE_RATING: "/course/createRating",
   CATEGORY_PAGE: "/course/getCategoryPageDetails",
   REVIEWS: "/course/getReviews",
 };
-
 //contact 
    
 export const contactEndpoints = {

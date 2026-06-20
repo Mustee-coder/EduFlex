@@ -18,6 +18,7 @@ import CoursePreview from "@/pages/student/CoursePreview";
 import BrowseCourses from "@/pages/student/BrowseCourses";
 import CheckoutPage from "@/pages/student/CheckoutPage";
 import MyLearning from "@/pages/student/MyLearning";
+import MyCourses from "@/pages/student/MyCourses";
 
 
 
@@ -89,6 +90,8 @@ element={<Navigate to="/login" replace />}
 />
      
 <Route path="/checkout/:courseId" element={<CheckoutPage />} />
+    
+    <Route path="/my-courses" element={<MyCourses />} />
 
 
 

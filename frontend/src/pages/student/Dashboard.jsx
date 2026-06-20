@@ -1,7 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUserDetails, useEnrolledCourses } from "@/hooks/useProfile";
+import DashboardSkeleton from "@/components/DashboardSkeleton";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   const { data: user, isLoading: userLoading, isError: userError } =
     useUserDetails();
 
@@ -16,11 +19,20 @@ const Dashboard = () => {
 
   const enrolledCourses = courses?.data || [];
 
-  // 🧠 SMART SORT: incomplete first
-  const sortedCourses = [...enrolledCourses].sort(
-    (a, b) => (b.progressPercentage || 0) - (a.progressPercentage || 0)
-  );
+  // -----------------------
+  // SMART SORT (in-progress first)
+  // -----------------------
+  const sortedCourses = [...enrolledCourses].sort((a, b) => {
+    const aProgress = a.progressPercentage || 0;
+    const bProgress = b.progressPercentage || 0;
 
+    // incomplete first, then more progress first
+    return aProgress - bProgress;
+  });
+
+  // -----------------------
+  // STATS
+  // -----------------------
   const completedCount = enrolledCourses.filter(
     (c) => c.progressPercentage === 100
   ).length;
@@ -35,17 +47,17 @@ const Dashboard = () => {
         )
       : 0;
 
-  if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <p className="text-gray-500 animate-pulse">
-          Loading your learning dashboard...
-        </p>
-      </div>
-    );
-  }
+  // -----------------------
+  // LOADING
+  // -----------------------
+  if (loading) return <DashboardSkeleton />;
 
+  // -----------------------
+  // ERROR
+  // -----------------------
   if (error) {
+    console.error("Dashboard error:", userError || coursesError);
+
     return (
       <div className="h-screen flex items-center justify-center">
         <div className="text-center">
@@ -63,20 +75,23 @@ const Dashboard = () => {
     );
   }
 
+  // -----------------------
+  // UI
+  // -----------------------
   return (
     <div className="p-6 bg-gray-50 min-h-screen space-y-6">
 
       {/* HEADER */}
       <div className="bg-white p-6 rounded-xl shadow">
         <h1 className="text-2xl font-bold">
-          Welcome back 👋 {user?.data?.firstName}
+          Welcome back 👋 {user?.data?.firstName || "Learner"}
         </h1>
         <p className="text-gray-500">
-          Continue learning where you left off
+          Continue where you left off
         </p>
       </div>
 
-      {/* STATS (UDACITY / UDEMY STYLE) */}
+      {/* STATS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         <div className="bg-white p-5 rounded-xl shadow">
@@ -101,7 +116,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* CONTINUE LEARNING (🔥 UDEMY STYLE CORE FEATURE) */}
+      {/* CONTINUE LEARNING */}
       <div>
         <h2 className="text-xl font-semibold mb-3">
           Continue Learning 🚀
@@ -112,7 +127,11 @@ const Dashboard = () => {
             <p className="text-gray-500">
               You haven't enrolled in any course yet
             </p>
-            <button className="mt-4 bg-purple-600 text-white px-4 py-2 rounded">
+
+            <button
+              onClick={() => navigate("/browse-courses")}
+              className="mt-4 bg-purple-600 text-white px-4 py-2 rounded"
+            >
               Browse Courses
             </button>
           </div>
@@ -125,7 +144,10 @@ const Dashboard = () => {
                 to={`/course/${course._id}`}
                 className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
               >
-                {/* HEADER BANNER */}
+              
+              
+
+                {/* BANNER */}
                 <div className="h-28 bg-gradient-to-r from-purple-500 to-indigo-500" />
 
                 <div className="p-4 space-y-2">
@@ -134,11 +156,18 @@ const Dashboard = () => {
                     {course.courseName}
                   </h3>
 
+                  {/* LAST WATCHED */}
+                  {course.lastWatched && (
+                    <p className="text-xs text-gray-400">
+                      Resume available 🎯
+                    </p>
+                  )}
+
                   <p className="text-sm text-gray-500">
                     {course.courseDescription?.slice(0, 60)}...
                   </p>
 
-                  {/* PROGRESS BAR */}
+                  {/* PROGRESS */}
                   <div className="w-full bg-gray-200 h-2 rounded">
                     <div
                       className="bg-purple-600 h-2 rounded"

@@ -11,13 +11,12 @@ export const getCourseDetails = async (courseId) => {
 
 
 export const updateCourseProgress = async (courseId, subSectionId) => {
-  const res = await api.post(courseEndpoints.UPDATE_PROGRESS, {
+  const res = await api.patch(courseEndpoints.UPDATE_PROGRESS, {
     courseId,
     subSectionId,
   });
 
-  
-  return res?.data?.data || res?.data;
+  return res.data.data;
 };
 
 export const getAllCourses = async () => {
