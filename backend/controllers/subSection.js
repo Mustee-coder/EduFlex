@@ -1,15 +1,16 @@
 import Section from "../models/section.js";
 import SubSection from "../models/subSection.js";
+import cloudinary from "../config/cloudinary.js";
 import { uploadImageToCloudinary, deleteResourceFromCloudinary } from "../utils/imageUploader.js";
 
 //  CREATE SUBSECTION 
 export const createSubSection = async (req, res) => {
   try {
     const { title, description, sectionId } = req.body;
-    console.log("SECTION ID:", sectionId);
     const videoFile = req.files?.video;
 
-    //  validation
+    console.log("SECTION ID:", sectionId);
+
     if (!title || !description || !sectionId || !videoFile) {
       return res.status(400).json({
         success: false,
@@ -17,7 +18,6 @@ export const createSubSection = async (req, res) => {
       });
     }
 
-    // check section
     const section = await Section.findById(sectionId);
 
     if (!section) {
@@ -27,39 +27,34 @@ export const createSubSection = async (req, res) => {
       });
     }
 
-    //  upload video
-    const uploadResult = await uploadImageToCloudinary(
-      videoFile,
-      process.env.FOLDER_NAME
+    // ✅ VIDEO UPLOAD FIX
+    const uploadResult = await cloudinary.uploader.upload(
+      videoFile.tempFilePath,
+      {
+        resource_type: "video",
+        folder: process.env.FOLDER_NAME,
+      }
     );
 
-    //  NOTE: duration depends on your uploader (may not exist)
-    const duration = Math.round(uploadResult.duration || 0)
-
-    //  create subsection (IMPORTANT FIX: include section)
     const newSubSection = await SubSection.create({
       title,
       description,
       videoUrl: uploadResult.secure_url,
-      timeDuration: duration,
-      section: sectionId, 
-   
+      timeDuration: Math.round(uploadResult.duration || 0),
+      section: sectionId,
     });
 
-    //  update section 
     await Section.findByIdAndUpdate(sectionId, {
-  $push: { subSections: newSubSection._id },
-});
+      $push: { subSections: newSubSection._id },
+    });
 
-const course = await Course.findOne({
-  sections: sectionId,
-});
+    const course = await Course.findOne({
+      sections: sectionId,
+    });
 
-console.log("COURSE FOUND:", course);
-
-if (course) {
-  await calculateCourseDuration(course._id);
-}
+    if (course) {
+      await calculateCourseDuration(course._id);
+    }
 
     const updatedSection = await Section.findById(sectionId).populate(
       "subSections"
@@ -70,6 +65,7 @@ if (course) {
       data: updatedSection,
       message: "SubSection created successfully",
     });
+
   } catch (error) {
     console.log("CREATE SUBSECTION ERROR:", error);
 

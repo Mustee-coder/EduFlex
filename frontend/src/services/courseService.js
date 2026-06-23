@@ -1,8 +1,3 @@
-
-
-
-
-
 import api, { courseEndpoints } from "../api/apis";
 
 
@@ -42,9 +37,33 @@ export const getFullCourseDetails = async (courseId) => {
 
 
 
+
+// INSTRUCTOR COURSES
 export const getInstructorCourses = async () => {
-const res = await api.get(courseEndpoints.INSTRUCTOR_COURSES)
-return res.data;
-}
+  const res = await api.get(courseEndpoints.INSTRUCTOR_COURSES);
+  return res.data;
+};
 
 
+export const deleteCourse = async (courseId) => {
+  const res = await api.delete(
+    courseEndpoints.DELETE_COURSE(courseId)
+  );
+  return res.data;
+};
+
+
+
+export const createCourse = async (formData) => {
+  const res = await api.post(
+    courseEndpoints.CREATE_COURSE,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return res.data;
+};

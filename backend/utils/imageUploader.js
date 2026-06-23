@@ -1,10 +1,19 @@
 import { v2 as cloudinary } from "cloudinary";
 
-export const uploadImageToCloudinary = async (file, folder, height, quality) => {
+
+
+export const uploadImageToCloudinary = async (
+  file,
+  folder,
+  height,
+  quality
+) => {
   try {
-    if (!file || !file.tempFilePath) {
+    if (!file) {
       throw new Error("No file provided for upload");
     }
+
+    const filePath = file.tempFilePath || file.path;
 
     const options = {
       folder,
@@ -14,7 +23,7 @@ export const uploadImageToCloudinary = async (file, folder, height, quality) => 
     if (height) options.height = height;
     if (quality) options.quality = quality;
 
-    return await cloudinary.uploader.upload(file.tempFilePath, options);
+    return await cloudinary.uploader.upload(filePath, options);
   } catch (error) {
     console.log("Cloudinary upload error:", error.message);
     throw error;
@@ -26,17 +35,26 @@ export const deleteResourceFromCloudinary = async (url) => {
   if (!url) return;
 
   try {
-    // extract public_id from URL
-    const parts = url.split("/");
-    const fileWithExt = parts[parts.length - 1];
-    const publicId = fileWithExt.split(".")[0];
+    // Extract path after /upload/
+    const splitUrl = url.split("/upload/");
+
+    if (splitUrl.length < 2) return;
+
+    let publicId = splitUrl[1];
+
+    // remove version (v12345/)
+    publicId = publicId.replace(/^v\d+\//, "");
+
+    // remove file extension
+    publicId = publicId.split(".")[0];
 
     const result = await cloudinary.uploader.destroy(publicId);
 
-    console.log("Deleted:", publicId);
+    console.log("Deleted from Cloudinary:", publicId);
+
     return result;
   } catch (error) {
-    console.error("Cloudinary delete error:", error);
+    console.error("Cloudinary delete error:", error.message);
     throw error;
   }
 };
