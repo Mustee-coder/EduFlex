@@ -1,3 +1,8 @@
+
+
+
+
+
 import api, { courseEndpoints } from "../api/apis";
 
 
@@ -34,5 +39,12 @@ export const getFullCourseDetails = async (courseId) => {
 
   return res.data;
 };
+
+
+
+export const getInstructorCourses = async () => {
+const res = await api.get(courseEndpoints.INSTRUCTOR_COURSES)
+return res.data;
+}
 
 
