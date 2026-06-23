@@ -21,6 +21,17 @@ import MyLearning from "@/pages/student/MyLearning";
 import MyCourses from "@/pages/student/MyCourses";
 
 
+//instructor 
+import InstructorCourses from "@/pages/instructor/InstructorCourses";
+import CreateCourse from "@/pages/instructor/CreateCourse";
+import Revenue from "@/pages/instructor/Revenue";
+import Students from "@/pages/instructor/Students";
+
+import Analytics from "@/pages/instructor/Analytics";
+
+
+
+
 
 
 
@@ -102,6 +113,40 @@ element={<Navigate to="/login" replace />}
         path="/instructor"
         element={<InstructorDashboard />}
       />
+      
+       <Route
+        path="/courses"
+        element={<InstructorCourses />}
+      />
+      <Route
+        path="/add-course"
+        element={<CreateCourse/>}
+      />
+      
+       <Route
+        path="/revenue"
+        element={<Revenue/>}
+      />
+       <Route
+        path="/students"
+        element={<Students/>}
+      />
+      <Route
+        path="/analytics"
+        element={<Analytics/>}
+      />
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
 
       {/* Admin */}
       <Route

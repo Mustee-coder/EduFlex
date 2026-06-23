@@ -558,66 +558,134 @@ export const editCourse = async (req, res) => {
 
 //   Get a list of Course for a given Instructor  
 export const getInstructorCourses = async (req, res) => {
-  try {
-    const instructorId = req.user?.id || req.user?._id;
+try {
+const instructorId = req.user?.id || req.user?._id;
 
-    // ROLE CHECK
-    if (!req.user || req.user.accountType !== "Instructor") {
-      return res.status(403).json({
-        success: false,
-        message: "Only instructors can access this data",
-      });
-    }
+// ROLE CHECK
+if (!req.user || req.user.accountType !== "Instructor") {
+  return res.status(403).json({
+    success: false,
+    message: "Only instructors can access this data",
+  });
+}
 
-    // FETCH COURSES (Instructor Dashboard View → includes Draft + Published)
-    const instructorCourses = await Course.find({
-      instructor: instructorId,
-    })
-      .select("courseName price status createdAt thumbnail category ratingAndReviews")
-      .populate({
-        path: "category",
-        select: "name",
-      })
-      .populate("ratingAndReviews")
-      .sort({ createdAt: -1 })
-      .lean();
+const courses = await Course.find({
+  instructor: instructorId,
+})
+  .select(
+    `
+    courseName
+    thumbnail
+    price
+    status
+    createdAt
+    category
+    studentsEnrolled
+    ratingAndReviews
+  `
+  )
+  .populate({
+    path: "category",
+    select: "name",
+  })
+  .populate({
+    path: "ratingAndReviews",
+    select: "rating",
+  })
+  .sort({ createdAt: -1 })
+  .lean();
 
-    // TOTAL COURSES
-    const totalCourses = instructorCourses.length;
+const formattedCourses = courses.map((course) => {
+  const ratings = course.ratingAndReviews || [];
 
-    // OPTIONAL STATS (better dashboard UX)
-    const publishedCount = instructorCourses.filter(
-      (c) => c.status === "Published"
-    ).length;
+  const averageRating =
+    ratings.length > 0
+      ? ratings.reduce(
+          (sum, review) => sum + review.rating,
+          0
+        ) / ratings.length
+      : 0;
 
-    const draftCount = instructorCourses.filter(
-      (c) => c.status === "Draft"
-    ).length;
+  return {
+    ...course,
 
-    return res.status(200).json({
-      success: true,
-      data: instructorCourses,
-      stats: {
-        totalCourses,
-        publishedCount,
-        draftCount,
-      },
-      message: "Instructor courses fetched successfully",
-    });
-  } catch (error) {
-    console.error("GET INSTRUCTOR COURSES ERROR:", error);
+    studentsCount:
+      course.studentsEnrolled?.length || 0,
 
-    return res.status(500).json({
-      success: false,
-      message: "Failed to retrieve instructor courses",
-      error: error.message,
-    });
-  }
+    ratingsCount: ratings.length,
+
+    averageRating: Number(
+      averageRating.toFixed(1)
+    ),
+  };
+});
+
+const totalCourses = formattedCourses.length;
+
+const publishedCount = formattedCourses.filter(
+  (course) => course.status === "Published"
+).length;
+
+const draftCount = formattedCourses.filter(
+  (course) => course.status === "Draft"
+).length;
+
+const totalStudents = formattedCourses.reduce(
+  (sum, course) =>
+    sum + course.studentsCount,
+  0
+);
+
+const totalRevenue = formattedCourses.reduce(
+  (sum, course) =>
+    sum +
+    course.studentsCount *
+      (course.price || 0),
+  0
+);
+
+return res.status(200).json({
+  success: true,
+
+  data: formattedCourses,
+
+  stats: {
+    totalCourses,
+    publishedCount,
+    draftCount,
+    totalStudents,
+    totalRevenue,
+  },
+
+  message:
+    "Instructor courses fetched successfully",
+});
+
+} catch (error) {
+console.error(
+"GET INSTRUCTOR COURSES ERROR:",
+error
+);
+
+return res.status(500).json({
+  success: false,
+  message:
+    "Failed to retrieve instructor courses",
+  error: error.message,
+});
+
+}
 };
 
 //   Delete the Course  
+
+
 export const deleteCourse = async (req, res) => {
+  const session = await mongoose.startSession();
+
   try {
+    session.startTransaction();
+
     const { courseId } = req.params;
     const userId = req.user.id;
 
@@ -630,18 +698,19 @@ export const deleteCourse = async (req, res) => {
       });
     }
 
-    //  ownership check
+    // ownership check
     if (course.instructor.toString() !== userId) {
       return res.status(403).json({
         success: false,
-        message: "You are not allowed to delete this course",
+        message: "Not allowed to delete this course",
       });
     }
 
-    //  remove course from students
+    // remove from users
     await User.updateMany(
       { courses: courseId },
-      { $pull: { courses: courseId } }
+      { $pull: { courses: courseId } },
+      { session }
     );
 
     // delete thumbnail
@@ -649,38 +718,49 @@ export const deleteCourse = async (req, res) => {
       await deleteResourceFromCloudinary(course.thumbnail);
     }
 
-    // delete sections + subsections
- const courseSections = course.sections || [];
+    // delete sections + subsections + videos (FAST PARALLEL)
+    const courseSections = course.sections || [];
 
-    for (const sectionId of courseSections) {
-      const section = await Section.findById(sectionId);
+    await Promise.all(
+      courseSections.map(async (sectionId) => {
+        const section = await Section.findById(sectionId);
 
-      if (section) {
-const subSections = section.subSections || [];
+        if (!section) return;
 
-        for (const subSectionId of subSections) {
-          const subSection = await SubSection.findById(subSectionId);
+        const subSections = section.subSections || [];
 
-          if (subSection?.videoUrl) {
-            await deleteResourceFromCloudinary(subSection.videoUrl);
-          }
+        await Promise.all(
+          subSections.map(async (subId) => {
+            const sub = await SubSection.findById(subId);
 
-          await SubSection.findByIdAndDelete(subSectionId);
-        }
-      }
+            if (sub?.videoUrl) {
+              await deleteResourceFromCloudinary(sub.videoUrl);
+            }
 
-      await Section.findByIdAndDelete(sectionId);
-    }
+            await SubSection.findByIdAndDelete(subId, { session });
+          })
+        );
+
+        await Section.findByIdAndDelete(sectionId, { session });
+      })
+    );
 
     // delete course
-    await Course.findByIdAndDelete(courseId);
+    await Course.findByIdAndDelete(courseId, { session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     return res.status(200).json({
       success: true,
       message: "Course deleted successfully",
     });
+
   } catch (error) {
-    console.error("Error deleting course:", error);
+    await session.abortTransaction();
+    session.endSession();
+
+    console.error("DELETE COURSE ERROR:", error);
 
     return res.status(500).json({
       success: false,
@@ -689,7 +769,6 @@ const subSections = section.subSections || [];
     });
   }
 };
-
 // publishCourse
 
 export const publishCourse = async (req, res) => {

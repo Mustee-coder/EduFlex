@@ -68,10 +68,12 @@ export const paymentEndpoints = {
 export const courseEndpoints = {
   GET_ALL_COURSES: "/course/getAllCourses",
   COURSE_DETAILS: "/course/getCourseDetails",
+  
   CREATE_COURSE: "/course/createCourse",
+  
   EDIT_COURSE: "/course/editCourse",
 
-  DELETE_COURSE: "/course/deleteCourse",
+  DELETE_COURSE: (courseId) => `/course/deleteCourse/${courseId}`,
 
   CREATE_SECTION: "/course/addSection",
   UPDATE_SECTION: "/course/updateSection",
@@ -85,7 +87,8 @@ export const courseEndpoints = {
   CREATE_CATEGORY: "/course/createCategory",
   DELETE_CATEGORY: "/course/deleteCategory",
 
-  INSTRUCTOR_COURSES: "/course/getInstructorCourses",
+  INSTRUCTOR_COURSES: "/course/instructor/courses",
+  
   FULL_COURSE_DETAILS: "/course/getFullCourseDetails",
 
   UPDATE_PROGRESS: "/course/course-progress",
