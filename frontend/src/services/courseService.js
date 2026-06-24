@@ -55,15 +55,10 @@ export const deleteCourse = async (courseId) => {
 
 
 export const createCourse = async (formData) => {
-  const res = await api.post(
-    courseEndpoints.CREATE_COURSE,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
-
+  const res = await api.post(courseEndpoints.CREATE_COURSE, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };

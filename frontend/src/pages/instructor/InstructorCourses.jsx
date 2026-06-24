@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useInstructorCourses } from "@/hooks/useInstructorCourses";
 import { useDeleteCourse } from "@/hooks/useDeleteCourse";
 import ConfirmModal from "@/components/ConfirmModal";
+import {Link} from "react-router-dom"
 import { useState } from "react";
 
 const InstructorCourses = () => {
