@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import RoleRoute from "@/components/RoleRoute";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Auth
 import Login from "@/pages/auth/Login";
@@ -47,6 +49,7 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 
 const App = () => {
 return (
+<>
 <Routes>
 {/* DEFAULT */}
 <Route
@@ -154,9 +157,15 @@ element={<Navigate to="/login" replace />}
         path="/admin"
         element={<AdminDashboard />}
       />
+      
     </Route>
   </Route>
 </Routes>
+<ToastContainer
+    position="top-right"
+    autoClose={3000}
+  />
+</>
 
 );
 };
