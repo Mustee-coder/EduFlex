@@ -170,14 +170,14 @@ const InstructorCourses = () => {
                     View
                   </button>
 
-                  <button
-                    onClick={() =>
-                      navigate(`/edit-course/${course._id}`)
-                    }
-                    className="flex-1 bg-blue-500 text-white rounded-lg py-2 text-sm"
-                  >
-                    Edit
-                  </button>
+                 <button
+  onClick={() =>
+    navigate(`/course-builder/${course._id}`)
+  }
+  className="flex-1 bg-blue-500 text-white rounded-lg py-2 text-sm"
+>
+  {course.sections?.length > 0 ? "Edit" : "Build"}
+</button>
 
                   <button
                     onClick={() => handleDeleteClick(course._id)}

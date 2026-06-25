@@ -62,3 +62,29 @@ export const createCourse = async (formData) => {
   });
   return res.data;
 };
+
+
+
+
+
+
+export const createSection = async(data) =>{
+    const res = await api.post(courseEndpoints.CREATE_SECTION)
+    data
+    
+    return res.data
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

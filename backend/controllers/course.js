@@ -582,6 +582,7 @@ const courses = await Course.find({
     category
     studentsEnrolled
     ratingAndReviews
+    sections
   `
   )
   .populate({

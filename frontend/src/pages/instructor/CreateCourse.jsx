@@ -46,18 +46,17 @@ formData.append("thumbnailImage", thumbnail);
 formData.append("status", status);
 
 mutate(formData, {
-onSuccess: () => {
-  setCourseName("");
-  setCourseDescription("");
-  setWhatYouWillLearn("");
-  setPrice("");
-  setCategory("");
-  setThumbnail(null);
-  setStatus("Draft");
+  onSuccess: (data) => {
+    setCourseName("");
+    setCourseDescription("");
+    setWhatYouWillLearn("");
+    setPrice("");
+    setCategory("");
+    setThumbnail(null);
+    setStatus("Draft");
 
-  navigate("/courses");
-},
-
+    navigate(`/course-builder/${data.data._id}`);
+  },
 });
 };
   return (

@@ -75,7 +75,7 @@ export const courseEndpoints = {
 
   DELETE_COURSE: (courseId) => `/course/deleteCourse/${courseId}`,
 
-  CREATE_SECTION: "/course/addSection",
+  CREATE_SECTION: "/course/createSection",
   UPDATE_SECTION: "/course/updateSection",
   DELETE_SECTION: "/course/deleteSection",
 

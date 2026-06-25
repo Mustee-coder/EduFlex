@@ -28,8 +28,10 @@ import InstructorCourses from "@/pages/instructor/InstructorCourses";
 import CreateCourse from "@/pages/instructor/CreateCourse";
 import Revenue from "@/pages/instructor/Revenue";
 import Students from "@/pages/instructor/Students";
-
 import Analytics from "@/pages/instructor/Analytics";
+import CourseBuilder from "@/pages/instructor/CourseBuilder";
+
+
 
 
 
@@ -140,6 +142,10 @@ element={<Navigate to="/login" replace />}
         element={<Analytics/>}
       />
       
+      <Route
+  path="/course-builder/:courseId"
+  element={<CourseBuilder />}
+/>
       
       
       
