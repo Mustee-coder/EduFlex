@@ -81,6 +81,17 @@ export const createSection = async(data) =>{
 }
 
 
+export const createSubSection = async(data) =>{
+    const res = await api.post(courseEndpoints.CREATE_SUBSECTION, data)
+    return res.data
+}
+
+
+
+
+
+
+
 
 
 

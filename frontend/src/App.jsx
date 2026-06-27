@@ -23,13 +23,16 @@ import MyLearning from "@/pages/student/MyLearning";
 import MyCourses from "@/pages/student/MyCourses";
 
 
-//instructor 
+
+// Instructor Pages
+import InstructorDashboard from "@/pages/instructor/InstructorDashboard";
 import InstructorCourses from "@/pages/instructor/InstructorCourses";
 import CreateCourse from "@/pages/instructor/CreateCourse";
 import Revenue from "@/pages/instructor/Revenue";
 import Students from "@/pages/instructor/Students";
 import Analytics from "@/pages/instructor/Analytics";
 import CourseBuilder from "@/pages/instructor/CourseBuilder";
+import CreateSubSection from "@/pages/instructor/CreateSubSection";
 
 
 
@@ -43,8 +46,7 @@ import CourseBuilder from "@/pages/instructor/CourseBuilder";
 
 
 
-// Instructor Pages
-import InstructorDashboard from "@/pages/instructor/InstructorDashboard";
+
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -146,7 +148,10 @@ element={<Navigate to="/login" replace />}
   path="/course-builder/:courseId"
   element={<CourseBuilder />}
 />
-      
+      <Route
+  path="/add-subsection/:courseId/:sectionId"
+  element={<CreateSubSection />}
+/>
       
       
       

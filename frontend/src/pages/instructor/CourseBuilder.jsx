@@ -1,24 +1,27 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { ChevronDown, ChevronUp, Plus, Trash2, Edit2 } from 'lucide-react';
-import { useFullCourseDetails } from '@/hooks/useFullCourseDetails';
+
+import { useGetCourseDetails } from "@/hooks/useGetCourseDetails";
 import { useCreateSection } from '@/hooks/useCreateSection';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const CourseBuilder = () => {
   const { courseId } = useParams();
-  const { data: courseData, isLoading } = useFullCourseDetails(courseId);
+  const navigate = useNavigate();
+
+  const { data: courseData, isLoading } = useGetCourseDetails(courseId);
   const { mutate: createSection, isPending } = useCreateSection();
 
   const [sectionName, setSectionName] = useState('');
   const [expandedSections, setExpandedSections] = useState({});
 
-  const course = courseData?.data;
+  const course = courseData?.data?.courseDetails;
 
   const handleCreateSection = (e) => {
     e.preventDefault();
-    
+
     if (!sectionName.trim()) {
       toast.error('Section name cannot be empty');
       return;
@@ -29,7 +32,7 @@ const CourseBuilder = () => {
       {
         onSuccess: () => {
           setSectionName('');
-        }
+        },
       }
     );
   };
@@ -37,13 +40,13 @@ const CourseBuilder = () => {
   const toggleSectionExpand = (sectionId) => {
     setExpandedSections((prev) => ({
       ...prev,
-      [sectionId]: !prev[sectionId]
+      [sectionId]: !prev[sectionId],
     }));
   };
 
-  // if (isLoading) {
-  //   return <LoadingSpinner />;
-  // }
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   if (!course) {
     return (
@@ -54,7 +57,7 @@ const CourseBuilder = () => {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{course.courseName}</h1>
@@ -64,7 +67,10 @@ const CourseBuilder = () => {
       {/* Create Section Form */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 className="text-xl font-semibold mb-4">Create New Section</h2>
-        <form onSubmit={handleCreateSection} className="flex gap-3">
+        <form
+          onSubmit={handleCreateSection}
+          className="flex flex-col sm:flex-row gap-3"
+        >
           <input
             type="text"
             placeholder="Enter section name"
@@ -76,7 +82,7 @@ const CourseBuilder = () => {
           <button
             type="submit"
             disabled={isPending}
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 flex items-center gap-2 transition"
+            className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 flex items-center justify-center gap-2 transition"
           >
             <Plus size={18} />
             {isPending ? 'Creating...' : 'Add Section'}
@@ -87,9 +93,9 @@ const CourseBuilder = () => {
       {/* Sections List */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Course Sections</h2>
-        
-        {course.courseContent && course.courseContent.length > 0 ? (
-          course.courseContent.map((section) => (
+
+        {course.sections && course.sections.length > 0 ? (
+          course.sections.map((section) => (
             <div
               key={section._id}
               className="bg-white rounded-lg shadow-md overflow-hidden"
@@ -97,7 +103,7 @@ const CourseBuilder = () => {
               {/* Section Header */}
               <div
                 onClick={() => toggleSectionExpand(section._id)}
-                className="p-6 bg-gray-50 hover:bg-gray-100 cursor-pointer flex items-center justify-between transition"
+                className="p-4 sm:p-6 bg-gray-50 hover:bg-gray-100 cursor-pointer flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-center sm:justify-between transition"
               >
                 <div className="flex items-center gap-4 flex-1">
                   <button type="button" className="text-gray-600">
@@ -112,7 +118,7 @@ const CourseBuilder = () => {
                       {section.sectionName}
                     </h3>
                     <p className="text-sm text-gray-600">
-                      {section.subSection ? section.subSection.length : 0} lessons
+                      {section.subSections ? section.subSections.length : 0} lessons
                     </p>
                   </div>
                 </div>
@@ -121,6 +127,7 @@ const CourseBuilder = () => {
                 <div className="flex gap-2">
                   <button
                     type="button"
+                    onClick={(e) => e.stopPropagation()}
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition"
                     title="Edit section"
                   >
@@ -128,6 +135,7 @@ const CourseBuilder = () => {
                   </button>
                   <button
                     type="button"
+                    onClick={(e) => e.stopPropagation()}
                     className="p-2 text-red-600 hover:bg-red-50 rounded-md transition"
                     title="Delete section"
                   >
@@ -139,13 +147,13 @@ const CourseBuilder = () => {
               {/* Subsections */}
               {expandedSections[section._id] && (
                 <div className="border-t p-6 bg-gray-50">
-                  {section.subSection && section.subSection.length > 0 ? (
+                  {section.subSections && section.subSections.length > 0 ? (
                     <div className="space-y-3">
-                      {section.subSection.map((subSection) => (
+                      {section.subSections.map((subSection) => (
                         <div
-                          key={subSection._id}
-                          className="bg-white p-4 rounded-md border border-gray-200 flex items-center justify-between hover:shadow-md transition"
-                        >
+  key={subSection._id}
+  className="bg-white p-4 rounded-md border border-gray-200 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-center sm:justify-between hover:shadow-md transition"
+>
                           <div className="flex-1">
                             <h4 className="font-medium text-gray-800">
                               {subSection.title}
@@ -154,7 +162,7 @@ const CourseBuilder = () => {
                               {subSection.timeDuration || 'No duration'}
                             </p>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 self-end sm:self-auto">
                             <button
                               type="button"
                               className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition"
@@ -182,6 +190,7 @@ const CourseBuilder = () => {
                   {/* Add SubSection Button */}
                   <button
                     type="button"
+                    onClick={() => navigate(`/add-subsection/${courseId}/${section._id}`)}
                     className="mt-4 w-full py-2 px-4 border-2 border-dashed border-gray-300 rounded-md text-gray-600 hover:border-blue-500 hover:text-blue-600 transition flex items-center justify-center gap-2"
                   >
                     <Plus size={18} />
@@ -192,8 +201,8 @@ const CourseBuilder = () => {
             </div>
           ))
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <p className="text-gray-500 text-lg">
+          <div className="bg-white p-4 rounded-md border border-gray-200 flex items-center justify-center hover:shadow-md transition">
+            <p className="text-gray-500">
               No sections yet. Create one above to get started!
             </p>
           </div>
