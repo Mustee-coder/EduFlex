@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import dns from "dns";
+import os from "os";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
@@ -45,7 +46,9 @@ app.use(
 app.use(
   fileUpload({
     useTempFiles: true,
-    tempFileDir: "/data/data/com.termux/files/home/tmp",
+    tempFileDir: os.tmpdir(),
+    limits: { fileSize: 100 * 1024 * 1024 },
+    abortOnLimit: true,
   })
 );
 

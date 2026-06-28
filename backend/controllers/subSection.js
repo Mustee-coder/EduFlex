@@ -1,7 +1,9 @@
 import Section from "../models/section.js";
 import SubSection from "../models/subSection.js";
+import Course from "../models/course.js";
 import cloudinary from "../config/cloudinary.js";
 import { uploadImageToCloudinary, deleteResourceFromCloudinary } from "../utils/imageUploader.js";
+import { calculateCourseDuration } from "../utils/secToDuration.js";
 
 //  CREATE SUBSECTION 
 export const createSubSection = async (req, res) => {
