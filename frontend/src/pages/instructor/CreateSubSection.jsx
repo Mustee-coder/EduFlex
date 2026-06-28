@@ -25,6 +25,20 @@ const { mutate: createSubSection, isPending } = useCreateSubSection();
   formData.append("description", description);
   formData.append("video", video);
 
+  console.log({
+    courseId,
+    sectionId,
+    title,
+    description,
+    video,
+  });
+
+  console.log(formData.get("courseId"));
+  console.log(formData.get("sectionId"));
+  console.log(formData.get("title"));
+  console.log(formData.get("description"));
+  console.log(formData.get("video"));
+
   createSubSection(formData, {
     onSuccess: () => {
       navigate(`/course-builder/${courseId}`);

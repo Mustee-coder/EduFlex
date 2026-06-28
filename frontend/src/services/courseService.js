@@ -75,12 +75,6 @@ export const createCourse = async (formData) => {
 
 
 
-export const createSection = async(data) =>{
-    const res = await api.post(courseEndpoints.CREATE_SECTION, data)
-    return res.data
-}
-
-
 export const createSubSection = async (formData) => {
   const res = await api.post(
     courseEndpoints.CREATE_SUBSECTION,
@@ -92,9 +86,10 @@ export const createSubSection = async (formData) => {
     }
   );
 
+  console.log(res.data);
+
   return res.data;
 };
-
 
 
 
