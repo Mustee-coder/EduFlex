@@ -1,175 +1,210 @@
-import { Link } from "react-router-dom";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useNavigate } from "react-router-dom";
 import { useInstructorCourses } from "@/hooks/useInstructorCourses";
+import { useDeleteCourse } from "@/hooks/useDeleteCourse";
+import ConfirmModal from "@/components/ConfirmModal";
+import {Link} from "react-router-dom"
+import { useState } from "react";
 
-const InstructorDashboard = () => {
-  const { data, isLoading, isError, error } = useInstructorCourses();
+const InstructorCourses = () => {
+  const navigate = useNavigate();
+
+  const { data, isLoading, isError } = useInstructorCourses();
+  const { mutate: deleteCourse, isPending } = useDeleteCourse();
+
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("All");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
   const courses = data?.data || [];
-  const stats = data?.stats || {};
 
+  // loading
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <LoadingSpinner />
+      <div className="min-h-screen flex items-center justify-center">
+        Loading courses...
       </div>
     );
   }
 
+  // error
   if (isError) {
     return (
-      <div className="h-screen flex items-center justify-center px-4">
-        <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-md text-center max-w-md w-full">
-          <h2 className="text-xl sm:text-2xl font-semibold text-red-600 mb-3">
-            Unable to load your instructor dashboard
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">
-            {error?.message || "Please try again in a moment."}
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-5 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-          >
-            Reload
-          </button>
-        </div>
+      <div className="min-h-screen flex items-center justify-center text-red-500">
+        Failed to load courses
       </div>
     );
   }
 
+  // filter logic
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch = course.courseName
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesFilter =
+      filter === "All" ? true : course.status === filter;
+
+    return matchesSearch && matchesFilter;
+  });
+
+  // delete handler
+  const handleDeleteClick = (id) => {
+    setSelectedId(id);
+    setIsModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    deleteCourse(selectedId, {
+      onSuccess: () => {
+        setIsModalOpen(false);
+        setSelectedId(null);
+      },
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
 
-        {/* HEADER CARD */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-5 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                Instructor Dashboard
-              </h1>
-              <p className="mt-1 text-sm sm:text-base text-gray-500">
-                Manage your courses, track performance, and review your published content.
-              </p>
-            </div>
-            <div className="sm:text-right">
-              <p className="text-xs text-gray-500 uppercase tracking-wide">
-                Total courses
-              </p>
-              <p className="text-4xl font-bold text-purple-600 mt-1">
-                {stats.totalCourses ?? courses.length}
-              </p>
-            </div>
-          </div>
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold">
+            My Courses
+          </h1>
+          <p className="text-gray-500">
+            Manage all your courses
+          </p>
         </div>
 
-        {/* STATS GRID */}
-        <div className="grid grid-cols-1 xs:grid-cols-3 gap-4">
-          <div className="bg-indigo-50 border border-indigo-100 rounded-3xl p-5">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Published</p>
-            <p className="text-3xl font-bold text-indigo-700 mt-1">
-              {stats.publishedCount ?? 0}
-            </p>
-          </div>
-          <div className="bg-white border border-gray-200 rounded-3xl p-5">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Draft</p>
-            <p className="text-3xl font-bold text-gray-900 mt-1">
-              {stats.draftCount ?? 0}
-            </p>
-          </div>
-          <div className="bg-white border border-gray-200 rounded-3xl p-5">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">My Courses</p>
-            <p className="text-3xl font-bold text-gray-900 mt-1">
-              {courses.length}
-            </p>
-          </div>
-        </div>
-
-        {/* COURSES SECTION */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-5 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
-                Your Courses
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">
-                {courses.length === 0
-                  ? "You have no courses yet."
-                  : `${courses.length} course${courses.length === 1 ? "" : "s"} found.`}
-              </p>
-            </div>
-            <Link
-              to="/my-courses"
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-purple-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-purple-700 transition"
-            >
-              View Student Courses
-            </Link>
-          </div>
-
-          {/* EMPTY STATE */}
-          {courses.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-gray-300 bg-gray-50 p-8 sm:p-12 text-center">
-              <p className="text-4xl mb-4">📚</p>
-              <p className="text-gray-500 text-base">
-                You have not created any courses yet.
-              </p>
-              <p className="text-gray-400 text-sm mt-1">
-                Start building your first course to reach learners.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              {courses.map((course) => (
-                <div
-                  key={course._id}
-                  className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition flex flex-col"
-                >
-                  {/* Card Top */}
-                  <div className="p-5 flex gap-4 justify-between flex-1">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-400 uppercase tracking-wide">
-                        {course.category?.name || "Uncategorized"}
-                      </p>
-                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mt-1 truncate">
-                        {course.courseName}
-                      </h3>
-                      <p className="mt-1.5 text-sm text-gray-500 line-clamp-2">
-                        {course.courseDescription || "No description available."}
-                      </p>
-                    </div>
-                    <span
-                      className={`shrink-0 self-start inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                        course.status === "Published"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {course.status}
-                    </span>
-                  </div>
-
-                  {/* Card Footer */}
-                  <div className="border-t border-gray-100 px-5 py-4 bg-gray-50">
-                    <div className="flex flex-wrap gap-2 text-xs text-gray-600">
-                      <span className="rounded-full bg-white border border-gray-200 px-3 py-1.5 font-medium">
-                        {course.price ? `$${course.price}` : "Free"}
-                      </span>
-                      <span className="rounded-full bg-white border border-gray-200 px-3 py-1.5">
-                        {course.ratingAndReviews?.length || 0} reviews
-                      </span>
-                      <span className="rounded-full bg-white border border-gray-200 px-3 py-1.5">
-                        {new Date(course.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
+        <button
+          onClick={() => navigate("/add-course")}
+          className="bg-blue-600 text-white px-5 py-2 rounded-lg"
+        >
+          + Create Course
+        </button>
       </div>
+
+      {/* SEARCH + FILTER */}
+      <div className="flex flex-col md:flex-row gap-3">
+        <input
+          type="text"
+          placeholder="Search courses..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border rounded-lg px-4 py-2 flex-1"
+        />
+
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="border rounded-lg px-4 py-2"
+        >
+          <option value="All">All</option>
+          <option value="Published">Published</option>
+          <option value="Draft">Draft</option>
+        </select>
+      </div>
+
+      {/* EMPTY STATE */}
+      {filteredCourses.length === 0 ? (
+        <div className="bg-white rounded-xl shadow p-10 text-center">
+          <p className="text-5xl">📚</p>
+          <h2 className="text-xl font-semibold mt-3">
+            No courses found
+          </h2>
+          <p className="text-gray-500 mt-2">
+            Try changing search or filter
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+          {filteredCourses.map((course) => (
+            <div
+              key={course._id}
+              className="bg-white rounded-xl shadow overflow-hidden"
+            >
+              <img
+                src={course.thumbnail}
+                className="h-44 w-full object-cover"
+                alt={course.courseName}
+              />
+
+              <div className="p-4 space-y-3">
+
+                <h3 className="font-bold text-lg">
+                  {course.courseName}
+                </h3>
+
+                <p className="text-sm text-gray-500">
+                  {course.category?.name}
+                </p>
+
+                <div className="flex justify-between">
+                  <span className="text-green-600 font-semibold">
+                    ${course.price}
+                  </span>
+
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      course.status === "Published"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
+                  >
+                    {course.status}
+                  </span>
+                </div>
+
+                {/* ACTIONS */}
+                <div className="flex gap-2 pt-2">
+
+                  <button
+                    onClick={() =>
+                      navigate(`/course/${course._id}`)
+                    }
+                    className="flex-1 border rounded-lg py-2 text-sm"
+                  >
+                    View
+                  </button>
+
+                 <button
+  onClick={() =>
+    navigate(`/course-builder/${course._id}`)
+  }
+  className="flex-1 bg-blue-500 text-white rounded-lg py-2 text-sm"
+>
+  {course.sections?.length > 0 ? "Edit" : "Build"}
+</button>
+
+                  <button
+                    onClick={() => handleDeleteClick(course._id)}
+                    className="px-3 py-2 bg-red-500 text-white rounded text-sm"
+                  >
+                    Delete
+                  </button>
+
+                </div>
+              </div>
+            </div>
+          ))}
+
+        </div>
+      )}
+
+      {/* CONFIRM MODAL */}
+      <ConfirmModal
+        isOpen={isModalOpen}
+        title="Delete Course?"
+        message="This action cannot be undone. The course and all content will be removed."
+        loading={isPending}
+        onCancel={() => setIsModalOpen(false)}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 };
 
-export default InstructorDashboard;
+export default InstructorCourses;

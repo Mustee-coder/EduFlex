@@ -6,7 +6,7 @@ import { uploadImageToCloudinary, deleteResourceFromCloudinary } from "../utils/
 //  CREATE SUBSECTION 
 export const createSubSection = async (req, res) => {
   try {
-    const { title, description, sectionId } = req.body;
+    const { title, description, sectionId, courseId } = req.body;
     const videoFile = req.files?.video;
 
     console.log("SECTION ID:", sectionId);

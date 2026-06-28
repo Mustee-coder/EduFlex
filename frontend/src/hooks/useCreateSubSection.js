@@ -10,6 +10,7 @@ export const useCreateSubSection = () => {
 
     onSuccess: () => {
       toast.success("Lesson created successfully");
+      
 
       queryClient.invalidateQueries({
         queryKey: ["full-course-details"],
@@ -17,10 +18,12 @@ export const useCreateSubSection = () => {
     },
 
     onError: (error) => {
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to create lesson"
-      );
-    },
+  console.log(error);
+  console.log(error?.response?.data);
+
+  toast.error(
+    error?.response?.data?.message || "Failed to create lesson"
+  );
+},
   });
 };

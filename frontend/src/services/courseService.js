@@ -81,10 +81,19 @@ export const createSection = async(data) =>{
 }
 
 
-export const createSubSection = async(data) =>{
-    const res = await api.post(courseEndpoints.CREATE_SUBSECTION, data)
-    return res.data
-}
+export const createSubSection = async (formData) => {
+  const res = await api.post(
+    courseEndpoints.CREATE_SUBSECTION,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return res.data;
+};
 
 
 
