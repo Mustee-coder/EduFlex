@@ -73,6 +73,15 @@ export const createCourse = async (formData) => {
 
 
 
+export const createSection = async(data) =>{
+  const res = await api.post(
+    courseEndpoints.CREATE_SECTION,
+    data,
+  )
+}
+
+
+
 
 
 export const createSubSection = async (formData) => {
