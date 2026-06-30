@@ -4,18 +4,43 @@ import { toast } from 'react-toastify';
 import { ChevronDown, ChevronUp, Plus, Trash2, Edit2 } from 'lucide-react';
 
 import { useGetCourseDetails } from "@/hooks/useGetCourseDetails";
-import { useCreateSection } from '@/hooks/useCreateSection';
+import { useCreateSection } from '@/hooks/useCreateSection'
+
+import { useUpdateSection } from '@/hooks/useUpdateSection';
+import { useDeleteSection } from '@/hooks/useDeleteSection';
+
+
+import { useUpdateSubSection } from '@/hooks/useUpdateSubSection';
+
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+
 
 const CourseBuilder = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
 
   const { data: courseData, isLoading } = useGetCourseDetails(courseId);
+  
   const { mutate: createSection, isPending } = useCreateSection();
+  const { mutate: updateSection, isPending: isUpdatingSection } =
+  useUpdateSection();
+  const { mutate: deleteSection } = useDeleteSection(courseId);
+
+const { mutate: updateSubSection, isPending: isUpdatingSubSection } =
+  useUpdateSubSection();
+  
+  
 
   const [sectionName, setSectionName] = useState('');
   const [expandedSections, setExpandedSections] = useState({});
+const [editingSection, setEditingSection] = useState(null);
+const [editSectionName, setEditSectionName] = useState("");
+const [editingSubSection, setEditingSubSection] = useState(null);
+
+const [editSubSectionTitle, setEditSubSectionTitle] = useState("");
+
+const [editSubSectionDescription, setEditSubSectionDescription] = useState("");
+
 
   const course = courseData?.data?.courseDetails;
 
@@ -36,6 +61,58 @@ const CourseBuilder = () => {
       }
     );
   };
+  const handleUpdateSection = (sectionId) => {
+  if (!editSectionName.trim()) {
+    toast.error("Section name is required");
+    return;
+  }
+
+  updateSection(
+  {
+    sectionId,
+    sectionName: editSectionName,
+    courseId,
+  },
+  {
+    onSuccess: () => {
+      setEditingSection(null);
+      setEditSectionName("");
+    },
+  }
+
+  );
+};
+
+
+const handleDeleteSection = (sectionId) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this section? This action cannot be undone."
+  );
+
+  if (!confirmed) return;
+
+  deleteSection({
+    sectionId,
+    courseId,
+  });
+};
+
+const handleUpdateSubSection = (subSectionId) => {
+  updateSubSection(
+    {
+      subSectionId,
+      title: editSubSectionTitle,
+      description: editSubSectionDescription,
+    },
+    {
+      onSuccess: () => {
+        setEditingSubSection(null);
+        setEditSubSectionTitle("");
+        setEditSubSectionDescription("");
+      },
+    }
+  );
+};
 
   const toggleSectionExpand = (sectionId) => {
     setExpandedSections((prev) => ({
@@ -114,9 +191,19 @@ const CourseBuilder = () => {
                     )}
                   </button>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      {section.sectionName}
-                    </h3>
+                  {editingSection === section._id ? (
+  <input
+    type="text"
+    value={editSectionName}
+    onChange={(e) => setEditSectionName(e.target.value)}
+    className="border rounded-md px-2 py-1 w-full"
+    onClick={(e) => e.stopPropagation()}
+  />
+) : (
+  <h3 className="text-lg font-semibold text-gray-800">
+    {section.sectionName}
+  </h3>
+)}
                     <p className="text-sm text-gray-600">
                       {section.subSections ? section.subSections.length : 0} lessons
                     </p>
@@ -124,25 +211,60 @@ const CourseBuilder = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={(e) => e.stopPropagation()}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition"
-                    title="Edit section"
-                  >
-                    <Edit2 size={18} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => e.stopPropagation()}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-md transition"
-                    title="Delete section"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </div>
+              <div className="flex justify-end gap-2 w-full sm:w-auto">
+  {editingSection === section._id ? (
+    <>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleUpdateSection(section._id);
+        }}
+        className="px-3 py-1 bg-blue-600 text-white rounded"
+      >
+        {isUpdatingSection ? "Saving..." : "Save"}
+      </button>
+
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setEditingSection(null);
+          setEditSectionName("");
+        }}
+        className="px-3 py-1 bg-gray-500 text-white rounded"
+      >
+        Cancel
+      </button>
+    </>
+  ) : (
+    <>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setEditingSection(section._id);
+          setEditSectionName(section.sectionName);
+        }}
+        className="p-2 text-blue-600 hover:bg-blue-50 rounded-md"
+      >
+        <Edit2 size={18} />
+      </button>
+
+      <button
+  type="button"
+  onClick={(e) => {
+    e.stopPropagation();
+    handleDeleteSection(section._id);
+  }}
+  className="p-2 text-red-600 hover:bg-red-50 rounded-md"
+>
+  <Trash2 size={18} />
+</button>
+    </>
+  )}
+</div>
+</div>
 
               {/* Subsections */}
               {expandedSections[section._id] && (
@@ -152,31 +274,85 @@ const CourseBuilder = () => {
                       {section.subSections.map((subSection) => (
                         <div
   key={subSection._id}
-  className="bg-white p-4 rounded-md border border-gray-200 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-center sm:justify-between hover:shadow-md transition"
->
-                          <div className="flex-1">
-                            <h4 className="font-medium text-gray-800">
-                              {subSection.title}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              {subSection.timeDuration || 'No duration'}
-                            </p>
-                          </div>
+  className="bg-white p-4 rounded-md border border-gray-200 flex flex-col sm:flex-row sm:items-center">
+                         <div className="flex-1">
+  {editingSubSection === subSection._id ? (
+    <>
+      <input
+        type="text"
+        value={editSubSectionTitle}
+        onChange={(e) => setEditSubSectionTitle(e.target.value)}
+        className="border rounded px-2 py-1 w-full"
+      />
+
+      <textarea
+        value={editSubSectionDescription}
+        onChange={(e) => setEditSubSectionDescription(e.target.value)}
+        className="border rounded px-2 py-1 w-full mt-2"
+      />
+    </>
+  ) : (
+    <>
+      <h4 className="font-medium text-gray-800">
+        {subSection.title}
+      </h4>
+
+      <p className="text-sm text-gray-600">
+        {subSection.description}
+      </p>
+
+      <p className="text-sm text-gray-500">
+        {subSection.timeDuration || "No duration"}
+      </p>
+    </>
+  )}
+</div>
                           <div className="flex gap-2 self-end sm:self-auto">
-                            <button
-                              type="button"
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition"
-                              title="Edit lesson"
-                            >
-                              <Edit2 size={16} />
-                            </button>
-                            <button
-                              type="button"
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-md transition"
-                              title="Delete lesson"
-                            >
-                              <Trash2 size={16} />
-                            </button>
+                            {editingSubSection === subSection._id ? (
+  <>
+    <button
+      type="button"
+      onClick={() => handleUpdateSubSection(subSection._id)}
+      className="px-3 py-1 bg-blue-600 text-white rounded"
+    >
+      {isUpdatingSubSection ? "Saving..." : "Save"}
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setEditingSubSection(null);
+        setEditSubSectionTitle("");
+        setEditSubSectionDescription("");
+      }}
+      className="px-3 py-1 bg-gray-500 text-white rounded"
+    >
+      Cancel
+    </button>
+  </>
+) : (
+  <>
+    <button
+      type="button"
+      onClick={(e) => {
+  e.stopPropagation();
+  setEditingSubSection(subSection._id);
+  setEditSubSectionTitle(subSection.title);
+  setEditSubSectionDescription(subSection.description || "");
+}}
+      className="p-2 text-blue-600 hover:bg-blue-50 rounded-md"
+    >
+      <Edit2 size={16} />
+    </button>
+
+    <button
+      type="button"
+      className="p-2 text-red-600 hover:bg-red-50 rounded-md"
+    >
+      <Trash2 size={16} />
+    </button>
+  </>
+)}
                           </div>
                         </div>
                       ))}

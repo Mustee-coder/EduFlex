@@ -63,13 +63,12 @@ import {
 // Sections
 router.post("/createSection", auth, isInstructor, createSection);
 router.post("/updateSection", auth, isInstructor, updateSection);
-router.post("/deleteSection", auth, isInstructor, deleteSection);
+router.delete("/deleteSection", auth, isInstructor, deleteSection);
 
 // SubSections
 router.post("/addSubSection", auth, isInstructor, createSubSection);
-
 router.post("/updateSubSection", auth, isInstructor, updateSubSection);
-router.post("/deleteSubSection", auth, isInstructor, deleteSubSection);
+router.delete("/deleteSubSection", auth, isInstructor, deleteSubSection);
 
 // Courses
 router.post("/createCourse", auth, isInstructor, createCourse);

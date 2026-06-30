@@ -70,7 +70,10 @@ export const createCourse = async (formData) => {
 
 
 
-
+export const createSection = async (data) => {
+  const res = await api.post(courseEndpoints.CREATE_SECTION, data);
+  return res.data;
+};
 
 
 export const createSection = async(data) =>{
@@ -103,16 +106,41 @@ export const createSubSection = async (formData) => {
 
 
 
+export const updateSection = async (data) => {
+  const res = await api.post(
+    courseEndpoints.UPDATE_SECTION,
+    data
+  );
+
+  return res.data;
+};
 
 
 
 
 
 
+export const deleteSection = async (data) => {
+  const res = await api.delete(
+    courseEndpoints.DELETE_SECTION,
+    {
+      data,
+    }
+  );
+
+  return res.data;
+};
 
 
 
+export const updateSubSection = async (data) => {
+  const res = await api.post(
+    courseEndpoints.UPDATE_SUBSECTION,
+    data
+  );
 
+  return res.data;
+};
 
 
 
