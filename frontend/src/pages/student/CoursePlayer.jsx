@@ -2,6 +2,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useFullCourseDetails } from "@/hooks/useFullCourseDetails";
+import { useUpdateCourseProgress } from "@/hooks/useUpdateCourseProgress";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const CoursePlayer = () => {
@@ -9,6 +10,7 @@ const { courseId } = useParams();
 
 const { data, isLoading, isError } =
 useFullCourseDetails(courseId);
+const { mutate: updateProgress } = useUpdateCourseProgress();
 
 const course = data?.data?.courseDetails;
 
@@ -50,7 +52,19 @@ if (isLoading) return <LoadingSpinner />;
 if (isError) return <p>Failed to load course</p>;
 
 const syncProgress = (type, lessonId) => {
-console.log("sync:", type, lessonId);
+  if (!courseId || !lessonId) return;
+
+  updateProgress(
+    { courseId, subSectionId: lessonId },
+    {
+      onSuccess: () => {
+        console.log("Progress synced for", lessonId);
+      },
+      onError: (error) => {
+        console.error("Progress sync failed", error);
+      },
+    }
+  );
 };
 
 const handleSelectLesson = (lesson) => {

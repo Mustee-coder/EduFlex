@@ -51,7 +51,7 @@ const BrowseCourses = () => {
               <CourseSkeleton key={i} />
             ))
           : courses.map((course) => (
-             <Link to={`/course-preview/${course._id}`}>
+             <Link key={course._id || course.id} to={`/course-preview/${course._id}`}>
                 <div className="bg-white rounded-xl overflow-hidden shadow hover:shadow-xl transition group">
 
                   {/* THUMBNAIL */}
