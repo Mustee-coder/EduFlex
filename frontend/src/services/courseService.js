@@ -75,18 +75,6 @@ export const createSection = async (data) => {
   return res.data;
 };
 
-
-export const createSection = async(data) =>{
-  const res = await api.post(
-    courseEndpoints.CREATE_SECTION,
-    data,
-  )
-}
-
-
-
-
-
 export const createSubSection = async (formData) => {
   const res = await api.post(
     courseEndpoints.CREATE_SUBSECTION,
@@ -133,7 +121,7 @@ export const deleteSection = async (data) => {
 
 
 
-export const updateSubSection = async (data) => {
+export const updateSubSection = async(data) => {
   const res = await api.post(
     courseEndpoints.UPDATE_SUBSECTION,
     data
@@ -141,7 +129,13 @@ export const updateSubSection = async (data) => {
 
   return res.data;
 };
+export const deleteSubSection = async (data) => {
+  const res = await api.delete(courseEndpoints.DELETE_SUBSECTION, {
+    data,
+  });
 
+  return res.data;
+};
 
 
 

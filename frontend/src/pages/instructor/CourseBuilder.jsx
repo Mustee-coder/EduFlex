@@ -11,8 +11,10 @@ import { useDeleteSection } from '@/hooks/useDeleteSection';
 
 
 import { useUpdateSubSection } from '@/hooks/useUpdateSubSection';
+import { useDeleteSubSection } from '@/hooks/useDeleteSubSection';
 
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ConfirmModal from '@/components/ConfirmModal';
 
 
 const CourseBuilder = () => {
@@ -28,7 +30,7 @@ const CourseBuilder = () => {
 
 const { mutate: updateSubSection, isPending: isUpdatingSubSection } =
   useUpdateSubSection();
-  
+const { mutate: deleteSubSection } = useDeleteSubSection(courseId);
   
 
   const [sectionName, setSectionName] = useState('');
@@ -40,9 +42,10 @@ const [editingSubSection, setEditingSubSection] = useState(null);
 const [editSubSectionTitle, setEditSubSectionTitle] = useState("");
 
 const [editSubSectionDescription, setEditSubSectionDescription] = useState("");
+const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+const [pendingDelete, setPendingDelete] = useState(null);
 
-
-  const course = courseData?.data?.courseDetails;
+const course = courseData?.data?.courseDetails;
 
   const handleCreateSection = (e) => {
     e.preventDefault();
@@ -85,17 +88,31 @@ const [editSubSectionDescription, setEditSubSectionDescription] = useState("");
 
 
 const handleDeleteSection = (sectionId) => {
-  const confirmed = window.confirm(
-    "Are you sure you want to delete this section? This action cannot be undone."
-  );
 
-  if (!confirmed) return;
-
-  deleteSection({
-    sectionId,
-    courseId,
-  });
+    setPendingDelete({ sectionId, courseId });
+      setDeleteModalOpen(true);
 };
+
+
+const confirmDeleteSection = () => {
+  if (!pendingDelete) return;
+
+  deleteSection(
+    pendingDelete,
+    {
+      onSuccess: () => {
+        setDeleteModalOpen(false);
+        setPendingDelete(null);
+      },
+      onError: (error) => {
+        toast.error(error?.response?.data?.message || "Failed to delete section");
+      },
+    }
+  );
+};
+
+
+
 
 const handleUpdateSubSection = (subSectionId) => {
   updateSubSection(
@@ -109,6 +126,29 @@ const handleUpdateSubSection = (subSectionId) => {
         setEditingSubSection(null);
         setEditSubSectionTitle("");
         setEditSubSectionDescription("");
+      },
+    }
+  );
+};
+ 
+const handleDeleteSubSection = (subSectionId, sectionId) => {
+  setPendingDelete({ subSectionId, sectionId });
+  setDeleteModalOpen(true);
+};
+
+const confirmDeleteSubSection = () => {
+  if (!pendingDelete) return;
+
+  deleteSubSection(
+    pendingDelete,
+    {
+      onSuccess: () => {
+        toast.success("Lesson deleted successfully");
+        setDeleteModalOpen(false);
+        setPendingDelete(null);
+      },
+      onError: (error) => {
+        toast.error(error?.response?.data?.message || "Failed to delete lesson");
       },
     }
   );
@@ -347,6 +387,7 @@ const handleUpdateSubSection = (subSectionId) => {
 
     <button
       type="button"
+      onClick={() => handleDeleteSubSection(subSection._id, section._id)}
       className="p-2 text-red-600 hover:bg-red-50 rounded-md"
     >
       <Trash2 size={16} />
@@ -384,6 +425,29 @@ const handleUpdateSubSection = (subSectionId) => {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        title="Delete lesson?"
+        message="This lesson will be removed from the section."
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setPendingDelete(null);
+        }}
+        onConfirm={confirmDeleteSubSection}
+      />
+
+            <ConfirmModal
+        isOpen={deleteModalOpen}
+        title="Delete section?"
+        message="This section will be removed from the course."
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setPendingDelete(null);
+        }}
+        onConfirm={confirmDeleteSection}
+      />
+
     </div>
   );
 };

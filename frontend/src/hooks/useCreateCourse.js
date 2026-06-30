@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createCourse } from "@/services/courseService";
+ import { createCourse } from "@/services/courseService";
 import { toast } from "react-toastify";
 
 export const useCreateCourse = () => {
