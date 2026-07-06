@@ -12,8 +12,7 @@ const CreateCourse = () => {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [thumbnail, setThumbnail] = useState(null);
-  const [status, setStatus] = useState("Draft");
-
+  
   const { mutate, isPending } = useCreateCourse();
   
   const navigate = useNavigate();
@@ -34,7 +33,7 @@ return toast.error("Please fill all required fields");
 if (!thumbnail) {
 return toast.error("Thumbnail is required");
 }
-
+const status = "Draft";
 const formData = new FormData();
 
 formData.append("courseName", courseName);
@@ -47,16 +46,15 @@ formData.append("status", status);
 
 mutate(formData, {
   onSuccess: (data) => {
-    setCourseName("");
-    setCourseDescription("");
-    setWhatYouWillLearn("");
-    setPrice("");
-    setCategory("");
-    setThumbnail(null);
-    setStatus("Draft");
+  setCourseName("");
+  setCourseDescription("");
+  setWhatYouWillLearn("");
+  setPrice("");
+  setCategory("");
+  setThumbnail(null);
 
-    navigate(`/course-builder/${data.data._id}`);
-  },
+  navigate(`/course-builder/${data.data._id}`);
+},
 });
 };
   return (
@@ -69,15 +67,7 @@ mutate(formData, {
 
         <form onSubmit={handleSubmit} className="space-y-5">
             
-            <select
-  value={status}
-  onChange={(e) => setStatus(e.target.value)}
-  className="w-full border rounded-lg px-4 py-3"
->
-  <option value="Draft">Draft</option>
-  <option value="Published">Published</option>
-</select>
-
+         
           {/* Course Name */}
           <input
             type="text"

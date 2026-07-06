@@ -5,7 +5,7 @@ const otpTemplate = (otp, name) => {
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>OTP Verification Email</title>
+	<title>EduFlex OTP Verification</title>
 	<style>
 		body {
 			background-color: #ffffff;
@@ -51,22 +51,23 @@ const otpTemplate = (otp, name) => {
 			margin-top: 20px;
 		}
 	</style>
+
 </head>
 
 <body>
 	<div class="container">
 
-		<a href="https://study-notion-mern-stack.netlify.app">
+		<a href="http://localhost:5173">
 			<img class="logo" src="https://i.ibb.co/7Xyj3PC/logo.png" />
 		</a>
 
-		<div class="message">OTP Verification Email</div>
+		<div class="message">Welcome to EduFlex 🎉</div>
 
 		<div class="body">
 			<p>Dear ${name},</p>
 
 			<p>
-				Thank you for registering with StudyNotion.
+				Thank you for registering with EduFlex.
 				Use the OTP below to verify your account:
 			</p>
 

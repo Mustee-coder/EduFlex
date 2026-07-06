@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import paystack from "../config/paystack.js";
 import mailSender from "../utils/mailSender.js";
 import { courseEnrollmentEmail} from "../mail/templates/courseEnrollmentEmail.js";
+import Payment from "../models/payment.js";
 
 import User from "../models/user.js";
 import Course from "../models/course.js";
@@ -63,17 +64,20 @@ export const initializePayment = async (req, res) => {
     }
 
     const response = await paystack.post("/transaction/initialize", {
-      email: req.user.email,
-      amount: totalAmount * 100,
-      metadata: {
-        userId,
-        coursesId: validCourses,
-      },
-    });
+  email: req.user.email,
+  amount: totalAmount * 100,
+
+  callback_url: `${process.env.CLIENT_URL}/payment/verify`,
+
+  metadata: {
+    userId,
+    coursesId: validCourses,
+  },
+});
 
     return res.status(200).json({
       success: true,
-      data: response.data,
+      data: response.data.data
     });
 
   } catch (error) {

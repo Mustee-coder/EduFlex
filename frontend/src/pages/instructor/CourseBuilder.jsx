@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp, Plus, Trash2, Edit2 } from 'lucide-react';
 
 import { useGetCourseDetails } from "@/hooks/useGetCourseDetails";
 import { useCreateSection } from '@/hooks/useCreateSection'
+import { usePublishCourse } from "@/hooks/usePublishCourse";
 
 import { useUpdateSection } from '@/hooks/useUpdateSection';
 import { useDeleteSection } from '@/hooks/useDeleteSection';
@@ -30,7 +31,12 @@ const CourseBuilder = () => {
 
 const { mutate: updateSubSection, isPending: isUpdatingSubSection } =
   useUpdateSubSection();
+  
 const { mutate: deleteSubSection } = useDeleteSubSection(courseId);
+
+const { mutate: publishCourse, isPending: isPublishing } =
+  usePublishCourse();
+  
   
 
   const [sectionName, setSectionName] = useState('');
@@ -44,6 +50,7 @@ const [editSubSectionTitle, setEditSubSectionTitle] = useState("");
 const [editSubSectionDescription, setEditSubSectionDescription] = useState("");
 const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 const [pendingDelete, setPendingDelete] = useState(null);
+const [deleteType, setDeleteType] = useState(null);
 
 const course = courseData?.data?.courseDetails;
 
@@ -88,11 +95,10 @@ const course = courseData?.data?.courseDetails;
 
 
 const handleDeleteSection = (sectionId) => {
-
-    setPendingDelete({ sectionId, courseId });
-      setDeleteModalOpen(true);
+  setPendingDelete({ sectionId, courseId });
+  setDeleteType("section");
+  setDeleteModalOpen(true);
 };
-
 
 const confirmDeleteSection = () => {
   if (!pendingDelete) return;
@@ -133,6 +139,7 @@ const handleUpdateSubSection = (subSectionId) => {
  
 const handleDeleteSubSection = (subSectionId, sectionId) => {
   setPendingDelete({ subSectionId, sectionId });
+  setDeleteType("lesson");
   setDeleteModalOpen(true);
 };
 
@@ -175,11 +182,53 @@ const confirmDeleteSubSection = () => {
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{course.courseName}</h1>
-        <p className="text-gray-600">{course.courseDescription}</p>
-      </div>
+     
+     {/* Header */}
+<div className="mb-8">
+  <h1 className="text-3xl font-bold mb-2">
+    {course.courseName}
+  </h1>
+
+  <p className="text-gray-600">
+    {course.courseDescription}
+  </p>
+
+  <div className="mt-3 flex items-center gap-3">
+    <span
+      className={`px-3 py-1 rounded-full text-sm font-medium ${
+        course.status === "Published"
+          ? "bg-green-100 text-green-700"
+          : "bg-yellow-100 text-yellow-700"
+      }`}
+    >
+      {course.status}
+    </span>
+
+   <button
+  onClick={() =>
+    publishCourse({
+      courseId,
+      status:
+        course.status === "Published"
+          ? "Draft"
+          : "Published",
+    })
+  }
+  disabled={isPublishing}
+  className={`px-4 py-2 rounded-lg text-white ${
+    course.status === "Published"
+      ? "bg-red-600 hover:bg-red-700"
+      : "bg-green-600 hover:bg-green-700"
+  }`}
+>
+  {isPublishing
+    ? "Updating..."
+    : course.status === "Published"
+    ? "Unpublish"
+    : "Publish Course"}
+</button>
+  </div>
+</div>
 
       {/* Create Section Form */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -426,27 +475,29 @@ const confirmDeleteSubSection = () => {
         )}
       </div>
 
-      <ConfirmModal
-        isOpen={deleteModalOpen}
-        title="Delete lesson?"
-        message="This lesson will be removed from the section."
-        onCancel={() => {
-          setDeleteModalOpen(false);
-          setPendingDelete(null);
-        }}
-        onConfirm={confirmDeleteSubSection}
-      />
-
-            <ConfirmModal
-        isOpen={deleteModalOpen}
-        title="Delete section?"
-        message="This section will be removed from the course."
-        onCancel={() => {
-          setDeleteModalOpen(false);
-          setPendingDelete(null);
-        }}
-        onConfirm={confirmDeleteSection}
-      />
+     <ConfirmModal
+  isOpen={deleteModalOpen}
+  title={
+    deleteType === "section"
+      ? "Delete section?"
+      : "Delete lesson?"
+  }
+  message={
+    deleteType === "section"
+      ? "This section will be removed from the course."
+      : "This lesson will be removed from the section."
+  }
+  onCancel={() => {
+    setDeleteModalOpen(false);
+    setPendingDelete(null);
+    setDeleteType(null);
+  }}
+  onConfirm={
+    deleteType === "section"
+      ? confirmDeleteSection
+      : confirmDeleteSubSection
+  }
+/>
 
     </div>
   );

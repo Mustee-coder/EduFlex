@@ -21,6 +21,8 @@ import BrowseCourses from "@/pages/student/BrowseCourses";
 import CheckoutPage from "@/pages/student/CheckoutPage";
 import MyLearning from "@/pages/student/MyLearning";
 import MyCourses from "@/pages/student/MyCourses";
+import VerifyPaymentPage from "@/pages/student/VerifyPaymentPage";
+
 
 
 
@@ -111,7 +113,10 @@ element={<Navigate to="/login" replace />}
     
     <Route path="/my-courses" element={<MyCourses />} />
 
-
+<Route
+  path="/payment/verify"
+  element={<VerifyPaymentPage />}
+/>
 
 
 

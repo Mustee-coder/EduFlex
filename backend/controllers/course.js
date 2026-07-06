@@ -775,6 +775,7 @@ export const deleteCourse = async (req, res) => {
 export const publishCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
+    const { status } = req.body;
 
     const course = await Course.findById(courseId);
 
@@ -785,7 +786,6 @@ export const publishCourse = async (req, res) => {
       });
     }
 
-    // ownership check
     if (!req.user || course.instructor.toString() !== req.user.id) {
       return res.status(403).json({
         success: false,
@@ -793,14 +793,14 @@ export const publishCourse = async (req, res) => {
       });
     }
 
-    course.status = "Published";
+    course.status = status;
     await course.save();
 
     return res.status(200).json({
       success: true,
-      message: "Course published successfully",
+      message: `Course ${status.toLowerCase()} successfully`,
+      data: course,
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -808,5 +808,3 @@ export const publishCourse = async (req, res) => {
     });
   }
 };
-
-
