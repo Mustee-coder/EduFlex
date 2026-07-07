@@ -2,6 +2,7 @@ import Profile from "../models/profile.js";
 import User from "../models/user.js";
 import Course from "../models/course.js";
 import CourseProgress from "../models/courseProgress.js";
+import mongoose from "mongoose"
 import { deleteResourceFromCloudinary } from "../utils/imageUploader.js";
 
 import { convertSecondsToDuration } from "../utils/secToDuration.js";
@@ -291,14 +292,25 @@ export const instructorDashboard = async (req, res) => {
             $size: { $ifNull: ["$studentsEnrolled", []] },
           },
           totalRevenue: {
-            $multiply: [
-              { $size: { $ifNull: ["$studentsEnrolled", []] } },
-              "$price",
-            ],
-          },
+  $multiply: [
+    { $size: { $ifNull: ["$studentsEnrolled", []] } },
+    { $ifNull: ["$price", 0] },
+  ],
+},
         },
       },
     ]);
+    
+    const bestCourse =
+  result.length > 0
+    ? result.reduce((best, course) =>
+        course.totalStudentsEnrolled > best.totalStudentsEnrolled
+          ? course
+          : best
+      )
+    : null;
+        
+    console.log(bestCourse);
 
     const totalStudents = result.reduce(
       (acc, c) => acc + c.totalStudentsEnrolled,
@@ -317,6 +329,7 @@ export const instructorDashboard = async (req, res) => {
     totalCourses: result.length,
     totalStudents,
     totalRevenue,
+    bestCourse
   },
 });
 

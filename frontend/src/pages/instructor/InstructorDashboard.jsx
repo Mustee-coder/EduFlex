@@ -6,6 +6,7 @@ const InstructorDashboard = () => {
   const { data, isLoading, isError, error } = useInstructorCourses();
   const courses = data?.data || [];
   const stats = data?.stats || {};
+  const bestCourse = stats.bestCourse;
 
   if (isLoading) {
     return (
@@ -14,6 +15,12 @@ const InstructorDashboard = () => {
       </div>
     );
   }
+
+
+console.log(data);
+console.log(stats);
+console.log(bestCourse);
+
 
   if (isError) {
     return (
@@ -97,6 +104,34 @@ const InstructorDashboard = () => {
     </p>
   </div>
 </div>
+
+
+<div className="mt-8 bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+  <h2 className="text-xl font-bold mb-4">
+    🏆 Best Performing Course
+  </h2>
+
+  {bestCourse ? (
+    <div className="space-y-2">
+      <h3 className="text-lg font-semibold">
+        {bestCourse.courseName}
+      </h3>
+
+      <p className="text-gray-600">
+        👨‍🎓 {bestCourse.totalStudentsEnrolled} Students
+      </p>
+
+      <p className="text-green-600 font-semibold">
+        💰 ${bestCourse.totalRevenue}
+      </p>
+    </div>
+  ) : (
+    <p className="text-gray-500">
+      No course data available.
+    </p>
+  )}
+</div>
+
         <section className="mt-10">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
            
