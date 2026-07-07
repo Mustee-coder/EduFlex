@@ -74,6 +74,7 @@ export const courseEndpoints = {
   EDIT_COURSE: "/course/editCourse",
 
   DELETE_COURSE: (courseId) => `/course/deleteCourse/${courseId}`,
+  PUBLISHED_COURSE: "/course/publishCourse",
 
   CREATE_SECTION: "/course/createSection",
   UPDATE_SECTION: "/course/updateSection",
@@ -82,6 +83,7 @@ export const courseEndpoints = {
   CREATE_SUBSECTION: "/course/addSubSection",
   UPDATE_SUBSECTION: "/course/updateSubSection",
   DELETE_SUBSECTION: "/course/deleteSubSection",
+  
 
   COURSE_CATEGORIES: "/course/showAllCategories",
   CREATE_CATEGORY: "/course/createCategory",

@@ -304,15 +304,21 @@ export const instructorDashboard = async (req, res) => {
       (acc, c) => acc + c.totalStudentsEnrolled,
       0
     );
+    
+    const  totalRevenue = result.reduce(
+  (acc, c) => acc + c.totalRevenue,
+  0
+);
 
     return res.status(200).json({
-      success: true,
-      data: result,
-      stats: {
-        totalCourses: result.length,
-        totalStudents,
-      },
-    });
+  success: true,
+  data: result,
+  stats: {
+    totalCourses: result.length,
+    totalStudents,
+    totalRevenue,
+  },
+});
 
   } catch (error) {
     return res.status(500).json({
@@ -360,7 +366,7 @@ export const getAllStudents = async (req, res) => {
 
 export const getAllInstructors = async (req, res) => {
   try {
-    // 🔐 role protection (recommended)
+    //  role protection (recommended)
     if (req.user.accountType !== "Admin") {
       return res.status(403).json({
         success: false,

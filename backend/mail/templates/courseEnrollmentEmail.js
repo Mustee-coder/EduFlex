@@ -88,7 +88,7 @@ export const courseEnrollmentEmail = (courseName, name) => {
         You can now access your course materials and start learning immediately.
       </p>
 
-      <a class="cta" href="${frontendURL}/dashboard/enrolled-courses">
+      <a class="cta" href="${frontendURL}/my-learning">
         Go to Dashboard
       </a>
     </div>

@@ -8,3 +8,17 @@ export const initializePayment = async (data) => {
 
   return res.data;
 };
+
+
+
+
+export const verifyPayment = async (reference) => {
+  const res = await api.get(
+    `${paymentEndpoints.VERIFY_PAYMENT}/${reference}`
+  );
+
+  return res.data;
+};
+
+
+

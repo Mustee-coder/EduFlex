@@ -46,53 +46,67 @@ const InstructorDashboard = () => {
               Manage your courses, track performance, and review your published content.
             </p>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-gray-500">Total courses</p>
-            <p className="text-3xl font-semibold text-purple-600">
-              {stats.totalCourses ?? courses.length}
-            </p>
-          </div>
+          
+          
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-          <div className="bg-indigo-50 border border-indigo-100 rounded-3xl p-5">
-            <p className="text-sm text-gray-500">Published</p>
-            <p className="text-3xl font-bold text-indigo-700">
-              {stats.publishedCount ?? 0}
-            </p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center">
+            
+            
+            <div className="bg-purple-50 border border-purple-100 rounded-3xl p-5">
+  <p className="text-sm text-gray-500">Total Courses</p>
+  <p className="text-3xl font-bold text-purple-700">
+    {stats.totalCourses ?? courses.length}
+  </p>
+</div>
+            
+            
+  <div className="bg-indigo-50 border border-indigo-100 rounded-3xl p-5">
+    <p className="text-sm text-gray-500">Published</p>
+    <p className="text-3xl font-bold text-indigo-700">
+      {stats.publishedCount ?? 0}
+    </p>
+  </div>
+  
 
-          <div className="bg-white border border-gray-200 rounded-3xl p-5">
-            <p className="text-sm text-gray-500">Draft</p>
-            <p className="text-3xl font-bold text-gray-900">
-              {stats.draftCount ?? 0}
-            </p>
-          </div>
+  <div className="bg-white border border-gray-200 rounded-3xl p-5">
+    <p className="text-sm text-gray-500">Draft</p>
+    <p className="text-3xl font-bold text-gray-900">
+      {stats.draftCount ?? 0}
+    </p>
+  </div>
 
-          <div className="bg-white border border-gray-200 rounded-3xl p-5">
-            <p className="text-sm text-gray-500">Instructor courses</p>
-            <p className="text-3xl font-bold text-gray-900">
-              {courses.length}
-            </p>
-          </div>
-        </div>
+  <div className="bg-white border border-gray-200 rounded-3xl p-5">
+    <p className="text-sm text-gray-500">Instructor Courses</p>
+    <p className="text-3xl font-bold text-gray-900">
+      {stats.totalCourses ?? courses.length}
+    </p>
+  </div>
 
+  <div className="bg-green-50 border border-green-100 rounded-3xl p-5">
+    <p className="text-sm text-gray-500">Students Enrolled</p>
+    <p className="text-3xl font-bold text-green-700">
+      {stats.totalStudents ?? 0}
+    </p>
+  </div>
+
+  <div className="bg-yellow-50 border border-yellow-100 rounded-3xl p-5">
+    <p className="text-sm text-gray-500">Total Revenue</p>
+    <p className="text-3xl font-bold text-yellow-700">
+      ${stats.totalRevenue ?? 0}
+    </p>
+  </div>
+</div>
         <section className="mt-10">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-            <div>
-              <h2 className="text-2xl font-semibold">Your courses</h2>
-              <p className="text-sm text-gray-500 mt-1">
-                {courses.length === 0
-                  ? "You have no courses yet."
-                  : `${courses.length} course${courses.length === 1 ? "" : "s"} found.`}
-              </p>
-            </div>
-            <Link
-              to="/my-courses"
-              className="inline-flex items-center justify-center rounded-full bg-purple-600 px-5 py-2 text-sm font-semibold text-white hover:bg-purple-700 transition"
-            >
-              View student-facing courses
-            </Link>
+           
+            
+           <Link
+  to="/courses"
+  className="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-purple-700 transition"
+>
+  Manage Courses
+</Link>
           </div>
 
           {courses.length === 0 ? (

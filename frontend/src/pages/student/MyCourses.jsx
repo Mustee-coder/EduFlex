@@ -14,9 +14,9 @@ const MyCourses = () => {
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("progress");
 
-  // -------------------
+  
   // LOADING
-  // -------------------
+ 
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -25,9 +25,9 @@ const MyCourses = () => {
     );
   }
 
-  // -------------------
+  
   // FILTER + SEARCH
-  // -------------------
+ 
   const filteredCourses = courses.filter((course) => {
     const matchSearch =
       course.courseName
@@ -49,9 +49,9 @@ const MyCourses = () => {
     return matchSearch && matchFilter;
   });
 
-  // -------------------
+  
   // SORT
-  // -------------------
+  
   const sortedCourses = [...filteredCourses].sort((a, b) => {
     if (sort === "progress") {
       return (
@@ -67,9 +67,9 @@ const MyCourses = () => {
     return 0;
   });
 
-  // -------------------
+  
   // EMPTY STATE
-  // -------------------
+  
   if (!courses.length) {
     return (
       <div className="h-screen flex flex-col items-center justify-center text-gray-500 text-center px-4">
@@ -82,7 +82,7 @@ const MyCourses = () => {
 
         <button
           onClick={() => navigate("/browse-courses")}
-          className="mt-5 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="mt-5 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-purple-700"
         >
           Browse Courses
         </button>
@@ -90,9 +90,9 @@ const MyCourses = () => {
     );
   }
 
-  // -------------------
+ 
   // UI
-  // -------------------
+ 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
 
@@ -185,7 +185,7 @@ const MyCourses = () => {
                 onClick={() =>
                   navigate(`/course/${course._id}`)
                 }
-                className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-purple-700"
               >
                 Continue Course
               </button>

@@ -139,3 +139,13 @@ export const deleteSubSection = async (data) => {
 
 
 
+
+export const publishCourse = async ({ courseId, status }) => {
+  const response = await api.patch(
+    `${courseEndpoints.PUBLISHED_COURSE}/${courseId}`,
+    { status }
+  );
+
+  return response.data;
+};
+

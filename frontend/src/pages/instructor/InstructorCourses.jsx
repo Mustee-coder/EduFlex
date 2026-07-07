@@ -174,7 +174,7 @@ const InstructorCourses = () => {
   onClick={() =>
     navigate(`/course-builder/${course._id}`)
   }
-  className="flex-1 bg-blue-500 text-white rounded-lg py-2 text-sm"
+  className="flex-1 bg-green-500 text-white rounded-lg py-2 text-sm"
 >
   {course.sections?.length > 0 ? "Edit" : "Build"}
 </button>
