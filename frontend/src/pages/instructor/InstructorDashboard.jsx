@@ -6,7 +6,8 @@ const InstructorDashboard = () => {
   const { data, isLoading, isError, error } = useInstructorCourses();
   const courses = data?.data || [];
   const stats = data?.stats || {};
-  const bestCourse = stats.bestCourse;
+
+  const bestCourse = stats?.bestCourse || null;
 
   if (isLoading) {
     return (
@@ -19,7 +20,7 @@ const InstructorDashboard = () => {
 
 console.log(data);
 console.log(stats);
-console.log(bestCourse);
+//console.log(bestCourse);
 
 
   if (isError) {

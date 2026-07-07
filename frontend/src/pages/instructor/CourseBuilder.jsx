@@ -168,10 +168,13 @@ const confirmDeleteSubSection = () => {
     }));
   };
 
-  if (isLoading) {
-    return <LoadingSpinner />;
+if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
-
   if (!course) {
     return (
       <div className="p-6">

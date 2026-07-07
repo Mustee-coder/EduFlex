@@ -10,11 +10,30 @@ export const usePublishCourse = () => {
     mutationFn: ({ courseId, status }) =>
       publishCourse({ courseId, status }),
 
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       toast.success(data.message);
 
+      queryClient.setQueryData(["course", variables.courseId], (oldData) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            courseDetails: {
+              ...oldData.data?.courseDetails,
+              status: variables.status,
+            },
+          },
+        };
+      });
+
       queryClient.invalidateQueries({
-        queryKey: ["course", courseId],
+        queryKey: ["course", variables.courseId],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["instructor-courses"],
       });
     },
 

@@ -10,7 +10,6 @@ export const useUserDetails = () => {
     queryFn: async () => {
       console.log("Fetching user details...");
       const res = await getUserDetails();
-      console.log("USER RESPONSE:", res);
       return res;
     },
   });

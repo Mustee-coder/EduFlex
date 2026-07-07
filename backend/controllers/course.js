@@ -645,6 +645,12 @@ const totalRevenue = formattedCourses.reduce(
   0
 );
 
+const bestCourse = [...formattedCourses].sort(
+  (a, b) =>
+    b.studentsCount * (b.price || 0) -
+    a.studentsCount * (a.price || 0)
+)[0] || null;
+
 return res.status(200).json({
   success: true,
 
@@ -656,6 +662,14 @@ return res.status(200).json({
     draftCount,
     totalStudents,
     totalRevenue,
+    bestCourse: bestCourse
+      ? {
+          courseName: bestCourse.courseName,
+          totalStudentsEnrolled: bestCourse.studentsCount,
+          totalRevenue:
+            bestCourse.studentsCount * (bestCourse.price || 0),
+        }
+      : null,
   },
 
   message:

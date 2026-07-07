@@ -14,7 +14,6 @@ export const useSignup = (options) => {
     },
 
     onError: (error) => {
-      console.log("SIGNUP ERROR FULL:", error); // 🔥 IMPORTANT DEBUG
 
       const message =
         error?.response?.data?.message ||
