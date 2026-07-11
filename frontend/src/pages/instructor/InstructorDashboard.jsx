@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useInstructorCourses } from "@/hooks/useInstructorCourses"
+import EnrollmentTrendChart from "./components/EnrollmentTrendChart";
+
+
 
 const InstructorDashboard = () => {
   const { data, isLoading, isError, error } = useInstructorCourses();
@@ -9,6 +12,7 @@ const InstructorDashboard = () => {
 
   const bestCourse = stats?.bestCourse || null;
 
+  
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -17,10 +21,6 @@ const InstructorDashboard = () => {
     );
   }
 
-
-console.log(data);
-console.log(stats);
-//console.log(bestCourse);
 
 
   if (isError) {
@@ -132,6 +132,8 @@ console.log(stats);
     </p>
   )}
 </div>
+
+<EnrollmentTrendChart />
 
         <section className="mt-10">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">

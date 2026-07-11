@@ -14,3 +14,14 @@ export const getMyLearning = async () => {
   const res = await api.get(profileEndpoints.GET_MYLEARNING);
   return res.data;
 };
+
+
+export const getEnrollmentTrend = async () => {
+  const res = await api.get(profileEndpoints.GET_ENROLLMENT_TREND);
+
+  return res.data;
+};
+
+
+
+

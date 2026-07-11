@@ -4,8 +4,9 @@ import Course from "../models/course.js";
 import CourseProgress from "../models/courseProgress.js";
 import mongoose from "mongoose"
 import { deleteResourceFromCloudinary } from "../utils/imageUploader.js";
-
 import { convertSecondsToDuration } from "../utils/secToDuration.js";
+import Payment from "../models/payment.js";
+
 
 
 
@@ -498,3 +499,91 @@ export const getMyLearning = async (req, res) => {
 
 
 
+export const getEnrollmentTrend = async (req, res) => {
+  try {
+    const instructorId = req.user.id;
+
+    const trend = await Payment.aggregate([
+      {
+        $unwind: "$coursesId",
+      },
+
+      {
+        $lookup: {
+          from: "courses",
+          localField: "coursesId",
+          foreignField: "_id",
+          as: "course",
+        },
+      },
+
+      {
+        $unwind: "$course",
+      },
+
+      {
+        $match: {
+          "course.instructor": new mongoose.Types.ObjectId(instructorId),
+          status: "success",
+        },
+      },
+
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          enrollments: {
+            $sum: 1,
+          },
+        },
+      },
+
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+
+      {
+        $project: {
+          _id: 0,
+          month: {
+            $arrayElemAt: [
+              [
+                "",
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+              ],
+              "$_id.month",
+            ],
+          },
+          year: "$_id.year",
+          enrollments: 1,
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      data: trend,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

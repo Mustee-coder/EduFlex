@@ -30,7 +30,6 @@ import VerifyPaymentPage from "@/pages/student/VerifyPaymentPage";
 import InstructorDashboard from "@/pages/instructor/InstructorDashboard";
 import InstructorCourses from "@/pages/instructor/InstructorCourses";
 import CreateCourse from "@/pages/instructor/CreateCourse";
-import Revenue from "@/pages/instructor/Revenue";
 import Students from "@/pages/instructor/Students";
 import Analytics from "@/pages/instructor/Analytics";
 import CourseBuilder from "@/pages/instructor/CourseBuilder";
@@ -136,10 +135,7 @@ element={<Navigate to="/login" replace />}
         element={<CreateCourse/>}
       />
       
-       <Route
-        path="/revenue"
-        element={<Revenue/>}
-      />
+       
        <Route
         path="/students"
         element={<Students/>}

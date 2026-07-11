@@ -28,7 +28,6 @@ const Sidebar = ({ closeSidebar }) => {
   { path: "/courses", label: "📚 My Courses" },
   { path: "/add-course", label: "➕ Create Course" },
   { path: "/analytics", label: "📊 Analytics" },
-  { path: "/revenue", label: "💰 Revenue" },
   { path: "/students", label: "👨‍🎓 Students" },
 ],
 

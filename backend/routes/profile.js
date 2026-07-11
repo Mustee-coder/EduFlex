@@ -16,7 +16,9 @@ import {
     getEnrolledCourses,
     deleteAccount,
     instructorDashboard,
-    getMyLearning
+    getMyLearning,
+    getEnrollmentTrend
+    
 } from "../controllers/profile.js";
 
 // Delete User Account
@@ -30,6 +32,12 @@ router.get("/getUserDetails", auth, getUserDetails);
 
 // Enrolled courses
 router.get("/getEnrolledCourses", auth, getEnrolledCourses);
+router.get(
+  "/enrollment-trend",
+  auth,
+  isInstructor,
+  getEnrollmentTrend
+);
 // my learning 
 router.get("/my-learning", auth, isStudent, getMyLearning);
 
