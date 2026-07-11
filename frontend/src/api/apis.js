@@ -45,7 +45,7 @@ export const profileEndpoints = {
   UPDATE_PROFILE: "/profile/updateProfile",
   DELETE_PROFILE: "/profile/deleteProfile",
   GET_MYLEARNING: "/profile/my-learning",
-  GET_ENROLLMENT_TREND: "/enrollment-trend",
+  GET_ENROLLMENT_TREND: "/profile/enrollment-trend",
 };
 
 // ADMIN ENDPOINTS

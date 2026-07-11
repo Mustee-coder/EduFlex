@@ -23,8 +23,8 @@ const Dashboard = () => {
   // SMART SORT (in-progress first)
   // -----------------------
   const sortedCourses = [...enrolledCourses].sort((a, b) => {
-    const aProgress = a.progressPercentage || 0;
-    const bProgress = b.progressPercentage || 0;
+    const aProgress = a.progress?.progressPercent ?? a.progressPercentage ?? 0;
+    const bProgress = b.progress?.progressPercent ?? b.progressPercentage ?? 0;
 
     // incomplete first, then more progress first
     return aProgress - bProgress;
@@ -34,27 +34,24 @@ const Dashboard = () => {
   // STATS
   // -----------------------
   const completedCount = enrolledCourses.filter(
-    (c) => c.progressPercentage === 100
+    (c) => (c.progress?.progressPercent ?? c.progressPercentage ?? 0) === 100
   ).length;
 
   const avgProgress =
     enrolledCourses.length > 0
       ? Math.round(
           enrolledCourses.reduce(
-            (acc, c) => acc + (c.progressPercentage || 0),
+            (acc, c) => acc + (c.progress?.progressPercent ?? c.progressPercentage ?? 0),
             0
           ) / enrolledCourses.length
         )
       : 0;
 
-  // -----------------------
+
   // LOADING
-  // -----------------------
   if (loading) return <DashboardSkeleton />;
 
-  // -----------------------
   // ERROR
-  // -----------------------
   if (error) {
     console.error("Dashboard error:", userError || coursesError);
 
@@ -75,9 +72,7 @@ const Dashboard = () => {
     );
   }
 
-  // -----------------------
   // UI
-  // -----------------------
   return (
     <div className="p-6 bg-gray-50 min-h-screen space-y-6">
 
@@ -172,14 +167,14 @@ const Dashboard = () => {
                     <div
                       className="bg-purple-600 h-2 rounded"
                       style={{
-                        width: `${course.progressPercentage || 0}%`,
+                        width: `${course.progress?.progressPercent ?? course.progressPercentage ?? 0}%`,
                       }}
                     />
                   </div>
 
                   <div className="flex justify-between items-center">
                     <p className="text-xs text-gray-500">
-                      {course.progressPercentage || 0}% completed
+                      {course.progress?.progressPercent ?? course.progressPercentage ?? 0}% completed
                     </p>
 
                     <button className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">

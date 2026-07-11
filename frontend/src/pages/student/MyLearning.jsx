@@ -48,7 +48,7 @@ const MyLearning = () => {
 
       <div className="grid md:grid-cols-3 gap-6">
         {courses.map((course) => {
-          const progress = course.progress?.progressPercent || 0;
+          const progress = course.progress?.progressPercent ?? course.progressPercentage ?? 0;
 
           return (
             <div

@@ -234,13 +234,13 @@ export const getEnrolledCourses = async (req, res) => {
 
         // 4. Progress
         const progress = await CourseProgress.findOne({
-          courseID: course._id,
+          courseId: course._id,
           userId,
         });
 
-        const completed = progress?.completedVideos?.length || 0;
+        const completed = progress?.completedLessons?.length || 0;
 
-        const progressPercentage =
+        const progressPercent =
           lectureCount === 0
             ? 100
             : Math.round((completed / lectureCount) * 100);
@@ -249,7 +249,12 @@ export const getEnrolledCourses = async (req, res) => {
         return {
           ...fullCourse.toObject(),
           totalDuration: convertSecondsToDuration(totalSeconds),
-          progressPercentage,
+          progressPercentage: progressPercent,
+          progress: {
+            completed,
+            totalVideos: lectureCount,
+            progressPercent,
+          },
         };
       })
     );

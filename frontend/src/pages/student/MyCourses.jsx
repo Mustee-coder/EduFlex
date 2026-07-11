@@ -37,7 +37,7 @@ const MyCourses = () => {
         ?.toLowerCase()
         .includes(search.toLowerCase());
 
-    const progress = course.progressPercentage || 0;
+    const progress = course.progress?.progressPercent ?? course.progressPercentage ?? 0;
 
     const matchFilter =
       filter === "all"
@@ -55,8 +55,8 @@ const MyCourses = () => {
   const sortedCourses = [...filteredCourses].sort((a, b) => {
     if (sort === "progress") {
       return (
-        (b.progressPercentage || 0) -
-        (a.progressPercentage || 0)
+        (b.progress?.progressPercent ?? b.progressPercentage ?? 0) -
+        (a.progress?.progressPercent ?? a.progressPercentage ?? 0)
       );
     }
 
@@ -170,13 +170,13 @@ const MyCourses = () => {
                   <div
                     className="bg-blue-600 h-2 rounded"
                     style={{
-                      width: `${course.progressPercentage || 0}%`,
+                      width: `${course.progress?.progressPercent ?? course.progressPercentage ?? 0}%`,
                     }}
                   />
                 </div>
 
                 <p className="text-xs text-gray-500 mt-1">
-                  {course.progressPercentage || 0}% completed
+                  {course.progress?.progressPercent ?? course.progressPercentage ?? 0}% completed
                 </p>
               </div>
 

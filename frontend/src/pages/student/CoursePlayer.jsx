@@ -1,6 +1,7 @@
 
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useFullCourseDetails } from "@/hooks/useFullCourseDetails";
 import { useUpdateCourseProgress } from "@/hooks/useUpdateCourseProgress";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -10,12 +11,15 @@ const { courseId } = useParams();
 
 const { data, isLoading, isError } =
 useFullCourseDetails(courseId);
+const queryClient = useQueryClient();
 const { mutate: updateProgress } = useUpdateCourseProgress();
 
 const course = data?.data?.courseDetails;
+const completedLessonsFromServer = data?.data?.completedLessons || [];
+const progressFromServer = data?.data?.progressPercentage ?? 0;
 
 const [currentLesson, setCurrentLesson] = useState(null);
-const [completedLessons, setCompletedLessons] = useState([]);
+const [completedLessons, setCompletedLessons] = useState(completedLessonsFromServer);
 const [sidebarOpen, setSidebarOpen] = useState(false);
 
 // Resume lesson
@@ -32,9 +36,9 @@ const startLesson =
   ) || course.allSubSections[0];
 
 setCurrentLesson(startLesson);
-setCompletedLessons(course.completedLessons || []);
+setCompletedLessons(completedLessonsFromServer);
 
-}, [course, courseId]);
+}, [course, courseId, completedLessonsFromServer]);
 
 // Prevent background scroll
 useEffect(() => {
@@ -57,8 +61,23 @@ const syncProgress = (type, lessonId) => {
   updateProgress(
     { courseId, subSectionId: lessonId },
     {
-      onSuccess: () => {
-        console.log("Progress synced for", lessonId);
+      onSuccess: (data) => {
+        const nextCompleted = data?.completedLessons || [];
+        const nextPercentage = data?.progressPercentage ?? 0;
+
+        setCompletedLessons(nextCompleted);
+        queryClient?.setQueryData(["full-course-details", courseId], (oldData) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            data: {
+              ...oldData.data,
+              completedLessons: nextCompleted,
+              progressPercentage: nextPercentage,
+            },
+          };
+        });
       },
       onError: (error) => {
         console.error("Progress sync failed", error);
@@ -130,7 +149,7 @@ if (nextLesson) {
 };
 
 const progress =
-course?.progressPercentage ??
+progressFromServer ??
 (course?.allSubSections?.length
 ? (completedLessons.length /
 course.allSubSections.length) *
