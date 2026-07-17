@@ -3,7 +3,9 @@ import mailSender from "../utils/mailSender.js";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 
-//  SEND RESET TOKEN 
+
+// SEND RESET PASSWORD LINK
+
 export const resetPasswordToken = async (req, res) => {
   try {
     const { email } = req.body;
@@ -15,7 +17,11 @@ export const resetPasswordToken = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -24,31 +30,29 @@ export const resetPasswordToken = async (req, res) => {
       });
     }
 
-    // generate token
+    // Generate token
     const token = crypto.randomBytes(32).toString("hex");
 
-    const expiry = Date.now() + 5 * 60 * 1000;
-
-    // store token + expiry
+    // Token expires in 5 minutes
     user.token = token;
-    user.resetPasswordTokenExpires = expiry;
+    user.resetPasswordTokenExpires = Date.now() + 5 * 60 * 1000;
+
     await user.save();
 
     const frontendUrl =
-      process.env.FRONTEND_URL ||
-      "http://localhost:3000";
+      process.env.FRONTEND_URL || "http://localhost:5173";
 
-    const url = `${frontendUrl}/update-password/${token}`;
+    const resetUrl = `${frontendUrl}/update-password/${token}`;
 
     await mailSender(
-      email,
+      normalizedEmail,
       "Password Reset Link",
-      `Click here to reset your password: ${url}`
+      `Click the link below to reset your password:\n\n${resetUrl}`
     );
 
     return res.status(200).json({
       success: true,
-      message: "Reset link sent to email",
+      message: "Password reset link sent successfully.",
     });
   } catch (error) {
     return res.status(500).json({
@@ -58,7 +62,9 @@ export const resetPasswordToken = async (req, res) => {
   }
 };
 
-//  RESET PASSWORD 
+
+// RESET PASSWORD
+
 export const resetPassword = async (req, res) => {
   try {
     const { token, password, confirmPassword } = req.body;
@@ -66,34 +72,33 @@ export const resetPassword = async (req, res) => {
     if (!token || !password || !confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "All fields are required.",
       });
     }
 
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "Passwords do not match",
+        message: "Passwords do not match.",
       });
     }
 
-    const user = await User.findOne({ token });
+    const user = await User.findOne({
+      token,
+      resetPasswordTokenExpires: { $gt: Date.now() },
+    });
 
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "Invalid or expired token",
+        message: "Invalid or expired reset token.",
       });
     }
 
-    if (user.resetPasswordTokenExpires < Date.now()) {
-      return res.status(400).json({
-        success: false,
-        message: "Token expired",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(
+      password,
+      Number(process.env.SALT_ROUNDS) || 10
+    );
 
     user.password = hashedPassword;
     user.token = undefined;
@@ -103,7 +108,7 @@ export const resetPassword = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Password reset successful",
+      message: "Password reset successfully.",
     });
   } catch (error) {
     return res.status(500).json({

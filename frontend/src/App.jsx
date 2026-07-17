@@ -9,6 +9,10 @@ import Signup from "@/pages/auth/Signup";
 import SendOtp from "@/pages/auth/SendOtp";
 import ForgotPassword from "@/pages/auth/ForgotPassword";
 import VerifyEmail from "@/pages/auth/VerifyEmail";
+import UpdatePassword from "@/pages/auth/UpdatePassword";
+
+
+
 
 // Layout
 import DashboardLayout from "@/components/layouts/DashboardLayout";
@@ -68,6 +72,11 @@ element={<Navigate to="/login" replace />}
   <Route path="/send-otp" element={<SendOtp />} />
   <Route path="/verify-email" element={<VerifyEmail />} />
   <Route path="/forgot-password" element={<ForgotPassword />} />
+      
+      <Route
+  path="/update-password/:token"
+  element={<UpdatePassword />}
+/>
 
   {/* UNAUTHORIZED */}
   <Route

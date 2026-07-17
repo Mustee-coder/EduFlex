@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import AuthLayout from "@/components/layouts/AuthLayout";
+import PasswordInput from "@/components/auth/PasswordInput";
 import { useSignup } from "@/hooks/useSignup";
 
 const Signup = () => {
@@ -35,17 +38,17 @@ const Signup = () => {
     const email = form.email.trim().toLowerCase();
 
     if (!email) {
-      alert("Email is required");
+      toast.error("Email is required");
       return;
     }
 
     if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
     if (form.password.length < 6) {
-      alert("Password must be at least 6 characters");
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
@@ -60,34 +63,35 @@ const Signup = () => {
 
     mutate(payload, {
       onSuccess: () => {
-        navigate("/login");
+        toast.success("Account created successfully 🎉");
+navigate("/login");
       },
       onError: (error) => {
-        alert(error?.response?.data?.message || "Signup failed");
+        toast.error(
+  error?.response?.data?.message || "Signup failed"
+);
       },
     });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Create Account
-        </h2>
-
+    <AuthLayout
+  title="Create Account"
+  subtitle="Start your learning journey"
+>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             name="firstName"
             placeholder="First Name"
             onChange={handleChange}
-            className="w-full p-3 border rounded"
+            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           <input
             name="lastName"
             placeholder="Last Name"
             onChange={handleChange}
-            className="w-full p-3 border rounded"
+            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           <input
@@ -98,26 +102,24 @@ const Signup = () => {
             className="w-full p-3 border rounded"
           />
 
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            onChange={handleChange}
-            className="w-full p-3 border rounded"
-          />
+          <PasswordInput
+  name="password"
+  value={form.password}
+  onChange={handleChange}
+  placeholder="Password"
+/>
 
-          <input
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm Password"
-            onChange={handleChange}
-            className="w-full p-3 border rounded"
-          />
+          <PasswordInput
+  name="confirmPassword"
+  value={form.confirmPassword}
+  onChange={handleChange}
+  placeholder="Confirm Password"
+/>
 
           <select
             name="accountType"
             onChange={handleChange}
-            className="w-full p-3 border rounded"
+            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="Student">Student</option>
             <option value="Instructor">Instructor</option>
@@ -125,13 +127,22 @@ const Signup = () => {
 
           <button
             disabled={isPending || isFormInvalid}
-            className="w-full bg-blue-600 text-white py-3 rounded disabled:opacity-60"
+            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-xl disabled:opacity-60"
           >
             {isPending ? "Creating..." : "Create Account"}
           </button>
         </form>
-      </div>
-    </div>
+        <p className="text-center text-sm text-gray-500 mt-6">
+  Already have an account?{" "}
+  <button
+    type="button"
+    onClick={() => navigate("/login")}
+    className="text-blue-600 hover:underline font-medium"
+  >
+    Sign In
+  </button>
+</p>
+      </AuthLayout>
   );
 };
 

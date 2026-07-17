@@ -30,9 +30,14 @@ export const authEndpoints = {
   SIGNUP: "/auth/signup",
   LOGIN: "/auth/login",
   RESET_PASSWORD_TOKEN: "/auth/reset-password-token",
+  
   RESET_PASSWORD: "/auth/reset-password",
   CHANGE_PASSWORD: "/auth/change-password",
 };
+
+
+
+
 
 
  //  PROFILE ENDPOINTS

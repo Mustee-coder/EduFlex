@@ -1,86 +1,117 @@
-
-
 const passwordUpdated = (email, name) => {
-	return `<!DOCTYPE html>
-<html>
+  return `
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Password Update Confirmation</title>
-	<style>
-		body {
-			background-color: #ffffff;
-			font-family: Arial, sans-serif;
-			font-size: 16px;
-			line-height: 1.4;
-			color: #333333;
-			margin: 0;
-			padding: 0;
-		}
+<meta charset="UTF-8" />
+<title>EduFlex Password Updated</title>
 
-		.container {
-			max-width: 600px;
-			margin: 0 auto;
-			padding: 20px;
-			text-align: center;
-		}
+<style>
+body{
+  margin:0;
+  padding:0;
+  background:#f4f7fb;
+  font-family:Arial,sans-serif;
+  color:#333;
+}
 
-		.logo {
-			max-width: 180px;
-			margin-bottom: 20px;
-		}
+.container{
+  max-width:600px;
+  margin:40px auto;
+  background:#fff;
+  border-radius:12px;
+  padding:40px;
+  box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
 
-		.message {
-			font-size: 18px;
-			font-weight: bold;
-			margin-bottom: 20px;
-		}
+.logo{
+  width:170px;
+  margin-bottom:25px;
+}
 
-		.body {
-			font-size: 16px;
-			margin-bottom: 20px;
-		}
+.title{
+  font-size:26px;
+  font-weight:bold;
+  color:#2563eb;
+  margin-bottom:20px;
+}
 
-		.highlight {
-			font-weight: bold;
-		}
+.text{
+  font-size:16px;
+  line-height:1.7;
+}
 
-		.support {
-			font-size: 14px;
-			color: #999999;
-			margin-top: 20px;
-		}
-	</style>
+.info{
+  margin:20px 0;
+  padding:16px;
+  background:#eff6ff;
+  border-left:4px solid #2563eb;
+  border-radius:8px;
+}
+
+.footer{
+  margin-top:35px;
+  font-size:14px;
+  color:#666;
+  border-top:1px solid #eee;
+  padding-top:20px;
+  text-align:center;
+}
+</style>
 </head>
 
 <body>
-	<div class="container">
 
-		<a href="https://studynotion-edtech-project.vercel.app">
-			<img class="logo" src="https://i.ibb.co/7Xyj3PC/logo.png" />
-		</a>
+<div class="container">
 
-		<div class="message">Password Updated Successfully</div>
+  <div style="text-align:center">
+    <img
+      src="https://i.ibb.co/7Xyj3PC/logo.png"
+      alt="EduFlex Logo"
+      class="logo"
+    />
+  </div>
 
-		<div class="body">
-			<p>Hey ${name},</p>
+  <div class="title">
+    Password Updated Successfully
+  </div>
 
-			<p>
-				Your password has been successfully updated for:
-				<span class="highlight">${email}</span>
-			</p>
+  <div class="text">
 
-			<p>
-				If this was not you, please secure your account immediately.
-			</p>
-		</div>
+    <p>Hello <strong>${name}</strong>,</p>
 
-		<div class="support">
-			If you need help, contact support anytime.
-		</div>
+    <p>
+      Your EduFlex account password has been updated successfully.
+    </p>
 
-	</div>
+    <div class="info">
+      <strong>Account:</strong> ${email}
+      <br><br>
+      <strong>Updated:</strong>
+      ${new Date().toLocaleString()}
+    </div>
+
+    <p>
+      If you made this change, no further action is required.
+    </p>
+
+    <p>
+      If you did <strong>not</strong> change your password,
+      please reset it immediately and contact EduFlex support
+      as soon as possible.
+    </p>
+
+  </div>
+
+  <div class="footer">
+    © ${new Date().getFullYear()} EduFlex. All rights reserved.
+  </div>
+
+</div>
+
 </body>
-</html>`;
+</html>
+`;
 };
 
 export default passwordUpdated;
