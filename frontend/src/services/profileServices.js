@@ -25,3 +25,35 @@ export const getEnrollmentTrend = async () => {
 
 
 
+export const updateProfile = async (data) => {
+  const res = await api.put(
+    profileEndpoints.UPDATE_PROFILE,
+    data
+  );
+
+  return res.data;
+};
+
+export const deleteProfile = async () => {
+  const res = await api.delete(
+    profileEndpoints.DELETE_PROFILE
+  );
+
+  return res.data;
+};
+
+export const updateProfileImage = async (formData) => {
+  const res = await api.put(
+    profileEndpoints.UPDATE_PROFILE_IMAGE,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return res.data;
+};
+
+

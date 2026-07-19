@@ -13,8 +13,8 @@ import {
     updateProfile,
     updateUserProfileImage,
     getUserDetails,
-    getEnrolledCourses,
     deleteAccount,
+    getEnrolledCourses, 
     instructorDashboard,
     getMyLearning,
     getEnrollmentTrend

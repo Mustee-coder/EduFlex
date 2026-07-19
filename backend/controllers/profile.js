@@ -16,14 +16,16 @@ export const updateProfile = async (req, res) => {
     const userId = req.user.id;
 
     const {
-      gender = "",
-      dateOfBirth = "",
-      about = "",
-      contactNumber = "",
+      gender,
+      dateOfBirth,
+      about,
+      contactNumber,
       firstName,
       lastName,
     } = req.body;
 
+console.log("USER:", req.user);
+console.log("BODY:", req.body);
     const userDetails = await User.findById(userId);
 
     if (!userDetails) {
@@ -44,33 +46,41 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // update user safely
-    if (firstName) userDetails.firstName = firstName;
-    if (lastName) userDetails.lastName = lastName;
+    if (firstName) userDetails.firstName = firstName.trim();
+    if (lastName) userDetails.lastName = lastName.trim();
 
     await userDetails.save();
 
-    //  update profile safely
-    profileDetails.gender = gender;
-    profileDetails.dateOfBirth = dateOfBirth;
-    profileDetails.about = about;
-    profileDetails.contactNumber = contactNumber;
+    if (gender !== undefined)
+      profileDetails.gender = gender;
+
+    if (dateOfBirth !== undefined)
+      profileDetails.dateOfBirth = dateOfBirth;
+
+    if (about !== undefined)
+      profileDetails.about = about;
+
+    if (contactNumber !== undefined)
+      profileDetails.contactNumber = contactNumber;
 
     await profileDetails.save();
 
-    const updatedUser = await User.findById(userId).populate(
-      "additionalDetails"
-    );
+    const updatedUser = await User.findById(userId)
+      .populate("additionalDetails")
+      .select("-password -token -resetPasswordTokenExpires");
 
     return res.status(200).json({
       success: true,
       data: updatedUser,
       message: "Profile updated successfully",
     });
+
   } catch (error) {
+    console.error("UPDATE PROFILE ERROR:", error);
+
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to update profile",
     });
   }
 };
@@ -89,40 +99,39 @@ export const deleteAccount = async (req, res) => {
       });
     }
 
-    // delete avatar
     if (userDetails.image) {
       await deleteResourceFromCloudinary(userDetails.image);
     }
 
-    //  remove user from all courses (fast bulk update)
     await Course.updateMany(
       { studentsEnrolled: userId },
       { $pull: { studentsEnrolled: userId } }
     );
 
-    // delete course progress
     await CourseProgress.deleteMany({ userId });
 
-    //  delete profile
     await Profile.findByIdAndDelete(
       userDetails.additionalDetails
     );
 
-    //  delete user
     await User.findByIdAndDelete(userId);
+
+    res.clearCookie("token");
 
     return res.status(200).json({
       success: true,
       message: "Account deleted successfully",
     });
+
   } catch (error) {
+    console.error("DELETE ACCOUNT ERROR:", error);
+
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to delete account",
     });
   }
 };
-
 
 //  GET USER DETAILS 
 export const getUserDetails = async (req, res) => {
@@ -131,7 +140,7 @@ export const getUserDetails = async (req, res) => {
 
     const user = await User.findById(userId)
       .populate("additionalDetails")
-      .select("-password -token");
+      .select("-password -token -resetPasswordTokenExpires");
 
     if (!user) {
       return res.status(404).json({
@@ -143,17 +152,18 @@ export const getUserDetails = async (req, res) => {
     return res.status(200).json({
       success: true,
       data: user,
-      message: "User fetched successfully",
+      message: "User details fetched successfully",
     });
 
   } catch (error) {
+    console.error("GET USER ERROR:", error);
+
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to fetch user details",
     });
   }
 };
-
 //  UPDATE PROFILE IMAGE 
 export const updateUserProfileImage = async (req, res) => {
   try {
@@ -168,6 +178,19 @@ export const updateUserProfileImage = async (req, res) => {
       });
     }
 
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (user.image) {
+      await deleteResourceFromCloudinary(user.image);
+    }
+
     const uploadedImage = await uploadImageToCloudinary(
       profileImage,
       process.env.FOLDER_NAME,
@@ -177,23 +200,31 @@ export const updateUserProfileImage = async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { image: uploadedImage.secure_url },
-      { new: true }
-    ).populate("additionalDetails");
+      {
+        image: uploadedImage.secure_url,
+      },
+      {
+        new: true,
+      }
+    )
+      .populate("additionalDetails")
+      .select("-password -token -resetPasswordTokenExpires");
 
     return res.status(200).json({
       success: true,
       data: updatedUser,
-      message: "Profile image updated",
+      message: "Profile image updated successfully",
     });
+
   } catch (error) {
+    console.error("UPDATE IMAGE ERROR:", error);
+
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to update profile image",
     });
   }
 };
-
 //  GET ENROLLED COURSES 
 export const getEnrolledCourses = async (req, res) => {
   try {

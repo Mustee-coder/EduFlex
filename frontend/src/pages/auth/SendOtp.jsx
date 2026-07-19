@@ -1,61 +1,101 @@
 import { useState } from "react";
-import { useSendOtp } from "@/hooks/useSendOtp";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
+import AuthLayout from "@/components/layouts/AuthLayout";
+import { useSendOtp } from "@/hooks/useSendOtp";
 
 const SendOtp = () => {
   const [email, setEmail] = useState("");
-  const { mutate, isPending } = useSendOtp();
+
   const navigate = useNavigate();
+  const { mutate, isPending } = useSendOtp();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const normalizedEmail = email.trim().toLowerCase();
 
+    if (!normalizedEmail) {
+      toast.error("Email is required");
+      return;
+    }
+
     mutate(
       { email: normalizedEmail },
       {
         onSuccess: () => {
-          localStorage.setItem("signupEmail", normalizedEmail);
+          toast.success("OTP sent successfully 🎉");
+
+          localStorage.setItem(
+            "signupEmail",
+            normalizedEmail
+          );
+
           setEmail("");
+
           navigate("/verify-email");
         },
+
         onError: (error) => {
-          alert(error?.response?.data?.message || "Failed to send OTP");
+          toast.error(
+            error?.response?.data?.message ||
+              "Failed to send OTP"
+          );
         },
       }
     );
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB] px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow">
-        <h2 className="text-2xl font-bold mb-2 text-center">
-          Create Account
-        </h2>
+    <AuthLayout
+      title="Verify Your Email"
+      subtitle="Enter your email to receive a verification code"
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-5"
+      >
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Email Address
+          </label>
 
-        <p className="text-sm text-gray-500 text-center mb-6">
-          Enter your email to receive OTP
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
-            placeholder="Email address"
+            placeholder="Enter your email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
+            className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+        </div>
 
-          <button
-            disabled={!email.trim() || isPending}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg disabled:opacity-60"
-          >
-            {isPending ? "Sending OTP..." : "Continue"}
-          </button>
-        </form>
-      </div>
-    </div>
+        <button
+          type="submit"
+          disabled={
+            isPending || !email.trim()
+          }
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition disabled:opacity-50"
+        >
+          {isPending
+            ? "Sending OTP..."
+            : "Continue"}
+        </button>
+      </form>
+
+      <p className="text-center text-sm text-gray-500 mt-6">
+        Already have an account?{" "}
+        <button
+          type="button"
+          onClick={() => navigate("/login")}
+          className="text-blue-600 hover:underline font-medium"
+        >
+          Sign In
+        </button>
+      </p>
+    </AuthLayout>
   );
 };
 

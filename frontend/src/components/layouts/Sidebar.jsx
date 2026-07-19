@@ -20,7 +20,6 @@ const Sidebar = ({ closeSidebar }) => {
       { path: "/my-courses", label: "📚 My Courses" },
       { path: "/my-learning", label: "🎓 My Learning" },
       { path: "/browse-courses", label: "🔍 Browse Courses" },
-      { path: "/profile", label: "👤 Profile" },
     ],
 
     Instructor: [
@@ -35,8 +34,8 @@ const Sidebar = ({ closeSidebar }) => {
       { path: "/admin", label: "⚙️ Admin Dashboard" },
       { path: "/admin/users", label: "👥 Users" },
       { path: "/admin/courses", label: "📚 Courses" },
-      { path: "/admin/settings", label: "⚙️ Settings" },
-      { path: "/profile", label: "👤 Profile" },
+     
+     
     ],
   };
 

@@ -169,7 +169,7 @@ const Login = () => {
         <p className="text-center text-sm text-gray-500 mt-8">
           Don't have an account?{" "}
           <button
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/send-otp")}
             className="text-blue-600 font-semibold hover:underline"
           >
             Create Account
