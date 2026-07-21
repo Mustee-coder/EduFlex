@@ -81,7 +81,7 @@ const Topbar = ({ openSidebar }) => {
           onClick={() => setOpen((prev) => !prev)}
           className="focus:outline-none"
         >
-          <img
+          <img 
             src={`https://api.dicebear.com/7.x/initials/svg?seed=${fullName}`}
             alt="Avatar"
             className={`w-10 h-10 rounded-full border-2 ${theme.text} hover:scale-105 transition`}

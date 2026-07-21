@@ -1,10 +1,25 @@
 import { useUserDetails } from "@/hooks/useProfile";
+import { useUpdateProfileImage } from "@/hooks/useUpdateProfileImage";
+
 import {useState} from "react"
+import {useRef} from "react"
 import EditProfileModal from "@/components/profile/EditProfileModal"
 
 const Profile = () => {
   const { data, isLoading, isError } = useUserDetails();
-const [openEditModal, setOpenEditModal] = useState(false);
+  const user = data?.data;
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(user?.image || "");
+  const fileInputRef = useRef(null);
+  const {mutate, isPending} = useUpdateProfileImage()
+
+  const handleUploadImage = () => {
+    if (!selectedImage) return;
+    const formData = new FormData();
+    formData.append("profileImage", selectedImage);
+    mutate(formData);
+  }
 
   if (isLoading) {
     return (
@@ -22,7 +37,14 @@ const [openEditModal, setOpenEditModal] = useState(false);
     );
   }
 
-  const user = data?.data;
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSelectedImage(file);
+    setPreviewImage(URL.createObjectURL(file));
+  };
+
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-8">
@@ -31,14 +53,13 @@ const [openEditModal, setOpenEditModal] = useState(false);
       {/* Profile Header */}
       <div className="bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row items-center gap-6">
         <img
-          src={
+          src={ previewImage || 
             user?.image ||
             `https://api.dicebear.com/7.x/initials/svg?seed=${user?.firstName}`
           }
           alt="Profile"
           className="w-28 h-28 rounded-full object-cover border"
         />
-
         <div className="flex-1">
           <h2 className="text-2xl font-semibold">
             {user?.firstName} {user?.lastName}
@@ -121,9 +142,39 @@ const [openEditModal, setOpenEditModal] = useState(false);
           Change Profile Picture
         </h2>
 
-        <button className="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-          Upload New Picture
-        </button>
+
+
+
+<input 
+type="file"
+ref={fileInputRef}
+accept="image/*"
+className="hidden"     
+onChange={handleImageChange}
+/>
+
+
+
+        <div className="flex gap-3">
+          <button 
+            type="button"
+            onClick={()=> fileInputRef.current?.click()}
+            className="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            disabled={isPending}
+          >
+            Choose Picture
+          </button>
+          {selectedImage && (
+            <button
+              type="button"
+              onClick={handleUploadImage}
+              disabled={isPending}
+              className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {isPending ? "Uploading..." : "Upload Picture"}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Delete Account */}

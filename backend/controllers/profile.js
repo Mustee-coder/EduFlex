@@ -3,7 +3,7 @@ import User from "../models/user.js";
 import Course from "../models/course.js";
 import CourseProgress from "../models/courseProgress.js";
 import mongoose from "mongoose"
-import { deleteResourceFromCloudinary } from "../utils/imageUploader.js";
+import { deleteResourceFromCloudinary, uploadImageToCloudinary } from "../utils/imageUploader.js";
 import { convertSecondsToDuration } from "../utils/secToDuration.js";
 import Payment from "../models/payment.js";
 
