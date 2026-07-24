@@ -244,7 +244,7 @@ export const getEnrolledCourses = async (req, res) => {
     const enrichedCourses = await Promise.all(
       user.courses.map(async (course) => {
 
-        // 🔥 FULL POPULATE (IMPORTANT FIX)
+        // FULL POPULATE 
         const fullCourse = await Course.findById(course._id).populate({
           path: "sections",
           populate: {
