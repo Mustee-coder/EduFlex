@@ -47,7 +47,7 @@ router.post("/logout", logout);
 
 
 // Change password
-router.post("/changepassword", auth, changePassword);
+router.patch("/change-password", auth, changePassword);
 
 
 
