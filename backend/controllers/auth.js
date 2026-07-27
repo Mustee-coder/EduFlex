@@ -203,8 +203,7 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 5. Create profile safely
-    const profile = await Profile.create({
-      gender: "",
+    const profile = await Profile.create({  
       dateOfBirth: "",
       about: "",
       contactNumber: "",

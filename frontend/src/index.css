@@ -1,1 +1,491 @@
+
+
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
+
+
+/* student style*/
+/* dashboard*/
+        .dashboard-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .dashboard-title {
+          font-family: 'Syne', sans-serif;
+        }
+
+        @keyframes shimmer {
+          0% { background-position: -1000px 0; }
+          100% { background-position: 1000px 0; }
+        }
+
+        .skeleton-shimmer {
+          animation: shimmer 2s infinite;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 1000px 100%;
+        }
+     
+/* top navbar */
+
+.topbar-root {
+  font-family: 'Poppins', sans-serif;
+}
+
+.topbar-title {
+  font-family: 'Syne', sans-serif;
+}
+
+.search-input {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.search-input:focus {
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+}
+
+
+        .settings-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .settings-title {
+          font-family: 'Syne', sans-serif;
+        }
+
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .settings-card {
+          animation: slideIn 0.5s ease-out forwards;
+        }
+
+        @keyframes modalFadeIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .modal-content {
+          animation: modalFadeIn 0.3s ease-out forwards;
+        }
+      
+        /* browse course*/
+        .browse-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .browse-title {
+          font-family: 'Syne', sans-serif;
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .filter-panel {
+          animation: slideDown 0.3s ease-out;
+        }
+   
+      
+      
+      /* checkout */ 
+      
+      
+       
+        .checkout-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .checkout-title {
+          font-family: 'Syne', sans-serif;
+        }
+     
+      
+      /* course player  */
+      
+
+        .player-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .player-title {
+          font-family: 'Syne', sans-serif;
+        }
+
+        .lesson-card:hover {
+          background-color: rgba(99, 102, 241, 0.1);
+        }
+     
+/* course preview */
+
+
+        .detail-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .detail-title {
+          font-family: 'Syne', sans-serif;
+        }
+    /* my Courses */
+       
+
+        .mycourses-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .mycourses-title {
+          font-family: 'Syne', sans-serif;
+        }
+        
+        
+        /* instructor style*/
+        
+
+        .instructor-courses-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .instructor-courses-title {
+          font-family: 'Syne', sans-serif;
+        }
+      
+
+       
+        
+    
+/* Profile */
+        .profile-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .profile-title {
+          font-family: 'Syne', sans-serif;
+        }
+
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-card {
+          animation: slideIn 0.5s ease-out forwards;
+        }
+
+        @keyframes scaleIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        .profile-image {
+          animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .progress-fill {
+          transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+      
+     
+
+        .login-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .login-title {
+          font-family: 'Syne', sans-serif;
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .login-card {
+          animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .input-field {
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .input-field:focus {
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+     
+     
+     
+     
+      /*  password input*/
+     
+
+        .password-input-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .password-field {
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .password-field:focus {
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .password-field:focus-within {
+          border-color: #6366f1;
+        }
+
+        .toggle-btn {
+          transition: all 0.2s ease;
+        }
+
+        .toggle-btn:hover {
+          transform: scale(1.1);
+        }
+
+        .toggle-btn:active {
+          transform: scale(0.95);
+        }
+      
+      
+      /* send otp */
+        .sendotp-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .sendotp-title {
+          font-family: 'Syne', sans-serif;
+        }
+
+        .input-field {
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .input-field:focus {
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .error-message {
+          animation: slideUp 0.3s ease-out;
+        }
+     
+     
+     /* Auth layout */
+      
+
+        .auth-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .auth-title {
+          font-family: 'Syne', sans-serif;
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+        }
+
+        .auth-card {
+          animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .logo-float {
+          animation: float 3s ease-in-out infinite;
+        }
+
+        .gradient-text {
+          background: linear-gradient(135deg, #6366f1 0%, #9333ea 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        /* Background animation */
+        .auth-background {
+          position: fixed;
+          inset: 0;
+          overflow: hidden;
+          z-index: -1;
+        }
+
+        .blob {
+          position: absolute;
+          border-radius: 50%;
+          opacity: 0.3;
+          animation: blobAnimation 8s ease-in-out infinite;
+        }
+
+        .blob:nth-child(1) {
+          width: 300px;
+          height: 300px;
+          top: -100px;
+          right: -50px;
+          background: linear-gradient(135deg, #6366f1, #a78bfa);
+          animation-delay: 0s;
+        }
+
+        .blob:nth-child(2) {
+          width: 250px;
+          height: 250px;
+          bottom: -100px;
+          left: -50px;
+          background: linear-gradient(135deg, #9333ea, #c084fc);
+          animation-delay: 2s;
+        }
+
+        .blob:nth-child(3) {
+          width: 200px;
+          height: 200px;
+          bottom: 10%;
+          right: 5%;
+          background: linear-gradient(135deg, #a78bfa, #ddd6fe);
+          animation-delay: 4s;
+        }
+
+        @keyframes blobAnimation {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+          }
+          33% {
+            transform: translate(30px, -30px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+          .blob {
+            opacity: 0.15;
+          }
+
+          .blob:nth-child(1) {
+            width: 200px;
+            height: 200px;
+          }
+
+          .blob:nth-child(2) {
+            width: 150px;
+            height: 150px;
+          }
+
+          .blob:nth-child(3) {
+            width: 120px;
+            height: 120px;
+          }
+        }
+        
+        
+        
+        /* verify email*/
+     
+
+        .verify-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .otp-input {
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .otp-input:focus {
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .error-message {
+          animation: slideUp 0.3s ease-out;
+        }
+    
+    
+   /* signup */
+
+        .register-root {
+          font-family: 'Poppins', sans-serif;
+        }
+
+        .input-field {
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .input-field:focus {
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .error-message {
+          animation: slideUp 0.3s ease-out;
+        }
+    

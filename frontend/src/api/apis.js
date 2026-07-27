@@ -7,7 +7,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// 🔐 INTERCEPTOR
+// INTERCEPTOR
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");

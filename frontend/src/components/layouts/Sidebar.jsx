@@ -1,82 +1,240 @@
+import React from "react";
 import { NavLink } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Home, BookOpen, Zap, Search, BarChart3, Users, Plus, ChevronRight
+} from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { roleTheme } from "@/utils/roleTheme";
-import { motion } from "framer-motion";
 
-const Sidebar = ({ closeSidebar }) => {
+const Sidebar = ({ isOpen, closeSidebar }) => {
   const { user } = useAuth();
-
-  const role = user?.accountType || user?.role || user?.type;
-  const theme = roleTheme[role] || roleTheme.default;
-
-  const linkStyle = ({ isActive }) =>
-    isActive
-      ? `${theme.active} px-4 py-2 rounded-lg block shadow`
-      : `text-gray-600 ${theme.hover} px-4 py-2 rounded-lg block`;
-
-  const linksMap = {
-    Student: [
-      { path: "/dashboard", label: "🏠 Dashboard" },
-      { path: "/my-courses", label: "📚 My Courses" },
-      { path: "/my-learning", label: "🎓 My Learning" },
-      { path: "/browse-courses", label: "🔍 Browse Courses" },
-    ],
-
-    Instructor: [
-  { path: "/instructor", label: "🎓 Dashboard" },
-  { path: "/courses", label: "📚 My Courses" },
-  { path: "/add-course", label: "➕ Create Course" },
-  { path: "/analytics", label: "📊 Analytics" },
-  { path: "/students", label: "👨‍🎓 Students" },
-],
-
-    Admin: [
-      { path: "/admin", label: "⚙️ Admin Dashboard" },
-      { path: "/admin/users", label: "👥 Users" },
-      { path: "/admin/courses", label: "📚 Courses" },
-     
-     
-    ],
-  };
-
-  const links = linksMap[role] || [];
 
   if (!user) return null;
 
+  const role = user?.accountType || user?.role || "Student";
+
+  // Role themes
+  const roleThemes = {
+    Student: {
+      gradient: "from-indigo-600 to-purple-600",
+      active: "bg-indigo-100 text-indigo-700",
+    },
+    Instructor: {
+      gradient: "from-emerald-600 to-teal-600",
+      active: "bg-emerald-100 text-emerald-700",
+    },
+    Admin: {
+      gradient: "from-red-600 to-pink-600",
+      active: "bg-red-100 text-red-700",
+    },
+  };
+
+  const theme = roleThemes[role] || roleThemes.Student;
+
+  // Navigation links by role
+  const navigationLinks = {
+    Student: [
+      {
+        section: "Learning",
+        links: [
+          { path: "/dashboard", label: "Dashboard", icon: Home },
+          { path: "/my-courses", label: "My Courses", icon: BookOpen },
+          { path: "/my-learning", label: "Progress", icon: Zap },
+          { path: "/browse-courses", label: "Explore", icon: Search },
+        ],
+      },
+    ],
+
+    Instructor: [
+      {
+        section: "Teaching",
+        links: [
+          { path: "/instructor", label: "Dashboard", icon: Home },
+          { path: "/courses", label: "My Courses", icon: BookOpen },
+          { path: "/add-course", label: "Create Course", icon: Plus },
+        ],
+      },
+      {
+        section: "Analytics",
+        links: [
+          { path: "/analytics", label: "Analytics", icon: BarChart3 },
+          { path: "/students", label: "Students", icon: Users },
+        ],
+      },
+    ],
+
+    Admin: [
+      {
+        section: "Management",
+        links: [
+          { path: "/admin", label: "Dashboard", icon: Home },
+          { path: "/admin/users", label: "Users", icon: Users },
+          { path: "/admin/courses", label: "Courses", icon: BookOpen },
+          { path: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+        ],
+      },
+    ],
+  };
+
+  const links = navigationLinks[role] || navigationLinks.Student;
+
+  const handleNavClick = () => {
+    closeSidebar();
+  };
+
   return (
-    <motion.aside
-      initial={{ x: -300, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: -300, opacity: 0 }}
-      transition={{ duration: 0.25 }}
-      className="h-full flex flex-col bg-white shadow-lg p-4"
-    >
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
 
-      {/* HEADER */}
-      <div
-        className={`p-4 rounded-lg mb-6 bg-gradient-to-r ${theme.gradient} text-white`}
-      >
-        <h1 className="text-xl font-bold">EduFlex</h1>
-        <p className="text-xs opacity-90">
-          {theme.name} Panel
-        </p>
-      </div>
+        .sidebar-root {
+          font-family: 'Poppins', sans-serif;
+        }
 
-      {/* NAVIGATION */}
-      <nav className="space-y-2">
-        {links.map((link) => (
-          <NavLink
-            key={link.path}
-            to={link.path}
+        .sidebar-title {
+          font-family: 'Syne', sans-serif;
+        }
+
+        .nav-link {
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .nav-link::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: currentColor;
+          opacity: 0;
+          z-index: -1;
+          transition: opacity 0.3s ease;
+        }
+
+        .nav-link:hover::before {
+          opacity: 0.05;
+        }
+
+        .nav-link.active {
+          transform: translateX(4px);
+        }
+
+        .section-title {
+          font-family: 'Syne', sans-serif;
+        }
+
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .sidebar-content {
+          animation: slideIn 0.3s ease-out;
+        }
+
+        ::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: #e5e7eb;
+          border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background: #d1d5db;
+        }
+      `}</style>
+
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={closeSidebar}
-            className={linkStyle}
-          >
-            {link.label}
-          </NavLink>
-        ))}
-      </nav>
+            className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          />
+        )}
+      </AnimatePresence>
 
-    </motion.aside>
+      {/* Sidebar */}
+      <motion.aside
+        initial={{ x: -300, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: -300, opacity: 0 }}
+        transition={{ duration: 0.25 }}
+        className="sidebar-root fixed md:static inset-y-0 left-0 z-40 w-72 h-screen bg-white shadow-lg overflow-y-auto flex flex-col"
+      >
+        {/* Logo Section */}
+        <div className="p-6 flex-shrink-0 border-b border-gray-100">
+          <div className={`p-4 rounded-2xl bg-gradient-to-r ${theme.gradient} text-white`}>
+            <h1 className="sidebar-title text-2xl font-black">LearnMaster</h1>
+            <p className="text-xs opacity-80 mt-1">Platform</p>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="sidebar-content flex-1 px-4 py-6 space-y-8 overflow-y-auto">
+          {links.map((section, idx) => (
+            <div key={idx} className="space-y-3">
+              {/* Section Title */}
+              <p className="section-title text-xs font-black text-gray-400 uppercase tracking-widest px-4">
+                {section.section}
+              </p>
+
+              {/* Links */}
+              <div className="space-y-2">
+                {section.links.map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <NavLink
+                      key={link.path}
+                      to={link.path}
+                      onClick={handleNavClick}
+                      className={({ isActive }) =>
+                        `nav-link flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                          isActive
+                            ? `${theme.active} shadow-md`
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`
+                      }
+                    >
+                      <Icon className="w-5 h-5 flex-shrink-0" />
+                      <span className="flex-1">{link.label}</span>
+                      {({ isActive }) =>
+                        isActive && (
+                          <motion.div
+                            initial={{ opacity: 0, x: -4 }}
+                            animate={{ opacity: 1, x: 0 }}
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </motion.div>
+                        )
+                      }
+                    </NavLink>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        {/* Spacer */}
+        <div className="flex-shrink-0 h-4" />
+      </motion.aside>
+    </>
   );
 };
 

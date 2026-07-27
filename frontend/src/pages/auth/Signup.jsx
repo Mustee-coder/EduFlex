@@ -1,11 +1,14 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { motion } from "framer-motion";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { useSignup } from "@/hooks/useSignup";
+import { toast } from "sonner";
+import { AlertCircle, CheckCircle, Loader, User, Mail, Lock } from "lucide-react";
+import "@/index.css";
 
-const Signup = () => {
+const Register = () => {
   const navigate = useNavigate();
   const { mutate, isPending } = useSignup();
 
@@ -18,44 +21,131 @@ const Signup = () => {
     accountType: "Student",
   });
 
-  const handleChange = (e) => {
-    setForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const [passwordStrength, setPasswordStrength] = useState(0);
+
+  // ━━ VALIDATION ━━
+  const validateField = (name, value) => {
+    const newErrors = { ...errors };
+
+    switch (name) {
+      case "firstName":
+        if (!value.trim()) {
+          newErrors.firstName = "First name is required";
+        } else if (value.trim().length < 2) {
+          newErrors.firstName = "First name must be at least 2 characters";
+        } else {
+          delete newErrors.firstName;
+        }
+        break;
+
+      case "lastName":
+        if (!value.trim()) {
+          newErrors.lastName = "Last name is required";
+        } else if (value.trim().length < 2) {
+          newErrors.lastName = "Last name must be at least 2 characters";
+        } else {
+          delete newErrors.lastName;
+        }
+        break;
+
+      case "email":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value.trim()) {
+          newErrors.email = "Email is required";
+        } else if (!emailRegex.test(value.trim())) {
+          newErrors.email = "Please enter a valid email";
+        } else {
+          delete newErrors.email;
+        }
+        break;
+
+      case "password":
+        if (!value) {
+          newErrors.password = "Password is required";
+        } else if (value.length < 8) {
+          newErrors.password = "Password must be at least 8 characters";
+        } else if (!/[A-Z]/.test(value)) {
+          newErrors.password = "Password must contain an uppercase letter";
+        } else if (!/[0-9]/.test(value)) {
+          newErrors.password = "Password must contain a number";
+        } else {
+          delete newErrors.password;
+        }
+
+        // Calculate strength
+        let strength = 0;
+        if (value.length >= 8) strength++;
+        if (/[A-Z]/.test(value)) strength++;
+        if (/[0-9]/.test(value)) strength++;
+        if (/[^A-Za-z0-9]/.test(value)) strength++;
+        setPasswordStrength(strength);
+
+        // Check password match
+        if (form.confirmPassword && value !== form.confirmPassword) {
+          newErrors.confirmPassword = "Passwords do not match";
+        } else if (form.confirmPassword) {
+          delete newErrors.confirmPassword;
+        }
+        break;
+
+      case "confirmPassword":
+        if (!value) {
+          newErrors.confirmPassword = "Please confirm your password";
+        } else if (value !== form.password) {
+          newErrors.confirmPassword = "Passwords do not match";
+        } else {
+          delete newErrors.confirmPassword;
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    setErrors(newErrors);
   };
 
-  const isFormInvalid =
-    !form.firstName.trim() ||
-    !form.lastName.trim() ||
-    !form.email.trim() ||
-    !form.password ||
-    !form.confirmPassword;
+  // ━━ HANDLERS ━━
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (touched[name]) {
+      validateField(name, value);
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setTouched((prev) => ({
+      ...prev,
+      [name]: true,
+    }));
+    validateField(name, value);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const email = form.email.trim().toLowerCase();
+    // Validate all fields
+    Object.keys(form).forEach((key) => {
+      validateField(key, form[key]);
+    });
 
-    if (!email) {
-      toast.error("Email is required");
-      return;
-    }
-
-    if (form.password !== form.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    if (form.password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+    if (Object.keys(errors).length > 0) {
+      toast.error("Please fix the errors in the form");
       return;
     }
 
     const payload = {
       firstName: form.firstName.trim(),
       lastName: form.lastName.trim(),
-      email,
+      email: form.email.trim().toLowerCase(),
       password: form.password,
       confirmPassword: form.confirmPassword,
       accountType: form.accountType,
@@ -63,87 +153,259 @@ const Signup = () => {
 
     mutate(payload, {
       onSuccess: () => {
-        toast.success("Account created successfully 🎉");
-navigate("/login");
+        toast.success("Account created successfully! 🎉");
+        navigate("/login");
       },
       onError: (error) => {
-        toast.error(
-  error?.response?.data?.message || "Signup failed"
-);
+        const errorMsg =
+          error?.response?.data?.message || "Signup failed. Please try again.";
+        toast.error(errorMsg);
+        setErrors({ submit: errorMsg });
       },
     });
   };
 
+  const isFormValid =
+    form.firstName.trim() &&
+    form.lastName.trim() &&
+    form.email.trim() &&
+    form.password &&
+    form.confirmPassword &&
+    Object.keys(errors).length === 0 &&
+    !isPending;
+
   return (
-    <AuthLayout
-  title="Create Account"
-  subtitle="Start your learning journey"
->
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            name="firstName"
-            placeholder="First Name"
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+    <>
+      
 
-          <input
-            name="lastName"
-            placeholder="Last Name"
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+      <AuthLayout
+        title="Create Your Account"
+        subtitle="Join EduFlex and start learning"
+      >
+        <div className="register-root space-y-6">
+          {/* Submit Error */}
+          {errors.submit && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="error-message p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3"
+            >
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-red-700 text-sm font-semibold">{errors.submit}</p>
+            </motion.div>
+          )}
 
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            onChange={handleChange}
-            className="w-full p-3 border rounded"
-          />
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name Row */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* First Name */}
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-gray-700">First Name</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    name="firstName"
+                    placeholder="First"
+                    value={form.firstName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    aria-invalid={touched.firstName && !!errors.firstName}
+                    className={`input-field w-full pl-10 pr-3 py-2.5 border-2 rounded-xl font-medium text-sm focus:outline-none transition-all ${
+                      touched.firstName && errors.firstName
+                        ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
+                        : touched.firstName && !errors.firstName
+                        ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
+                        : "border-gray-200 bg-gray-50 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                    }`}
+                  />
+                </div>
+                {touched.firstName && errors.firstName && (
+                  <p className="text-red-600 text-xs font-semibold flex items-center gap-1">
+                    <AlertCircle size={12} />
+                    {errors.firstName}
+                  </p>
+                )}
+              </div>
 
-          <PasswordInput
-  name="password"
-  value={form.password}
-  onChange={handleChange}
-  placeholder="Password"
-/>
+              {/* Last Name */}
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-gray-700">Last Name</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    name="lastName"
+                    placeholder="Last"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    aria-invalid={touched.lastName && !!errors.lastName}
+                    className={`input-field w-full pl-10 pr-3 py-2.5 border-2 rounded-xl font-medium text-sm focus:outline-none transition-all ${
+                      touched.lastName && errors.lastName
+                        ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
+                        : touched.lastName && !errors.lastName
+                        ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
+                        : "border-gray-200 bg-gray-50 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                    }`}
+                  />
+                </div>
+                {touched.lastName && errors.lastName && (
+                  <p className="text-red-600 text-xs font-semibold flex items-center gap-1">
+                    <AlertCircle size={12} />
+                    {errors.lastName}
+                  </p>
+                )}
+              </div>
+            </div>
 
-          <PasswordInput
-  name="confirmPassword"
-  value={form.confirmPassword}
-  onChange={handleChange}
-  placeholder="Confirm Password"
-/>
+            {/* Email */}
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-700">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={form.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  aria-invalid={touched.email && !!errors.email}
+                  className={`input-field w-full pl-10 pr-12 py-2.5 border-2 rounded-xl font-medium text-sm focus:outline-none transition-all ${
+                    touched.email && errors.email
+                      ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
+                      : touched.email && !errors.email
+                      ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
+                      : "border-gray-200 bg-gray-50 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                  }`}
+                />
+                {touched.email && form.email && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    {errors.email ? (
+                      <AlertCircle className="w-4 h-4 text-red-500" />
+                    ) : (
+                      <CheckCircle className="w-4 h-4 text-emerald-500" />
+                    )}
+                  </div>
+                )}
+              </div>
+              {touched.email && errors.email && (
+                <p className="text-red-600 text-xs font-semibold flex items-center gap-1">
+                  <AlertCircle size={12} />
+                  {errors.email}
+                </p>
+              )}
+            </div>
 
-          <select
-            name="accountType"
-            onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="Student">Student</option>
-            <option value="Instructor">Instructor</option>
-          </select>
+            {/* Password */}
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-700">Password</label>
+              <PasswordInput
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Create a strong password"
+                error={touched.password ? errors.password : ""}
+                showStrength={true}
+              />
+            </div>
 
-          <button
-            disabled={isPending || isFormInvalid}
-            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-xl disabled:opacity-60"
-          >
-            {isPending ? "Creating..." : "Create Account"}
-          </button>
-        </form>
-        <p className="text-center text-sm text-gray-500 mt-6">
-  Already have an account?{" "}
-  <button
-    type="button"
-    onClick={() => navigate("/login")}
-    className="text-blue-600 hover:underline font-medium"
-  >
-    Sign In
-  </button>
-</p>
+            {/* Confirm Password */}
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-700">Confirm Password</label>
+              <PasswordInput
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Confirm your password"
+                error={touched.confirmPassword ? errors.confirmPassword : ""}
+              />
+            </div>
+
+            {/* Account Type */}
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-700">I am a:</label>
+              <select
+                name="accountType"
+                value={form.accountType}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 border-2 border-gray-200 bg-gray-50 rounded-xl font-medium text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+              >
+                <option value="Student">👨‍🎓 Student</option>
+                <option value="Instructor">🎓 Instructor</option>
+              </select>
+            </div>
+
+            {/* Info Box */}
+            <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-200">
+              <p className="text-xs text-indigo-700 leading-relaxed">
+                <span className="font-bold">✅ Your password must have:</span> At least 8 characters, uppercase letter, and a number.
+              </p>
+            </div>
+
+            {/* Submit Button */}
+            <motion.button
+              whileHover={isFormValid ? { scale: 1.02 } : {}}
+              whileTap={isFormValid ? { scale: 0.98 } : {}}
+              type="submit"
+              disabled={!isFormValid}
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              {isPending ? (
+                <>
+                  <Loader className="w-4 h-4 animate-spin" />
+                  Creating Account...
+                </>
+              ) : (
+                "Create Account"
+              )}
+            </motion.button>
+          </form>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-500 font-medium">OR</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          {/* Sign In Link */}
+          <p className="text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/login")}
+              className="text-indigo-600 font-bold hover:text-indigo-700 hover:underline transition-colors"
+            >
+              Sign In
+            </button>
+          </p>
+
+          {/* Terms */}
+          <p className="text-center text-xs text-gray-500 leading-relaxed">
+            By creating an account, you agree to our{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/terms")}
+              className="text-indigo-600 hover:underline"
+            >
+              Terms
+            </button>{" "}
+            and{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/privacy")}
+              className="text-indigo-600 hover:underline"
+            >
+              Privacy Policy
+            </button>
+          </p>
+        </div>
       </AuthLayout>
+    </>
   );
 };
 
-export default Signup;
+export default Register;

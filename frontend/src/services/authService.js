@@ -24,3 +24,13 @@ export const verifyOtp = async (data) => {
   return res.data;
 };
 
+
+
+export const changePassword = async (payload) => {
+  const response = await api.patch(
+    authEndpoints.CHANGE_PASSWORD,
+    payload
+  );
+
+  return response.data;
+};

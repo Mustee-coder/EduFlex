@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProfileImage } from "@/services/profileServices";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 export const useUpdateProfileImage = () => {
   const queryClient = useQueryClient();
+  const { updateUser } = useAuth();
 
   return useMutation({
     mutationFn: updateProfileImage,
@@ -12,6 +14,7 @@ export const useUpdateProfileImage = () => {
       toast.success(
         data?.message || "Profile image updated successfully"
       );
+      updateUser(data.data);
 
       queryClient.invalidateQueries({
         queryKey: ["userDetails"],
