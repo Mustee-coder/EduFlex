@@ -27,9 +27,16 @@ export const verifyOtp = async (data) => {
 
 
 export const changePassword = async (payload) => {
+  const normalizedPayload = {
+    oldPassword: payload?.oldPassword ?? payload?.currentPassword,
+    newPassword: payload?.newPassword,
+    confirmNewPassword:
+      payload?.confirmNewPassword ?? payload?.confirmPassword,
+  };
+
   const response = await api.patch(
     authEndpoints.CHANGE_PASSWORD,
-    payload
+    normalizedPayload
   );
 
   return response.data;

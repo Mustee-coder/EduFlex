@@ -11,7 +11,6 @@ export const createSubSection = async (req, res) => {
     const { title, description, sectionId, courseId } = req.body;
     const videoFile = req.files?.video;
 
-    console.log("SECTION ID:", sectionId);
 
     if (!title || !description || !sectionId || !videoFile) {
       return res.status(400).json({
@@ -29,7 +28,7 @@ export const createSubSection = async (req, res) => {
       });
     }
 
-    // ✅ VIDEO UPLOAD FIX
+    // VIDEO UPLOAD
     const uploadResult = await cloudinary.uploader.upload(
       videoFile.tempFilePath,
       {
@@ -128,7 +127,6 @@ export const updateSubSection = async (req, res) => {
   sections: sectionId,
 });
 
-console.log("COURSE FOUND:", course);
 
 if (course) {
   await calculateCourseDuration(course._id);

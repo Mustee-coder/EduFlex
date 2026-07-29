@@ -5,9 +5,8 @@ dotenv.config();
 
 //  AUTH
 export const auth = (req, res, next) => {
-  console.log("COOKIES RECEIVED:", req.cookies);
 
-  // SUPPORT BOTH COOKIE + HEADER
+
   const token =
     req.cookies?.token ||
     req.header("Authorization")?.replace("Bearer ", "");

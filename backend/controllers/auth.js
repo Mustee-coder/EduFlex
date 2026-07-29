@@ -303,6 +303,7 @@ export const signup = async (req, res) => {
       .json({
         success: true,
         message: "Login successful",
+        token,
         user: userObj,
       });
 
@@ -326,7 +327,14 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    const userDetails = await User.findById(req.user.id);
+    const userDetails = await User.findById(req.user.id).select("+password");
+
+    if (!userDetails) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
     const isMatch = await bcrypt.compare(oldPassword, userDetails.password);
 
@@ -352,11 +360,15 @@ export const changePassword = async (req, res) => {
       { new: true }
     );
 
-    await mailSender(
-      updatedUser.email,
-      "Password Updated",
-      passwordUpdated(updatedUser.email, updatedUser.firstName)
-    );
+    try {
+      await mailSender(
+        updatedUser.email,
+        "Password Updated",
+        passwordUpdated(updatedUser.email, updatedUser.firstName)
+      );
+    } catch (mailError) {
+      console.error("Password change email failed:", mailError.message);
+    }
 
     return res.status(200).json({
       success: true,
