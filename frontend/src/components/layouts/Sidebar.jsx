@@ -2,7 +2,16 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Home, BookOpen, Zap, Search, BarChart3, Users, Plus, ChevronRight
+  Home,
+  BookOpen,
+  Zap,
+  Search,
+  BarChart3,
+  Users,
+  Plus,
+  ChevronRight,
+  FolderTree,
+  Star,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -33,48 +42,50 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
 
   // Navigation links by role
   const navigationLinks = {
-    Student: [
-      {
-        section: "Learning",
-        links: [
-          { path: "/dashboard", label: "Dashboard", icon: Home },
-          { path: "/my-courses", label: "My Courses", icon: BookOpen },
-          { path: "/my-learning", label: "Progress", icon: Zap },
-          { path: "/browse-courses", label: "Explore", icon: Search },
-        ],
-      },
-    ],
+  Student: [
+    {
+      section: "Learning",
+      links: [
+        { path: "/dashboard", label: "Dashboard", icon: Home },
+        { path: "/my-courses", label: "My Courses", icon: BookOpen },
+        { path: "/my-learning", label: "Progress", icon: Zap },
+        { path: "/browse-courses", label: "Explore", icon: Search },
+      ],
+    },
+  ],
 
-    Instructor: [
-      {
-        section: "Teaching",
-        links: [
-          { path: "/instructor", label: "Dashboard", icon: Home },
-          { path: "/courses", label: "My Courses", icon: BookOpen },
-          { path: "/add-course", label: "Create Course", icon: Plus },
-        ],
-      },
-      {
-        section: "Analytics",
-        links: [
-          { path: "/analytics", label: "Analytics", icon: BarChart3 },
-          { path: "/students", label: "Students", icon: Users },
-        ],
-      },
-    ],
+  Instructor: [
+    {
+      section: "Teaching",
+      links: [
+        { path: "/instructor", label: "Dashboard", icon: Home },
+        { path: "/courses", label: "My Courses", icon: BookOpen },
+        { path: "/add-course", label: "Create Course", icon: Plus },
+      ],
+    },
+    {
+      section: "Analytics",
+      links: [
+        { path: "/analytics", label: "Analytics", icon: BarChart3 },
+        { path: "/students", label: "Students", icon: Users },
+      ],
+    },
+  ],
 
-    Admin: [
-      {
-        section: "Management",
-        links: [
-          { path: "/admin", label: "Dashboard", icon: Home },
-          { path: "/admin/users", label: "Users", icon: Users },
-          { path: "/admin/courses", label: "Courses", icon: BookOpen },
-          { path: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-        ],
-      },
-    ],
-  };
+  Admin: [
+    {
+      section: "Management",
+      links: [
+        { path: "/admin", label: "Dashboard", icon: Home },
+        { path: "/admin/users", label: "Users", icon: Users },
+        { path: "/admin/courses", label: "Courses", icon: BookOpen },
+        { path: "/admin/categories", label: "Categories", icon: FolderTree },
+        { path: "/admin/reviews", label: "Reviews", icon: Star },
+        { path: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+      ],
+    },
+  ],
+};
 
   const links = navigationLinks[role] || navigationLinks.Student;
 

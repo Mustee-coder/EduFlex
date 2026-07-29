@@ -7,7 +7,7 @@ dotenv.config();
 export const auth = (req, res, next) => {
   console.log("COOKIES RECEIVED:", req.cookies);
 
-  // ✅ SUPPORT BOTH COOKIE + HEADER
+  // SUPPORT BOTH COOKIE + HEADER
   const token =
     req.cookies?.token ||
     req.header("Authorization")?.replace("Bearer ", "");
@@ -84,4 +84,18 @@ export const isAdmin = (req, res, next) => {
 			message: error.message,
 		});
 	}
+};
+
+export const isInstructorOrAdmin = (req, res, next) => {
+  if (
+    req.user.accountType !== "Instructor" &&
+    req.user.accountType !== "Admin"
+  ) {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied",
+    });
+  }
+
+  next();
 };

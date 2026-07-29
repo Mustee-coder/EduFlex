@@ -399,7 +399,7 @@ const InstructorDashboard = () => {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => navigate(`/course-edit/${course._id}`)}
+                          onClick={() => navigate(`/course-builder/${course._id}`)}
                           className="flex items-center justify-center gap-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 py-2 rounded-lg font-semibold transition-all text-sm"
                         >
                           <Edit3 className="w-4 h-4" />

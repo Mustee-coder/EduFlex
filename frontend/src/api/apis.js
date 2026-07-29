@@ -55,8 +55,20 @@ export const profileEndpoints = {
 
 // ADMIN ENDPOINTS
 export const adminEndpoints = {
+  // Dashboard
+  GET_ADMIN_STATS: "/admin/dashboardStats",
+
+  // Users
   GET_ALL_STUDENTS: "/auth/all-students",
   GET_ALL_INSTRUCTORS: "/auth/all-instructors",
+
+  // Reviews
+  GET_ALL_REVIEWS: "/course/getReviews",
+
+  // Categories
+  CREATE_CATEGORY: "/course/createCategory",
+  DELETE_CATEGORY: "/course/deleteCategory",
+  COURSE_CATEGORIES: "/course/showAllCategories",
 };
 
 //PAYMENT ENDPOINTS
@@ -89,21 +101,15 @@ export const courseEndpoints = {
   CREATE_SUBSECTION: "/course/addSubSection",
   UPDATE_SUBSECTION: "/course/updateSubSection",
   DELETE_SUBSECTION: "/course/deleteSubSection",
-  
-
-  COURSE_CATEGORIES: "/course/showAllCategories",
-  CREATE_CATEGORY: "/course/createCategory",
-  DELETE_CATEGORY: "/course/deleteCategory",
-
+ 
   INSTRUCTOR_COURSES: "/course/instructor/courses",
+  CATEGORY_PAGE: "/course/getCategoryPageDetails",
   
   FULL_COURSE_DETAILS: "/course/getFullCourseDetails",
-
+CREATE_RATING: "/course/createRating",
   UPDATE_PROGRESS: "/course/course-progress",
 
-  CREATE_RATING: "/course/createRating",
-  CATEGORY_PAGE: "/course/getCategoryPageDetails",
-  REVIEWS: "/course/getReviews",
+  
 };
 //contact 
    

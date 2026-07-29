@@ -38,6 +38,9 @@ import Analytics from "@/pages/instructor/Analytics";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
+import UsersPage from "@/pages/admin/UsersPage";
+
+UsersPage
 
 const App = () => {
   return (
@@ -173,7 +176,11 @@ const App = () => {
             <Route
               path="/admin"
               element={<AdminDashboard />}
-            />
+             />
+                 <Route
+                path="/admin/users"
+              element={<UsersPage />}
+               />
 
           </Route>
         </Route>

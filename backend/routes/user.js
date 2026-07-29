@@ -21,6 +21,7 @@ import {
 import {
     auth,
     isAdmin
+    
 } from "../middleware/auth.js";
 
 // Profile controllers (admin only)
@@ -58,7 +59,6 @@ router.post("/reset-password-token", resetPasswordToken);
 router.post("/reset-password", resetPassword);
 
 
-
 // Get all students
 router.get("/all-students", auth, isAdmin, getAllStudents);
 
@@ -68,3 +68,6 @@ router.get("/all-instructors", auth, isAdmin, getAllInstructors);
 
 // Export router
 export default router;
+
+
+

@@ -52,7 +52,9 @@ import {
     isAdmin,
     isInstructor,
     isStudent,
+    isInstructorOrAdmin
 } from "../middleware/auth.js";
+
 
 
 
@@ -73,7 +75,7 @@ router.delete("/deleteSubSection", auth, isInstructor, deleteSubSection);
 // Courses
 router.post("/createCourse", auth, isInstructor, createCourse);
 
-router.get("/getAllCourses", auth, getAllCourses);
+router.get("/getAllCourses", auth,isAdmin, getAllCourses)
 
 router.get("/getCourseDetails/:courseId", auth, getCourseDetails);
 
@@ -81,7 +83,12 @@ router.get("/getFullCourseDetails/:courseId", auth, getFullCourseDetails);
 
 router.patch("/editCourse/:courseId", auth, isInstructor, editCourse);
 
-router.delete("/deleteCourse/:courseId", auth, isInstructor, deleteCourse);
+router.delete(
+  "/deleteCourse/:courseId",
+  auth,
+  isInstructorOrAdmin,
+  deleteCourse
+);
 
 router.patch(
   "/course-progress",
@@ -94,7 +101,6 @@ router.get("/instructor/courses", auth, isInstructor, getInstructorCourses);
 
 
 router.patch("/publishCourse/:courseId", auth, isInstructor, publishCourse);
-
 
 
 

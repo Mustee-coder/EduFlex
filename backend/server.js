@@ -17,6 +17,10 @@ import userRoutes from "./routes/user.js";
 import profileRoutes from "./routes/profile.js";
 import courseRoutes from "./routes/course.js";
 import paymentRoutes from "./routes/payments.js";
+import adminRoutes from "./routes/admin.js";
+
+
+
 
 dotenv.config();
 
@@ -63,6 +67,7 @@ app.use("/api/auth", userRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/course", courseRoutes);
  app.use("/api/payment", paymentRoutes);
+ app.use("/api/admin", adminRoutes);
 
 //  DEFAULT ROUTE
 
