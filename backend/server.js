@@ -6,8 +6,6 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 
-
-
 // Config
 import { connectDB } from "./config/database.js";
 import { cloudinaryConnect } from "./config/cloudinary.js";
@@ -19,12 +17,8 @@ import courseRoutes from "./routes/course.js";
 import paymentRoutes from "./routes/payments.js";
 import adminRoutes from "./routes/admin.js";
 
-
-
-
 dotenv.config();
 
-// Force Node DNS to use public resolvers when local DNS is unavailable for SRV lookups.
 try {
   dns.setServers(["8.8.8.8", "8.8.4.4"]);
 } catch (error) {
@@ -34,15 +28,27 @@ try {
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-//  MIDDLEWARE 
-
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Allowed Origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://edu-flex-coral.vercel.app",
+  "https://edu-flex-nt5g4rbp1-mustee-coders-projects.vercel.app",
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "*",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
     credentials: true,
   })
 );
@@ -56,21 +62,18 @@ app.use(
   })
 );
 
-//  DATABASE 
-
+// Database
 connectDB();
 cloudinaryConnect();
 
-//  ROUTES 
-
+// Routes
 app.use("/api/auth", userRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/course", courseRoutes);
- app.use("/api/payment", paymentRoutes);
- app.use("/api/admin", adminRoutes);
+app.use("/api/payment", paymentRoutes);
+app.use("/api/admin", adminRoutes);
 
-//  DEFAULT ROUTE
-
+// Default Route
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
@@ -78,19 +81,17 @@ app.get("/", (req, res) => {
   });
 });
 
-// ERROR HANDLER 
-
+// Error Handler
 app.use((err, req, res, next) => {
   console.error(err);
 
   res.status(500).json({
     success: false,
-    message: "Internal Server Error",
+    message: err.message || "Internal Server Error",
   });
 });
 
-//  START SERVER 
-
+// Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
