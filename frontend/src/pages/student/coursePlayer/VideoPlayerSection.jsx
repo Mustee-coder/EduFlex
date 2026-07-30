@@ -7,7 +7,7 @@ const VideoPlayerSection = forwardRef(({ currentLesson, handleVideoEnd }, ref) =
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="bg-black aspect-video md:aspect-auto md:flex-none md:h-1/2 relative group overflow-hidden"
+      className="bg-black w-full aspect-video relative group overflow-hidden"
     >
       {currentLesson?.videoUrl ? (
         <video
@@ -15,7 +15,7 @@ const VideoPlayerSection = forwardRef(({ currentLesson, handleVideoEnd }, ref) =
           src={currentLesson.videoUrl}
           controls
           onEnded={handleVideoEnd}
-          className="w-full h-full"
+          className="w-full h-full object-contain"
           controlsList="nodownload"
         />
       ) : (
@@ -23,8 +23,14 @@ const VideoPlayerSection = forwardRef(({ currentLesson, handleVideoEnd }, ref) =
           <div className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center mb-4">
             <BookOpen className="w-8 h-8 text-gray-600" />
           </div>
-          <p className="text-gray-400 font-medium">No video available for this lesson</p>
-          <p className="text-gray-600 text-sm mt-2">Content coming soon</p>
+
+          <p className="text-gray-400 font-medium">
+            No video available for this lesson
+          </p>
+
+          <p className="text-gray-600 text-sm mt-2">
+            Content coming soon
+          </p>
         </div>
       )}
     </motion.div>

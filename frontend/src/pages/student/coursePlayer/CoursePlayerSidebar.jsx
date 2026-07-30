@@ -16,12 +16,12 @@ const CoursePlayerSidebar = ({
   return (
     <>
       {/* Mobile Toggle Button */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 hover:bg-gray-700 rounded-lg transition-colors"
-      >
+     <motion.button
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  onClick={() => setSidebarOpen(!sidebarOpen)}
+  className="md:hidden fixed top-4 left-4 z-[60] p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+>
         {sidebarOpen ? (
           <X className="w-6 h-6 text-white" />
         ) : (
@@ -47,8 +47,7 @@ const CoursePlayerSidebar = ({
               animate={{ x: 0 }}
               exit={{ x: -400 }}
               transition={{ duration: 0.3 }}
-              className="fixed md:relative w-full md:w-1/4 h-full md:h-screen bg-gradient-to-b from-gray-800 to-gray-900 border-r border-gray-700 z-30 overflow-y-auto"
-            >
+              className="fixed md:relative top-0 left-0 w-[85%] sm:w-[350px] md:w-1/4 h-full md:h-screen bg-gradient-to-b from-gray-800 to-gray-900 border-r border-gray-700 z-40 overflow-y-auto">
               <div className="p-6 space-y-6">
                 
                 {/* Progress Summary Card */}
