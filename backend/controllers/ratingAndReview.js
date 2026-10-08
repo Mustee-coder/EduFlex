@@ -2,6 +2,7 @@ import User from "../models/user.js";
 import Course from "../models/course.js";
 import RatingAndReview from "../models/ratingAndReview.js";
 import mongoose from "mongoose";
+import { sendInternalError } from "../utils/errorResponse.js";
 
 //  CREATE RATING 
 export const createRating = async (req, res) => {
@@ -64,10 +65,7 @@ export const createRating = async (req, res) => {
       message: "Rating created successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -106,10 +104,7 @@ export const getAverageRating = async (req, res) => {
       totalReviews: result[0].totalReviews,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 // All ratings 
@@ -131,9 +126,6 @@ export const getAllRatingReview = async (req, res) => {
       data: allReviews,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };

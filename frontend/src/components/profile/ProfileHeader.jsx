@@ -1,7 +1,7 @@
 import React from "react";
 import { Camera } from "lucide-react";
 
-const ProfileHeader = ({ user, previewImage, profileCompletion, onEdit, fileInputRef }) => {
+const ProfileHeader = ({ user, previewImage, profileCompletion, onEdit, fileInputRef, isUploading }) => {
   return (
     <div
       className="profile-card bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-sm border border-gray-100 p-8 hover:shadow-lg transition-shadow duration-300"
@@ -22,6 +22,7 @@ const ProfileHeader = ({ user, previewImage, profileCompletion, onEdit, fileInpu
 
           <button
             onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
             className="absolute bottom-0 right-0 p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg transition-all"
           >
             <Camera className="w-5 h-5" />

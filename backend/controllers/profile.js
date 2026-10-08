@@ -6,6 +6,7 @@ import mongoose from "mongoose"
 import { deleteResourceFromCloudinary, uploadImageToCloudinary } from "../utils/imageUploader.js";
 import { convertSecondsToDuration } from "../utils/secToDuration.js";
 import Payment from "../models/payment.js";
+import { sendInternalError } from "../utils/errorResponse.js";
 
 
 
@@ -76,12 +77,7 @@ console.log("BODY:", req.body);
     });
 
   } catch (error) {
-    console.error("UPDATE PROFILE ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to update profile",
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -124,12 +120,7 @@ export const deleteAccount = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("DELETE ACCOUNT ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to delete account",
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -156,12 +147,7 @@ export const getUserDetails = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("GET USER ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch user details",
-    });
+    return sendInternalError(res, error);
   }
 };
 //  UPDATE PROFILE IMAGE 
@@ -217,12 +203,7 @@ export const updateUserProfileImage = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("UPDATE IMAGE ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to update profile image",
-    });
+    return sendInternalError(res, error);
   }
 };
 //  GET ENROLLED COURSES 
@@ -297,10 +278,7 @@ export const getEnrolledCourses = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 //   INSTRUCTOR DASHBOARD  
@@ -371,10 +349,7 @@ export const instructorDashboard = async (req, res) => {
 });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 //   ALL STUDENTS  
@@ -405,10 +380,7 @@ export const getAllStudents = async (req, res) => {
       data: students,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -449,10 +421,7 @@ export const getAllInstructors = async (req, res) => {
       data: instructors,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -524,12 +493,7 @@ export const getMyLearning = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("[MY_LEARNING_ERROR]", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch My Learning",
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -617,9 +581,6 @@ export const getEnrollmentTrend = async (req, res) => {
       data: trend,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };

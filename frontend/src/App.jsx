@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -39,6 +39,7 @@ import Analytics from "@/pages/instructor/Analytics";
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import UsersPage from "@/pages/admin/UsersPage";
+import LandingPage from "@/pages/LandingPage";
 
 UsersPage
 
@@ -47,11 +48,8 @@ const App = () => {
     <>
       <Routes>
 
-        {/* Default */}
-        <Route
-          path="/"
-          element={<Navigate to="/login" replace />}
-        />
+        {/* Public landing page */}
+        <Route path="/" element={<LandingPage />} />
 
         {/* Authentication */}
         <Route path="/login" element={<Login />} />

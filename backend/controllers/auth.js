@@ -4,13 +4,11 @@ import otpGenerator from "otp-generator";
 import OTP from "../models/OTP.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 
 import mailSender from "../utils/mailSender.js";
 import otpTemplate from "../mail/templates/emailVerificationTemplate.js";
 import passwordUpdated from "../mail/templates/passwordUpdate.js";
-
-dotenv.config();
+import { sendInternalError } from "../utils/errorResponse.js";
 
 //  SEND OTP 
 export const sendOTP = async (req, res) => {
@@ -31,7 +29,7 @@ export const sendOTP = async (req, res) => {
     // 3. Check if user already exists
     const checkUserPresent = await User.findOne({ email });
 
-    if (checkUserPresent) {
+    if (checkUserPresent?.isVerified) {
       return res.status(400).json({
         success: false,
         message: "User is already registered",
@@ -55,7 +53,7 @@ export const sendOTP = async (req, res) => {
       specialChars: false,
     });
 
-    console.log("Generated OTP:", otp);
+    
 
     // 6. Create name from email
     const name = email
@@ -85,13 +83,7 @@ export const sendOTP = async (req, res) => {
     });
 
   } catch (error) {
-    console.log("OTP ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Error while generating OTP",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -101,8 +93,18 @@ export const sendOTP = async (req, res) => {
 export const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
+    const normalizedEmail = email?.trim().toLowerCase();
 
-    const latestOtp = await OTP.findOne({ email }).sort({ createdAt: -1 });
+    if (!normalizedEmail || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and OTP are required",
+      });
+    }
+
+    const latestOtp = await OTP.findOne({ email: normalizedEmail }).sort({
+      createdAt: -1,
+    });
 
     if (!latestOtp) {
       return res.status(400).json({
@@ -113,13 +115,19 @@ export const verifyOTP = async (req, res) => {
     
     
 
-    const isExpired =
-      Date.now() - new Date(latestOtp.createdAt).getTime() > 5 * 60 * 1000;
+    const isExpired = latestOtp.expiresAt <= new Date();
 
     if (isExpired) {
       return res.status(400).json({
         success: false,
         message: "OTP expired",
+      });
+    }
+
+    if (latestOtp.verifiedAt) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP has already been used",
       });
     }
 
@@ -129,12 +137,14 @@ export const verifyOTP = async (req, res) => {
         message: "Invalid OTP",
       });
     }
-    if (latestOtp.otp === otp) {
-  await User.updateOne(
-    { email },
-    { isVerified: true }
-  );
-}
+
+    latestOtp.verifiedAt = new Date();
+    await latestOtp.save();
+
+    await User.updateOne(
+      { email: normalizedEmail },
+      { isVerified: true }
+    );
 
     // mark verified
     return res.status(200).json({
@@ -143,10 +153,7 @@ export const verifyOTP = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Verification failed",
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -180,6 +187,12 @@ export const signup = async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
+
+    const verifiedOtp = await OTP.findOne({
+      email: normalizedEmail,
+      verifiedAt: { $ne: null },
+      expiresAt: { $gt: new Date() },
+    }).sort({ verifiedAt: -1 });
 
     // 2. Password match check
     if (password !== confirmPassword) {
@@ -219,8 +232,12 @@ export const signup = async (req, res) => {
       additionalDetails: profile._id,
       approved: accountType === "Instructor" ? false : true,
       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
-      isVerified: false,
+      isVerified: Boolean(verifiedOtp),
     });
+
+    if (verifiedOtp) {
+      await OTP.deleteOne({ _id: verifiedOtp._id });
+    }
 
     // 7. Remove password before sending response
     const userObj = user.toObject();
@@ -233,12 +250,7 @@ export const signup = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("SIGNUP ERROR:", error); // 🔥 important for debugging
-
-    return res.status(500).json({
-      success: false,
-      message: error.message || "Internal Server Error",
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -278,6 +290,21 @@ export const signup = async (req, res) => {
       });
     }
 
+    if (user.accountType === "Instructor" && user.approved !== true) {
+      return res.status(403).json({
+        success: false,
+        message: "Your instructor account is awaiting approval",
+      });
+    }
+
+    if (user.accountType !== "Admin" && user.isVerified !== true) {
+      return res.status(403).json({
+        success: false,
+        message: "Please verify your email before logging in",
+        code: "EMAIL_NOT_VERIFIED",
+      });
+    }
+
     const payload = {
       email: user.email,
       id: user._id,
@@ -293,26 +320,23 @@ export const signup = async (req, res) => {
     delete userObj.password;
     delete userObj.token;
 
+    const isProduction = process.env.NODE_ENV === "production";
+
     res.cookie("token", token, {
-  httpOnly: true,
-  secure: false,
-  sameSite: "strict",
-  maxAge: 3 * 24 * 60 * 60 * 1000,
-})
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "strict",
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+    })
       .status(200)
       .json({
         success: true,
         message: "Login successful",
-        token,
         user: userObj,
       });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Login failed",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 //  CHANGE PASSWORD 
@@ -375,11 +399,7 @@ export const changePassword = async (req, res) => {
       message: "Password changed successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Password change failed",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -399,44 +419,6 @@ export const logout = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-
-export const forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required",
-      });
-    }
-
-    const user = await User.findOne({
-      email: email.trim().toLowerCase(),
-    });
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Reset link sent successfully",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };

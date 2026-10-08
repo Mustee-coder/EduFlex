@@ -14,13 +14,13 @@ const AuthLayout = ({ title, subtitle, children }) => {
       </div>
 
       {/* Main Container */}
-      <div className="auth-root min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center px-4 py-8 md:py-0 relative z-10">
+      <div className="auth-root min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8 md:py-0 relative z-10">
         
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="auth-card w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 sm:p-8"
+          className="auth-card w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8"
         >
           {/* Header Section */}
           <div className="text-center mb-8 sm:mb-10">
@@ -32,7 +32,7 @@ const AuthLayout = ({ title, subtitle, children }) => {
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             >
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-lg">
                 <span className="auth-title text-white font-black text-2xl sm:text-3xl">
                   E
                 </span>
@@ -80,7 +80,7 @@ const AuthLayout = ({ title, subtitle, children }) => {
           </motion.div>
 
           {/* Footer Accent */}
-          <div className="mt-8 pt-6 border-t border-gray-100">
+          <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-center text-xs sm:text-xs text-gray-500 leading-relaxed">
               Your learning platform for success 🚀
             </p>

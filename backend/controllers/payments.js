@@ -104,16 +104,7 @@ export const verifyPayment = async (req, res) => {
       });
     }
 
-    // Prevent duplicate verification
-    const existingPayment = await Payment.findOne({ reference });
-    if (existingPayment) {
-      return res.status(200).json({
-        success: true,
-        message: "Payment already verified.",
-      });
-    }
-
-    // Verify with Paystack
+    // Verify with Paystack before trusting or reusing any stored payment state.
     const response = await paystack.get(
       `/transaction/verify/${reference}`
     );
@@ -127,30 +118,92 @@ export const verifyPayment = async (req, res) => {
       });
     }
 
-    const { userId, coursesId } = paymentData.metadata || {};
+    const existingPayment = await Payment.findOne({ reference });
 
-    if (!userId || !Array.isArray(coursesId) || !coursesId.length) {
+    const { userId: metadataUserId, coursesId } = paymentData.metadata || {};
+
+    if (!metadataUserId || !Array.isArray(coursesId) || !coursesId.length) {
       return res.status(400).json({
         success: false,
         message: "Invalid payment metadata.",
       });
     }
 
-    // Save payment record (VERY IMPORTANT)
-    await Payment.create({
-      userId,
-      reference,
-      coursesId,
-      amount: paymentData.amount / 100,
-      status: "success",
-    });
+    const userId = req.user?.id;
+    if (!userId || String(metadataUserId) !== String(userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "Payment does not belong to this student.",
+      });
+    }
 
-    // Enroll student safely
+    if (new Set(coursesId.map(String)).size !== coursesId.length) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment course metadata.",
+      });
+    }
+
+    let courses;
+    try {
+      courses = await Course.find({ _id: { $in: coursesId } });
+    } catch {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment course metadata.",
+      });
+    }
+
+    if (courses.length !== coursesId.length) {
+      return res.status(400).json({
+        success: false,
+        message: "One or more payment courses do not exist.",
+      });
+    }
+
+    const expectedAmount = Math.round(
+      courses.reduce((total, course) => total + course.price, 0) * 100
+    );
+    if (!Number.isFinite(paymentData.amount) || paymentData.amount !== expectedAmount) {
+      return res.status(400).json({
+        success: false,
+        message: "Payment amount does not match the course total.",
+      });
+    }
+
+    if (existingPayment) {
+      const storedCourses = existingPayment.coursesId.map(String).sort();
+      const verifiedCourses = coursesId.map(String).sort();
+      if (
+        String(existingPayment.userId) !== String(userId) ||
+        existingPayment.amount !== paymentData.amount / 100 ||
+        JSON.stringify(storedCourses) !== JSON.stringify(verifiedCourses)
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Stored payment does not match the verified transaction.",
+        });
+      }
+    } else {
+      // Persist success only after Paystack, student, courses, and amount validate.
+      await Payment.create({
+        userId,
+        reference,
+        coursesId,
+        amount: paymentData.amount / 100,
+        status: "success",
+      });
+    }
+
+    // Also retry enrollment when a prior verification saved payment but failed
+    // before enrollment completed. enrollStudents is safe to repeat.
     await enrollStudents(coursesId, userId);
 
     return res.status(200).json({
       success: true,
-      message: "Payment verified & enrollment successful.",
+      message: existingPayment
+        ? "Payment verified & enrollment confirmed."
+        : "Payment verified & enrollment successful.",
     });
 
   } catch (error) {
@@ -207,7 +260,7 @@ export const verifyPayment = async (req, res) => {
     {
       courseId: course._id, 
       userId,
-      completedVideos: [],
+      completedLessons: [],
     },
   ],
   { session }

@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import Course from "../models/course.js";
 import Payment from "../models/payment.js";
+import { sendInternalError } from "../utils/errorResponse.js";
 
 export const getAdminStats = async (req, res) => {
   try {
@@ -42,9 +43,6 @@ export const getAdminStats = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };

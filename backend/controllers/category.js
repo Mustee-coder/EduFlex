@@ -1,5 +1,6 @@
 import Category from "../models/category.js";
 import Course from "../models/course.js";
+import { sendInternalError } from "../utils/errorResponse.js";
 
 //  CREATE CATEGORY 
 export const createCategory = async (req, res) => {
@@ -24,11 +25,7 @@ export const createCategory = async (req, res) => {
       data: category,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error while creating category",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -60,11 +57,7 @@ export const deleteCategory = async (req, res) => {
       message: "Category deleted successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error while deleting category",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -82,11 +75,7 @@ export const showAllCategories = async (req, res) => {
       message: "Categories fetched successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error while fetching categories",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -157,10 +146,6 @@ export const getCategoryPageDetails = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };

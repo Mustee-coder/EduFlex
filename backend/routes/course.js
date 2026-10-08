@@ -63,19 +63,19 @@ import {
 
 
 // Sections
-router.post("/createSection", auth, isInstructor, createSection);
-router.post("/updateSection", auth, isInstructor, updateSection);
-router.delete("/deleteSection", auth, isInstructor, deleteSection);
+router.post("/createSection", auth, isInstructorOrAdmin, createSection);
+router.post("/updateSection", auth, isInstructorOrAdmin, updateSection);
+router.delete("/deleteSection", auth, isInstructorOrAdmin, deleteSection);
 
 // SubSections
-router.post("/addSubSection", auth, isInstructor, createSubSection);
-router.post("/updateSubSection", auth, isInstructor, updateSubSection);
-router.delete("/deleteSubSection", auth, isInstructor, deleteSubSection);
+router.post("/addSubSection", auth, isInstructorOrAdmin, createSubSection);
+router.post("/updateSubSection", auth, isInstructorOrAdmin, updateSubSection);
+router.delete("/deleteSubSection", auth, isInstructorOrAdmin, deleteSubSection);
 
 // Courses
 router.post("/createCourse", auth, isInstructor, createCourse);
 
-router.get("/getAllCourses", auth,isAdmin, getAllCourses)
+router.get("/getAllCourses", auth, getAllCourses);
 
 router.get("/getCourseDetails/:courseId", auth, getCourseDetails);
 

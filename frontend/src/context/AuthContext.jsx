@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import api from "@/api/apis";
 
 const AuthContext = createContext();
 
@@ -6,29 +7,39 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on refresh
   useEffect(() => {
-  try {
-    const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
+    let isMounted = true;
 
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-    }
-  } catch (err) {
-    console.log("Auth parse error:", err);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-  }
+    const restoreSession = async () => {
+      try {
+        const response = await api.get("/profile/getUserDetails");
 
-  setLoading(false);
-}, []);
+        if (isMounted) {
+          setUser(response.data?.data || null);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setUser(null);
+          localStorage.removeItem("user");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    restoreSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // LOGIN FUNCTION
-  const login = (userData, token) => {
+  const login = (userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", token);
   };
   
   const updateUser = (userData) => {
@@ -38,10 +49,13 @@ export const AuthProvider = ({ children }) => {
   
 
   // LOGOUT FUNCTION
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+  const logout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } finally {
+      setUser(null);
+      localStorage.removeItem("user");
+    }
   };
 
   const value = {
@@ -63,4 +77,3 @@ export const AuthProvider = ({ children }) => {
 
 // custom hook
 export const useAuth = () => useContext(AuthContext);
-

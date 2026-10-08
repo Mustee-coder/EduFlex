@@ -2,6 +2,7 @@ import User from "../models/user.js";
 import mailSender from "../utils/mailSender.js";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
+import { sendInternalError } from "../utils/errorResponse.js";
 
 
 // SEND RESET PASSWORD LINK
@@ -55,10 +56,7 @@ export const resetPasswordToken = async (req, res) => {
       message: "Password reset link sent successfully.",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -111,9 +109,6 @@ export const resetPassword = async (req, res) => {
       message: "Password reset successfully.",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };

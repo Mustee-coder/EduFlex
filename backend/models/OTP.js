@@ -21,6 +21,11 @@ const OTPSchema = new mongoose.Schema(
       required: true,
       default: () => Date.now() + 5 * 60 * 1000,
     },
+
+    verifiedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

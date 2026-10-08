@@ -171,7 +171,7 @@ const VerifyEmail = () => {
             transition={{ delay: 0.2 }}
             className="text-center space-y-2"
           >
-            <p className="text-gray-700 font-semibold">Email verified!</p>
+            <p className="text-gray-600 font-semibold">Email verified!</p>
             <p className="text-sm text-gray-600">
               Your account is ready. Redirecting to signup...
             </p>
@@ -212,7 +212,7 @@ const VerifyEmail = () => {
               className="error-message p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3"
             >
               <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-red-700 text-sm font-semibold">{error}</p>
+              <p className="text-red-600 text-sm font-semibold">{error}</p>
             </motion.div>
           )}
 
@@ -220,7 +220,7 @@ const VerifyEmail = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* OTP Input Fields */}
             <div className="space-y-3">
-              <label className="text-xs font-semibold text-gray-700">
+              <label className="text-xs font-semibold text-gray-600">
                 Verification Code
               </label>
 
@@ -240,12 +240,12 @@ const VerifyEmail = () => {
                     onKeyDown={(e) => handleKeyDown(e, index)}
                     onPaste={handlePaste}
                     aria-label={`OTP digit ${index + 1}`}
-                    className={`otp-input w-12 h-12 md:w-14 md:h-14 border-2 rounded-xl text-center text-2xl font-bold focus:outline-none transition-all ${
+                    className={`edu-focus-ring otp-input w-12 h-12 md:w-14 md:h-14 border-2 rounded-xl bg-white text-gray-900 text-center text-2xl font-bold focus:outline-none transition-all ${
                       error
-                        ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
+                        ? "border-red-600 bg-red-50 focus:ring-2 focus:ring-red-200"
                         : digit
-                        ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                        : "border-gray-200 bg-gray-50 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                        ? "border-emerald-600 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
+                        : "border-gray-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
                     }`}
                   />
                 ))}
@@ -263,7 +263,7 @@ const VerifyEmail = () => {
               whileTap={otp.join("").length === 6 && !isPending ? { scale: 0.98 } : {}}
               type="submit"
               disabled={isPending || otp.join("").length !== 6}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2"
+              className="edu-focus-ring w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2"
             >
               {isPending ? (
                 <>
@@ -293,7 +293,7 @@ const VerifyEmail = () => {
               type="button"
               onClick={handleResend}
               disabled={resendLoading || resendTimer > 0}
-              className="w-full px-4 py-3 border-2 border-indigo-600 hover:bg-indigo-50 text-indigo-600 font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="edu-focus-ring w-full px-4 py-3 border-2 border-indigo-600 hover:bg-indigo-50 text-indigo-600 font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {resendLoading ? (
                 <>
@@ -317,7 +317,7 @@ const VerifyEmail = () => {
             <button
               type="button"
               onClick={() => navigate("/login")}
-              className="text-indigo-600 font-bold hover:text-indigo-700 hover:underline transition-colors"
+              className="edu-focus-ring rounded-sm text-indigo-600 font-bold hover:text-indigo-700 hover:underline transition-colors"
             >
               Sign In
             </button>

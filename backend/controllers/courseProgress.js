@@ -1,6 +1,7 @@
 import CourseProgress from "../models/courseProgress.js";
 import SubSection from "../models/subSection.js";
 import Course from "../models/course.js";
+import { sendInternalError } from "../utils/errorResponse.js";
 
 export const updateCourseProgress = async (req, res) => {
   try {
@@ -34,6 +35,16 @@ export const updateCourseProgress = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Course not found",
+      });
+    }
+
+    const isEnrolled = course.studentsEnrolled.some(
+      (studentId) => studentId.toString() === userId
+    );
+    if (!isEnrolled) {
+      return res.status(403).json({
+        success: false,
+        message: "You must be enrolled to update course progress",
       });
     }
 
@@ -101,12 +112,6 @@ export const updateCourseProgress = async (req, res) => {
     });
 
   } catch (error) {
-    console.log("Error updating course progress:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };

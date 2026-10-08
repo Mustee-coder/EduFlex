@@ -10,6 +10,7 @@ import { uploadImageToCloudinary } from "../utils/imageUploader.js";
 import { deleteResourceFromCloudinary } from "../utils/imageUploader.js";
 import { convertSecondsToDuration,calculateCourseDuration } from "../utils/secToDuration.js";
 import { roleFilter } from "../utils/roleFilter.js";
+import { sendInternalError } from "../utils/errorResponse.js";
 
 //  CREATE COURSE 
 export const createCourse = async (req, res) => {
@@ -160,13 +161,7 @@ export const createCourse = async (req, res) => {
     });
 
   } catch (error) {
-    console.log("CREATE COURSE ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -209,10 +204,7 @@ export const getAllCourses = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -258,13 +250,11 @@ export const getCourseDetails = async (req, res) => {
       userId &&
       courseDetails.instructor?._id?.toString() === userId;
 
-    const isInstructor = req.user?.accountType === "Instructor";
     const isAdmin = req.user?.accountType === "Admin";
 
     if (
       courseDetails.status === "Draft" &&
       !isOwner &&
-      !isInstructor &&
       !isAdmin
     ) {
       return res.status(403).json({
@@ -296,11 +286,7 @@ return res.status(200).json({
   message: "Course details fetched successfully",
 });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error while fetching course details",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -416,6 +402,21 @@ export const getFullCourseDetails = async (req, res) => {
       });
     }
 
+    const isStudent = req.user.accountType === "Student";
+    const isEnrolled = courseDetails.studentsEnrolled?.some(
+      (studentId) => studentId.toString() === userId
+    );
+    if (
+      courseDetails.status === "Published" &&
+      isStudent &&
+      !isEnrolled
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You must be enrolled to access this course.",
+      });
+    }
+
     // progress (still needed separately)
     const courseProgress = await CourseProgress.findOne({
       courseId,
@@ -445,11 +446,7 @@ export const getFullCourseDetails = async (req, res) => {
       message: "Course details fetched successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching course details",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 //   Edit Course Details  
@@ -547,11 +544,7 @@ export const editCourse = async (req, res) => {
       data: updatedCourse,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error while updating course",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -677,17 +670,7 @@ return res.status(200).json({
 });
 
 } catch (error) {
-console.error(
-"GET INSTRUCTOR COURSES ERROR:",
-error
-);
-
-return res.status(500).json({
-  success: false,
-  message:
-    "Failed to retrieve instructor courses",
-  error: error.message,
-});
+return sendInternalError(res, error);
 
 }
 };
@@ -702,7 +685,9 @@ export const deleteCourse = async (req, res) => {
     session.startTransaction();
 
     const { courseId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user?.id;
+    const isAdmin = req.user?.accountType === "Admin";
+    const isInstructor = req.user?.accountType === "Instructor";
 
     const course = await Course.findById(courseId);
 
@@ -713,8 +698,11 @@ export const deleteCourse = async (req, res) => {
       });
     }
 
-    // ownership check
-    if (course.instructor.toString() !== userId) {
+    // Admins may delete any course; instructors may delete only their own.
+    if (
+      !isAdmin &&
+      (!isInstructor || course.instructor.toString() !== userId)
+    ) {
       return res.status(403).json({
         success: false,
         message: "Not allowed to delete this course",
@@ -774,14 +762,7 @@ export const deleteCourse = async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-
-    console.error("DELETE COURSE ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Error while deleting course",
-      error: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 // publishCourse
@@ -816,9 +797,6 @@ export const publishCourse = async (req, res) => {
       data: course,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };

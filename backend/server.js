@@ -1,5 +1,6 @@
+import { env } from "./config/env.js";
+import { sendInternalError } from "./utils/errorResponse.js";
 import express from "express";
-import dotenv from "dotenv";
 import dns from "dns";
 import os from "os";
 import cors from "cors";
@@ -17,8 +18,6 @@ import courseRoutes from "./routes/course.js";
 import paymentRoutes from "./routes/payments.js";
 import adminRoutes from "./routes/admin.js";
 
-dotenv.config();
-
 try {
   dns.setServers(["8.8.8.8", "8.8.4.4"]);
 } catch (error) {
@@ -26,7 +25,7 @@ try {
 }
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = env.PORT;
 
 // Middleware
 app.use(express.json());
@@ -34,10 +33,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Allowed Origins
+const configuredOrigins = [env.FRONTEND_URL, env.CLIENT_URL]
+  .filter(Boolean)
+  .map((url) => new URL(url).origin);
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://edu-flex-coral.vercel.app",
-  "https://edu-flex-nt5g4rbp1-mustee-coders-projects.vercel.app",
+  ...(env.NODE_ENV === "production" ? [] : ["http://localhost:5173"]),
+  ...configuredOrigins,
 ];
 
 app.use(
@@ -62,10 +63,6 @@ app.use(
   })
 );
 
-// Database
-connectDB();
-cloudinaryConnect();
-
 // Routes
 app.use("/api/auth", userRoutes);
 app.use("/api/profile", profileRoutes);
@@ -83,15 +80,13 @@ app.get("/", (req, res) => {
 
 // Error Handler
 app.use((err, req, res, next) => {
-  console.error(err);
-
-  res.status(500).json({
-    success: false,
-    message: err.message || "Internal Server Error",
-  });
+  sendInternalError(res, err);
 });
 
 // Start Server
+await connectDB();
+cloudinaryConnect();
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });

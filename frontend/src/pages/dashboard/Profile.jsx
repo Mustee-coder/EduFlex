@@ -56,7 +56,15 @@ useEffect(() => {
   const file = e.target.files?.[0];
   if (!file) return;
 
-  if (!validateImage(file)) return;
+  if (!validateImage(file)) {
+    if (previewImage?.startsWith("blob:")) {
+      URL.revokeObjectURL(previewImage);
+    }
+    setSelectedImage(null);
+    setPreviewImage(user?.image || "");
+    e.currentTarget.value = "";
+    return;
+  }
 
   // Share old blob URL
   if (previewImage?.startsWith("blob:")) {
@@ -172,6 +180,7 @@ useEffect(() => {
   previewImage={previewImage}
   profileCompletion={profileCompletion}
   fileInputRef={fileInputRef}
+  isUploading={isUploading}
   onEdit={() => setOpenEditModal(true)}
 />
           {/* ━━ PERSONAL INFORMATION ━━ */}
@@ -228,7 +237,7 @@ useEffect(() => {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp,image/gif"
               onChange={handleImageChange}
               className="hidden"
             />
@@ -256,7 +265,7 @@ useEffect(() => {
             )}
 
             {/* Buttons */}
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}

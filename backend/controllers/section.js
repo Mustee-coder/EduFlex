@@ -2,6 +2,8 @@ import Course from "../models/course.js";
 import Section from "../models/section.js";
 import SubSection from "../models/subSection.js";
 import { calculateCourseDuration } from "../utils/secToDuration.js";
+import { getAuthorizedCourse } from "../utils/courseAuthorization.js";
+import { sendInternalError } from "../utils/errorResponse.js";
 
 
 
@@ -18,22 +20,16 @@ export const createSection = async (req, res) => {
       });
     }
 
-    const course = await Course.findById(courseId);
+    const authorization = await getAuthorizedCourse(req, courseId);
 
-    if (!course) {
-      return res.status(404).json({
+    if (authorization.error) {
+      return res.status(authorization.error.status).json({
         success: false,
-        message: "Course not found",
+        message: authorization.error.message,
       });
     }
 
-    // authorization
-    if (String(course.instructor) !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized",
-      });
-    }
+    const { course } = authorization;
 
     // create section
     const newSection = await Section.create({ sectionName });
@@ -58,10 +54,7 @@ export const createSection = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -80,9 +73,26 @@ export const updateSection = async (req, res) => {
       });
     }
 
+    const authorization = await getAuthorizedCourse(req, courseId);
+
+    if (authorization.error) {
+      return res.status(authorization.error.status).json({
+        success: false,
+        message: authorization.error.message,
+      });
+    }
+
+    const { course } = authorization;
     const section = await Section.findById(sectionId);
 
     if (!section) {
+      return res.status(404).json({
+        success: false,
+        message: "Section not found",
+      });
+    }
+
+    if (!course.sections.some((id) => String(id) === String(sectionId))) {
       return res.status(404).json({
         success: false,
         message: "Section not found",
@@ -107,10 +117,7 @@ export const updateSection = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -129,16 +136,32 @@ export const deleteSection = async (req, res) => {
       });
     }
 
-    const course = await Course.findById(courseId);
+    const authorization = await getAuthorizedCourse(req, courseId);
 
-    if (!course) {
-      return res.status(404).json({
+    if (authorization.error) {
+      return res.status(authorization.error.status).json({
         success: false,
-        message: "Course not found",
+        message: authorization.error.message,
       });
     }
 
+    const { course } = authorization;
+
     const section = await Section.findById(sectionId);
+
+    if (!section) {
+      return res.status(404).json({
+        success: false,
+        message: "Section not found",
+      });
+    }
+
+    if (!course.sections.some((id) => String(id) === String(sectionId))) {
+      return res.status(404).json({
+        success: false,
+        message: "Section not found",
+      });
+    }
 
     // delete subsections first
     if (section) {
@@ -170,10 +193,6 @@ export const deleteSection = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
-

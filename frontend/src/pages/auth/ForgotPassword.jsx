@@ -119,7 +119,7 @@ const ForgotPassword = () => {
               {email}
             </p>
             <p className="text-sm text-gray-600">
-              Check your email (and spam folder) for instructions. The link expires in 24 hours.
+              Check your email (and spam folder) for instructions. The link expires in 5 minutes.
             </p>
           </motion.div>
 
@@ -328,7 +328,7 @@ const ForgotPassword = () => {
 
           {/* Security Info */}
           <p className="text-center text-xs text-gray-500 leading-relaxed">
-            Your password reset link will expire in <span className="font-semibold">24 hours</span> for security reasons.
+            Your password reset link will expire in <span className="font-semibold">5 minutes</span> for security reasons.
           </p>
         </div>
       </AuthLayout>

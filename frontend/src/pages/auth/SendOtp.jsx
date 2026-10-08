@@ -142,7 +142,7 @@ const SendOtp = () => {
           >
             <AlertCircle className="w-5 h-5 text-red-600" />
 
-            <p className="text-red-700 text-sm font-semibold">
+            <p className="text-red-600 text-sm font-semibold">
               {error}
             </p>
           </motion.div>
@@ -157,14 +157,14 @@ const SendOtp = () => {
 
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-600 mb-2">
               Email Address
             </label>
 
 
             <div className="relative">
 
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"/>
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"/>
 
 
               <input
@@ -172,12 +172,12 @@ const SendOtp = () => {
                 value={email}
                 onChange={handleChange}
                 placeholder="you@example.com"
-                className={`w-full pl-12 pr-12 py-3 rounded-xl border-2 text-sm font-medium focus:outline-none transition ${
+                className={`edu-focus-ring w-full pl-12 pr-12 py-3 rounded-xl border-2 bg-white text-gray-900 placeholder:text-gray-500 text-sm font-medium focus:outline-none transition ${
                   error
-                    ? "border-red-500 bg-red-50"
+                    ? "border-red-600 bg-red-50"
                     : isValidEmail
-                    ? "border-emerald-500 bg-emerald-50"
-                    : "border-gray-200 bg-gray-50"
+                    ? "border-emerald-600 bg-emerald-50"
+                    : "border-gray-200 focus:border-indigo-600"
                 }`}
               />
 
@@ -186,9 +186,9 @@ const SendOtp = () => {
                 <div className="absolute right-4 top-1/2 -translate-y-1/2">
 
                   {error ? (
-                    <AlertCircle className="w-5 h-5 text-red-500"/>
+                    <AlertCircle className="w-5 h-5 text-red-600"/>
                   ) : isValidEmail ? (
-                    <CheckCircle className="w-5 h-5 text-emerald-500"/>
+                    <CheckCircle className="w-5 h-5 text-emerald-600"/>
                   ) : null}
 
                 </div>
@@ -210,7 +210,7 @@ const SendOtp = () => {
 
           <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-xl">
 
-            <p className="text-xs text-indigo-700">
+            <p className="text-xs text-indigo-600">
               📧 We will send a verification code to confirm your email address.
             </p>
 
@@ -231,7 +231,7 @@ const SendOtp = () => {
             }
             type="submit"
             disabled={!isFormValid || isPending}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-bold disabled:opacity-50 flex items-center justify-center gap-2"
+            className="edu-focus-ring w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
           >
 
             {isPending ? (
@@ -260,7 +260,7 @@ const SendOtp = () => {
           <button
             type="button"
             onClick={() => navigate("/login")}
-            className="text-indigo-600 font-bold hover:underline"
+            className="edu-focus-ring rounded-sm text-indigo-600 font-bold hover:text-indigo-700 hover:underline"
           >
             Sign In
           </button>

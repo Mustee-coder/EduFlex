@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-
-dotenv.config();
+import User from "../models/user.js";
+import { sendInternalError } from "../utils/errorResponse.js";
 
 //  AUTH
 export const auth = (req, res, next) => {
@@ -42,29 +41,33 @@ export const isStudent = (req, res, next) => {
 		}
 		next();
 	} catch (error) {
-		return res.status(500).json({
-			success: false,
-			message: error.message,
-		});
+		return sendInternalError(res, error);
 	}
 };
 
 //  IS INSTRUCTOR 
-export const isInstructor = (req, res, next) => {
-	try {
-		if (req.user?.accountType !== "Instructor") {
-			return res.status(403).json({
-				success: false,
-				message: "This route is only for Instructors",
-			});
-		}
-		next();
-	} catch (error) {
-		return res.status(500).json({
-			success: false,
-			message: error.message,
-		});
-	}
+export const isInstructor = async (req, res, next) => {
+  try {
+    if (req.user?.accountType !== "Instructor") {
+      return res.status(403).json({
+        success: false,
+        message: "This route is only for Instructors",
+      });
+    }
+
+    const user = await User.findById(req.user.id).select("accountType approved");
+
+    if (!user || user.accountType !== "Instructor" || user.approved !== true) {
+      return res.status(403).json({
+        success: false,
+        message: "Instructor account approval is required",
+      });
+    }
+
+    next();
+  } catch (error) {
+    return sendInternalError(res, error);
+  }
 };
 
 // IS ADMIN 
@@ -78,23 +81,34 @@ export const isAdmin = (req, res, next) => {
 		}
 		next();
 	} catch (error) {
-		return res.status(500).json({
-			success: false,
-			message: error.message,
-		});
+		return sendInternalError(res, error);
 	}
 };
 
-export const isInstructorOrAdmin = (req, res, next) => {
-  if (
-    req.user.accountType !== "Instructor" &&
-    req.user.accountType !== "Admin"
-  ) {
-    return res.status(403).json({
-      success: false,
-      message: "Access denied",
-    });
-  }
+export const isInstructorOrAdmin = async (req, res, next) => {
+  try {
+    if (req.user?.accountType === "Admin") {
+      return next();
+    }
 
-  next();
+    if (req.user?.accountType !== "Instructor") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied",
+      });
+    }
+
+    const user = await User.findById(req.user.id).select("accountType approved");
+
+    if (!user || user.accountType !== "Instructor" || user.approved !== true) {
+      return res.status(403).json({
+        success: false,
+        message: "Instructor account approval is required",
+      });
+    }
+
+    next();
+  } catch (error) {
+    return sendInternalError(res, error);
+  }
 };

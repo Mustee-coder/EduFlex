@@ -4,6 +4,8 @@ import Course from "../models/course.js";
 import cloudinary from "../config/cloudinary.js";
 import { uploadImageToCloudinary, deleteResourceFromCloudinary } from "../utils/imageUploader.js";
 import { calculateCourseDuration } from "../utils/secToDuration.js";
+import { getAuthorizedCourse } from "../utils/courseAuthorization.js";
+import { sendInternalError } from "../utils/errorResponse.js";
 
 //  CREATE SUBSECTION 
 export const createSubSection = async (req, res) => {
@@ -22,6 +24,27 @@ export const createSubSection = async (req, res) => {
     const section = await Section.findById(sectionId);
 
     if (!section) {
+      return res.status(404).json({
+        success: false,
+        message: "Section not found",
+      });
+    }
+
+    const authorization = await getAuthorizedCourse(
+      req,
+      courseId || (await Course.findOne({ sections: sectionId }))?._id
+    );
+
+    if (authorization.error) {
+      return res.status(authorization.error.status).json({
+        success: false,
+        message: authorization.error.message,
+      });
+    }
+
+    const { course } = authorization;
+
+    if (!course.sections.some((id) => String(id) === String(sectionId))) {
       return res.status(404).json({
         success: false,
         message: "Section not found",
@@ -49,13 +72,7 @@ export const createSubSection = async (req, res) => {
       $push: { subSections: newSubSection._id },
     });
 
-    const course = await Course.findOne({
-      sections: sectionId,
-    });
-
-    if (course) {
-      await calculateCourseDuration(course._id);
-    }
+    await calculateCourseDuration(course._id);
 
     const updatedSection = await Section.findById(sectionId).populate(
       "subSections"
@@ -68,12 +85,7 @@ export const createSubSection = async (req, res) => {
     });
 
   } catch (error) {
-    console.log("CREATE SUBSECTION ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -95,6 +107,33 @@ export const updateSubSection = async (req, res) => {
     const subSection = await SubSection.findById(subSectionId);
 
     if (!subSection) {
+      return res.status(404).json({
+        success: false,
+        message: "SubSection not found",
+      });
+    }
+
+    const parentSectionId = sectionId || subSection.section;
+    const section = await Section.findById(parentSectionId);
+
+    if (!section || String(subSection.section) !== String(section._id)) {
+      return res.status(404).json({
+        success: false,
+        message: "Section not found",
+      });
+    }
+
+    const parentCourse = await Course.findOne({ sections: section._id });
+    const authorization = await getAuthorizedCourse(req, parentCourse?._id);
+
+    if (authorization.error) {
+      return res.status(authorization.error.status).json({
+        success: false,
+        message: authorization.error.message,
+      });
+    }
+
+    if (!section.subSections.some((id) => String(id) === String(subSectionId))) {
       return res.status(404).json({
         success: false,
         message: "SubSection not found",
@@ -123,17 +162,11 @@ export const updateSubSection = async (req, res) => {
     await subSection.save();
 
     // update course duration (IMPORTANT)
-    const course = await Course.findOne({
-  sections: sectionId,
-});
-
-
-if (course) {
-  await calculateCourseDuration(course._id);
-}
+    const { course } = authorization;
+    await calculateCourseDuration(course._id);
 
     // return updated section
-    const updatedSection = await Section.findById(sectionId).populate(
+    const updatedSection = await Section.findById(parentSectionId).populate(
       "subSections"
     );
 
@@ -143,12 +176,7 @@ if (course) {
       message: "SubSection updated successfully",
     });
   } catch (error) {
-    console.log("UPDATE SUBSECTION ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };
 
@@ -176,6 +204,32 @@ export const deleteSubSection = async (req, res) => {
       });
     }
 
+    const section = await Section.findById(sectionId);
+
+    if (!section || String(subSection.section) !== String(section._id)) {
+      return res.status(404).json({
+        success: false,
+        message: "Section not found",
+      });
+    }
+
+    const course = await Course.findOne({ sections: section._id });
+    const authorization = await getAuthorizedCourse(req, course?._id);
+
+    if (authorization.error) {
+      return res.status(authorization.error.status).json({
+        success: false,
+        message: authorization.error.message,
+      });
+    }
+
+    if (!section.subSections.some((id) => String(id) === String(subSectionId))) {
+      return res.status(404).json({
+        success: false,
+        message: "SubSection not found",
+      });
+    }
+
     // delete video from cloudinary (safe)
     if (subSection.videoUrl) {
       try {
@@ -194,15 +248,7 @@ export const deleteSubSection = async (req, res) => {
     await SubSection.findByIdAndDelete(subSectionId);
 
     // recalculate course duration (IMPORTANT FIX)
-    const course = await Course.findOne({
-  sections: sectionId,
-});
-
-console.log("COURSE FOUND:", course);
-
-if (course) {
-  await calculateCourseDuration(course._id);
-}
+    await calculateCourseDuration(authorization.course._id);
 
     // return updated section
     const updatedSection = await Section.findById(sectionId).populate(
@@ -215,11 +261,6 @@ if (course) {
       message: "SubSection deleted successfully",
     });
   } catch (error) {
-    console.log("DELETE SUBSECTION ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return sendInternalError(res, error);
   }
 };

@@ -3,6 +3,36 @@
 @import url("https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
+:root {
+  --edu-color-primary: #4f46e5;
+  --edu-color-primary-hover: #4338ca;
+  --edu-color-secondary: #9333ea;
+
+  --edu-color-background: #f9fafb;
+  --edu-color-surface: #ffffff;
+  --edu-color-border: #e5e7eb;
+
+  --edu-color-heading: #111827;
+  --edu-color-body: #4b5563;
+  --edu-color-muted: #6b7280;
+
+  --edu-color-success: #059669;
+  --edu-color-error: #dc2626;
+  --edu-color-warning: #d97706;
+  --edu-color-info: #4f46e5;
+
+  --edu-font-body: "Poppins", sans-serif;
+  --edu-font-display: "Syne", sans-serif;
+
+  --edu-focus-ring-color: var(--edu-color-primary);
+  --edu-focus-ring-width: 2px;
+  --edu-focus-ring-offset: 2px;
+}
+
+.edu-focus-ring:focus-visible {
+  outline: var(--edu-focus-ring-width) solid var(--edu-focus-ring-color);
+  outline-offset: var(--edu-focus-ring-offset);
+}
 
 /* student style*/
 /* dashboard*/

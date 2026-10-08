@@ -7,20 +7,6 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// INTERCEPTOR
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
 
 // AUTH ENDPOINTS
 
@@ -111,10 +97,4 @@ CREATE_RATING: "/course/createRating",
 
   
 };
-//contact 
-   
-export const contactEndpoints = {
-  CONTACT_US: "/reach/contact",
-};
-
 export default api;

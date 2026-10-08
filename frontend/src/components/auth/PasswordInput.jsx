@@ -26,11 +26,11 @@ const PasswordInput = ({
     if (/[^A-Za-z0-9]/.test(value)) strength++;
 
     const levels = [
-      { level: 0, label: "Very Weak", color: "bg-red-500" },
-      { level: 1, label: "Weak", color: "bg-orange-500" },
-      { level: 2, label: "Fair", color: "bg-yellow-500" },
-      { level: 3, label: "Good", color: "bg-blue-500" },
-      { level: 4, label: "Strong", color: "bg-green-500" },
+      { level: 0, label: "Very Weak", color: "bg-red-600" },
+      { level: 1, label: "Weak", color: "bg-red-600" },
+      { level: 2, label: "Fair", color: "bg-amber-600" },
+      { level: 3, label: "Good", color: "bg-indigo-600" },
+      { level: 4, label: "Strong", color: "bg-emerald-600" },
     ];
 
     return levels[strength];
@@ -45,9 +45,9 @@ const PasswordInput = ({
       <div className="password-input-root space-y-2">
         {/* Label */}
         {label && (
-          <label className="block text-sm font-semibold text-gray-700">
+          <label className="block text-sm font-semibold text-gray-600">
             {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
+            {required && <span className="text-red-600 ml-1">*</span>}
           </label>
         )}
 
@@ -63,10 +63,10 @@ const PasswordInput = ({
             aria-label={label || placeholder}
             aria-describedby={error ? `${name}-error` : undefined}
             aria-invalid={!!error}
-            className={`password-field w-full px-4 py-3 pr-12 border-2 rounded-xl font-medium text-sm transition-all ${
+            className={`edu-focus-ring password-field w-full px-4 py-3 pr-12 border-2 rounded-xl bg-white text-gray-900 placeholder:text-gray-500 font-medium text-sm transition-all focus:outline-none ${
               error
-                ? "border-red-500 bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-200"
-                : "border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+                ? "border-red-600 bg-red-50 focus:ring-2 focus:ring-red-200"
+                : "border-gray-200 focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600"
             } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
           />
 
@@ -77,7 +77,7 @@ const PasswordInput = ({
             disabled={disabled}
             aria-label={showPassword ? "Hide password" : "Show password"}
             aria-pressed={showPassword}
-            className="toggle-btn absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="edu-focus-ring toggle-btn absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {showPassword ? (
               <EyeOff size={20} />
@@ -116,7 +116,7 @@ const PasswordInput = ({
                 Strength: <span className="font-semibold">{strength.label}</span>
               </p>
               {strength.level >= 3 && (
-                <CheckCircle size={16} className="text-green-500" />
+                <CheckCircle size={16} className="text-emerald-600" />
               )}
             </div>
           </div>

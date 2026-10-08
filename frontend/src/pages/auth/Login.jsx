@@ -37,7 +37,7 @@ const Login = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className="login-root min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader className="w-8 h-8 text-indigo-600 animate-spin" />
       </div>
     );
@@ -126,7 +126,7 @@ const Login = () => {
           }
 
 
-          login(data?.user, data?.token);
+          login(data?.user);
 
 
           const routes = {
@@ -167,24 +167,24 @@ const Login = () => {
 
 
   return (
-    <div className="login-root min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center px-4 py-8">
+    <div className="login-root min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="login-card w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 p-8"
+        className="login-card w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8"
       >
 
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-            <span className="login-title text-white font-black text-lg">
-              ED
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl sm:rounded-3xl mx-auto mb-4 flex items-center justify-center shadow-lg">
+            <span className="login-title text-white font-black text-2xl sm:text-3xl">
+              E
             </span>
           </div>
 
-          <h1 className="login-title text-3xl font-black text-gray-900">
-            Eduflex
+          <h1 className="login-title text-3xl sm:text-4xl font-black text-gray-900">
+            EduFlex
           </h1>
 
           <p className="text-gray-600 mt-2 text-sm">
@@ -194,7 +194,7 @@ const Login = () => {
 
 
         {errors.submit && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex gap-3 text-red-700 text-sm">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex gap-3 text-red-600 text-sm">
             <AlertCircle size={20}/>
             {errors.submit}
           </div>
@@ -205,12 +205,12 @@ const Login = () => {
 
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-600 mb-2">
               Email Address
             </label>
 
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"/>
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4"/>
 
               <input
                 type="email"
@@ -218,10 +218,10 @@ const Login = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
-                className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 ${
+                className={`edu-focus-ring w-full pl-12 pr-4 py-3 rounded-xl border-2 text-gray-900 placeholder:text-gray-500 focus:outline-none transition-colors ${
                   errors.email
-                    ? "border-red-500 bg-red-50"
-                    : "border-gray-200 bg-gray-50"
+                    ? "border-red-600 bg-red-50"
+                    : "border-gray-200 bg-white focus:border-indigo-600"
                 }`}
               />
             </div>
@@ -238,7 +238,7 @@ const Login = () => {
 
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-600 mb-2">
               Password
             </label>
 
@@ -261,6 +261,7 @@ const Login = () => {
                 name="rememberMe"
                 checked={formData.rememberMe}
                 onChange={handleChange}
+                className="edu-focus-ring accent-indigo-600"
               />
 
               <span className="text-sm text-gray-600">
@@ -272,7 +273,7 @@ const Login = () => {
             <button
               type="button"
               onClick={() => navigate("/forgot-password")}
-              className="text-sm text-indigo-600 font-semibold"
+              className="edu-focus-ring rounded-sm text-sm text-indigo-600 font-semibold hover:text-indigo-700"
             >
               Forgot Password?
             </button>
@@ -285,7 +286,7 @@ const Login = () => {
             whileHover={isFormValid ? {scale:1.02}:{}}
             whileTap={isFormValid ? {scale:0.98}:{}}
             disabled={!isFormValid}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-bold disabled:opacity-50"
+            className="edu-focus-ring w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-bold disabled:opacity-50 transition-colors"
           >
 
             {isPending ? (
@@ -306,7 +307,7 @@ const Login = () => {
           Don't have an account?{" "}
           <button
             onClick={() => navigate("/send-otp")}
-            className="text-indigo-600 font-bold"
+            className="edu-focus-ring rounded-sm text-indigo-600 font-bold hover:text-indigo-700"
           >
             Create Account
           </button>
