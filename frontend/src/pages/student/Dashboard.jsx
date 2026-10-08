@@ -9,13 +9,17 @@ import "@/index.css";
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const { data: user, isLoading: userLoading, isError: userError } =
+  const {
+    data: user,
+    isLoading: userLoading,
+    error: userError,
+  } =
     useUserDetails();
 
   const {
     data: courses,
     isLoading: coursesLoading,
-    isError: coursesError,
+    error: coursesError,
   } = useEnrolledCourses();
 
   const loading = userLoading || coursesLoading;
@@ -66,6 +70,35 @@ const Dashboard = () => {
           <p className="text-gray-600 text-sm mb-6">
             We couldn't load your courses. Please try again.
           </p>
+          <div className="mb-6 rounded-lg bg-gray-100 p-3 text-left text-xs text-gray-800">
+            <p className="mb-2 font-bold">DEBUG: Query errors</p>
+            {userError && (
+              <pre className="mb-3 whitespace-pre-wrap break-words">
+                {`userError: ${JSON.stringify(
+                  {
+                    status: userError.response?.status,
+                    message: userError.message,
+                    data: userError.response?.data,
+                  },
+                  null,
+                  2
+                )}`}
+              </pre>
+            )}
+            {coursesError && (
+              <pre className="whitespace-pre-wrap break-words">
+                {`coursesError: ${JSON.stringify(
+                  {
+                    status: coursesError.response?.status,
+                    message: coursesError.message,
+                    data: coursesError.response?.data,
+                  },
+                  null,
+                  2
+                )}`}
+              </pre>
+            )}
+          </div>
           <button
             onClick={() => window.location.reload()}
             className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-bold transition-all"

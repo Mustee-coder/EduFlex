@@ -94,7 +94,7 @@ const SidebarClean = ({ isOpen, closeSidebar }) => {
   const links = navigationLinks[role] || navigationLinks.Student;
 
   const handleNavClick = () => {
-    closeSidebar();
+    closeSidebar?.();
   };
 
   // Helper component for individual nav links
