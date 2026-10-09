@@ -40,3 +40,13 @@ export const getAllInstructors = async () => {
     throw error.response?.data || error.message;
   }
 };
+
+export const approveInstructor = async (instructorId) => {
+  const res = await api.patch(adminEndpoints.APPROVE_INSTRUCTOR(instructorId));
+  return res.data;
+};
+
+export const rejectInstructor = async (instructorId) => {
+  const res = await api.patch(adminEndpoints.REJECT_INSTRUCTOR(instructorId));
+  return res.data;
+};

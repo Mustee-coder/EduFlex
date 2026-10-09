@@ -48,6 +48,14 @@ const userSchema = new mongoose.Schema(
   default: true,
 },
 
+    // Optional for backward compatibility with users created before approval
+    // statuses were introduced. Legacy records resolve from `approved`.
+    approvalStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: undefined,
+    },
+
     additionalDetails: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Profile",
@@ -86,5 +94,15 @@ const userSchema = new mongoose.Schema(
 );
 
 const User = mongoose.model("User", userSchema);
+
+export const getInstructorApprovalStatus = (user) => {
+  if (user?.approvalStatus === "rejected") return "rejected";
+  if (user?.approvalStatus === "pending") return "pending";
+  if (user?.approvalStatus === "approved") {
+    return user.approved === true ? "approved" : "pending";
+  }
+
+  return user?.approved === true ? "approved" : "pending";
+};
 
 export default User;

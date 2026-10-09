@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -8,11 +10,48 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  Check,
+  X,
 } from "lucide-react";
 import { useAllInstructors } from "@/hooks/admin/hooks";
+import {
+  approveInstructor,
+  rejectInstructor,
+} from "@/services/adminService";
 
 const InstructorsTable = () => {
   const { data, isLoading, error } = useAllInstructors();
+  const queryClient = useQueryClient();
+  const [processingId, setProcessingId] = useState(null);
+
+  const approvalMutation = useMutation({
+    mutationFn: ({ instructorId, action }) =>
+      action === "approve"
+        ? approveInstructor(instructorId)
+        : rejectInstructor(instructorId),
+    onSuccess: (result) => {
+      toast.success(result?.message || "Instructor status updated");
+      queryClient.invalidateQueries({ queryKey: ["allInstructors"] });
+    },
+    onError: (error) => {
+      toast.error(error?.message || "Unable to update instructor status");
+    },
+    onSettled: () => setProcessingId(null),
+  });
+
+  const handleApproval = (instructor, action) => {
+    const actionLabel = action === "approve" ? "approve" : "reject";
+    if (
+      !window.confirm(
+        `Are you sure you want to ${actionLabel} ${instructor.firstName} ${instructor.lastName}?`
+      )
+    ) {
+      return;
+    }
+
+    setProcessingId(instructor._id);
+    approvalMutation.mutate({ instructorId: instructor._id, action });
+  };
 
   const instructors = data?.data || [];
 
@@ -228,6 +267,51 @@ const InstructorsTable = () => {
                     instructor.createdAt
                   ).toLocaleDateString()}
                 </div>
+
+                <div className="mb-4">
+                  <span
+                    className={`inline-flex rounded-full px-3 py-1 text-xs font-bold capitalize ${
+                      instructor.approvalStatus === "approved"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : instructor.approvalStatus === "rejected"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-amber-100 text-amber-700"
+                    }`}
+                  >
+                    {instructor.approvalStatus || (instructor.approved ? "approved" : "pending")}
+                  </span>
+                </div>
+
+                {instructor.approvalStatus === "pending" && (
+                  <div className="mb-3 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleApproval(instructor, "approve")}
+                      disabled={approvalMutation.isPending}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {processingId === instructor._id && approvalMutation.variables?.action === "approve" ? (
+                        <Loader className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Check className="h-4 w-4" />
+                      )}
+                      Approve
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleApproval(instructor, "reject")}
+                      disabled={approvalMutation.isPending}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-sm font-bold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {processingId === instructor._id && approvalMutation.variables?.action === "reject" ? (
+                        <Loader className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <X className="h-4 w-4" />
+                      )}
+                      Reject
+                    </button>
+                  </div>
+                )}
 
                 {/* Button */}
                 <motion.button

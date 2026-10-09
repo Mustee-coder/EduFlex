@@ -1,5 +1,5 @@
 import Profile from "../models/profile.js";
-import User from "../models/user.js";
+import User, { getInstructorApprovalStatus } from "../models/user.js";
 import Course from "../models/course.js";
 import CourseProgress from "../models/courseProgress.js";
 import mongoose from "mongoose"
@@ -418,12 +418,101 @@ export const getAllInstructors = async (req, res) => {
     return res.status(200).json({
       success: true,
       count,
-      data: instructors,
+      data: instructors.map((instructor) => ({
+        ...instructor.toObject(),
+        approvalStatus: getInstructorApprovalStatus(instructor),
+      })),
     });
   } catch (error) {
     return sendInternalError(res, error);
   }
 };
+
+const updateInstructorApproval = async (req, res, approvalStatus) => {
+  try {
+    const { instructorId } = req.params;
+
+    if (!mongoose.isValidObjectId(instructorId)) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid instructor ID is required",
+      });
+    }
+
+    if (String(req.user?.id) === String(instructorId)) {
+      return res.status(403).json({
+        success: false,
+        message: "Administrators cannot approve or reject their own instructor account",
+      });
+    }
+
+    // Match the resolver's pending state while allowing records created before
+    // approvalStatus existed. Legacy documents with approved:false resolve to
+    // pending; missing approved still receives the schema default (true).
+    const pendingStatusFilter = {
+      _id: instructorId,
+      accountType: "Instructor",
+      $or: [
+        { approvalStatus: "pending" },
+        {
+          approvalStatus: { $in: ["approved", null] },
+          approved: false,
+        },
+      ],
+    };
+
+    const instructor = await User.findOneAndUpdate(
+      pendingStatusFilter,
+      {
+        $set: {
+          approvalStatus,
+          approved: approvalStatus === "approved",
+        },
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!instructor) {
+      const existingInstructor = await User.findOne({
+        _id: instructorId,
+        accountType: "Instructor",
+      });
+
+      if (!existingInstructor) {
+        return res.status(404).json({
+          success: false,
+          message: "Instructor not found",
+        });
+      }
+
+      return res.status(409).json({
+        success: false,
+        message: `Instructor has already been ${getInstructorApprovalStatus(existingInstructor)}`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message:
+        approvalStatus === "approved"
+          ? "Instructor approved successfully"
+          : "Instructor rejected successfully",
+      data: {
+        _id: instructor._id,
+        approvalStatus: instructor.approvalStatus,
+        approved: instructor.approved,
+      },
+    });
+  } catch (error) {
+    return sendInternalError(res, error);
+  }
+};
+
+export const approveInstructor = (req, res) =>
+  updateInstructorApproval(req, res, "approved");
+
+export const rejectInstructor = (req, res) =>
+  updateInstructorApproval(req, res, "rejected");
 
 
 

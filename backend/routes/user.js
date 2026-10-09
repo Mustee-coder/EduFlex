@@ -27,7 +27,9 @@ import {
 // Profile controllers (admin only)
 import {
     getAllStudents,
-    getAllInstructors
+    getAllInstructors,
+    approveInstructor,
+    rejectInstructor,
 } from "../controllers/profile.js";
 
 
@@ -64,10 +66,11 @@ router.get("/all-students", auth, isAdmin, getAllStudents);
 
 // Get all instructors
 router.get("/all-instructors", auth, isAdmin, getAllInstructors);
+router.patch("/instructors/:instructorId/approve", auth, isAdmin, approveInstructor);
+router.patch("/instructors/:instructorId/reject", auth, isAdmin, rejectInstructor);
 
 
 // Export router
 export default router;
-
 
 

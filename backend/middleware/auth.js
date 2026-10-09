@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.js";
+import User, { getInstructorApprovalStatus } from "../models/user.js";
 import { sendInternalError } from "../utils/errorResponse.js";
 
 //  AUTH
@@ -55,9 +55,15 @@ export const isInstructor = async (req, res, next) => {
       });
     }
 
-    const user = await User.findById(req.user.id).select("accountType approved");
+    const user = await User.findById(req.user.id).select(
+      "accountType approved approvalStatus"
+    );
 
-    if (!user || user.accountType !== "Instructor" || user.approved !== true) {
+    if (
+      !user ||
+      user.accountType !== "Instructor" ||
+      getInstructorApprovalStatus(user) !== "approved"
+    ) {
       return res.status(403).json({
         success: false,
         message: "Instructor account approval is required",
@@ -98,9 +104,15 @@ export const isInstructorOrAdmin = async (req, res, next) => {
       });
     }
 
-    const user = await User.findById(req.user.id).select("accountType approved");
+    const user = await User.findById(req.user.id).select(
+      "accountType approved approvalStatus"
+    );
 
-    if (!user || user.accountType !== "Instructor" || user.approved !== true) {
+    if (
+      !user ||
+      user.accountType !== "Instructor" ||
+      getInstructorApprovalStatus(user) !== "approved"
+    ) {
       return res.status(403).json({
         success: false,
         message: "Instructor account approval is required",

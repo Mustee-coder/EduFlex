@@ -47,6 +47,8 @@ export const adminEndpoints = {
   // Users
   GET_ALL_STUDENTS: "/auth/all-students",
   GET_ALL_INSTRUCTORS: "/auth/all-instructors",
+  APPROVE_INSTRUCTOR: (instructorId) => `/auth/instructors/${instructorId}/approve`,
+  REJECT_INSTRUCTOR: (instructorId) => `/auth/instructors/${instructorId}/reject`,
 
   // Reviews
   GET_ALL_REVIEWS: "/course/getReviews",

@@ -1,4 +1,4 @@
-import User from "../models/user.js";
+import User, { getInstructorApprovalStatus } from "../models/user.js";
 import Profile from "../models/profile.js";
 import otpGenerator from "otp-generator";
 import OTP from "../models/OTP.js";
@@ -231,6 +231,7 @@ export const signup = async (req, res) => {
       accountType,
       additionalDetails: profile._id,
       approved: accountType === "Instructor" ? false : true,
+      ...(accountType === "Instructor" ? { approvalStatus: "pending" } : {}),
       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
       isVerified: Boolean(verifiedOtp),
     });
@@ -290,7 +291,10 @@ export const signup = async (req, res) => {
       });
     }
 
-    if (user.accountType === "Instructor" && user.approved !== true) {
+    if (
+      user.accountType === "Instructor" &&
+      getInstructorApprovalStatus(user) !== "approved"
+    ) {
       return res.status(403).json({
         success: false,
         message: "Your instructor account is awaiting approval",
