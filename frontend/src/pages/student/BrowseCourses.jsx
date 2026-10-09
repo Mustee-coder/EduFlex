@@ -47,7 +47,7 @@ const BrowseCourses = () => {
       <div className="browse-root student-page min-h-screen bg-slate-50">
         
         {/* Header */}
-        <motion .div
+        <Motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           className="border-b border-slate-200 bg-white"
@@ -85,7 +85,7 @@ const BrowseCourses = () => {
               </div>
             </div>
           </div>
-        </motion .div>
+        </Motion.div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div>
@@ -100,7 +100,7 @@ const BrowseCourses = () => {
                 <div className="student-panel flex items-start gap-3 p-6" role="alert"><AlertCircle className="mt-0.5 text-rose-600"/><div><h2 className="font-semibold text-slate-900">Courses couldn’t load</h2><p className="mt-1 text-sm text-slate-600">Please refresh and try again.</p><button type="button" onClick={() => window.location.reload()} className="student-button-secondary mt-4">Try again</button></div></div>
               ) : visibleCourses.length === 0 ? (
                 // Empty State
-                <motion .div
+                <Motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center"
@@ -124,12 +124,12 @@ const BrowseCourses = () => {
                     <X className="w-4 h-4" />
                     Reset Filters
                   </button>
-                </motion .div>
+                </Motion.div>
               ) : (
                 // Courses Grid
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {visibleCourses.map((course, index) => (
-                    <motion .div
+                    <Motion.div
                       key={course._id || course.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -197,14 +197,14 @@ const BrowseCourses = () => {
                           </div>
                         </div>
                       </Link>
-                    </motion .div>
+                    </Motion.div>
                   ))}
                 </div>
               )}
 
               {/* Pagination */}
               {courses.length > 0 && pagination && (
-                <motion .div
+                <Motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-12 flex items-center justify-center gap-2"
@@ -253,7 +253,7 @@ const BrowseCourses = () => {
                   <span className="hidden text-sm text-gray-600 sm:inline ml-4">
                     Page {pagination.page || 1} of {pagination.pages || 1}
                   </span>
-                </motion .div>
+                </Motion.div>
               )}
           </div>
         </div>
