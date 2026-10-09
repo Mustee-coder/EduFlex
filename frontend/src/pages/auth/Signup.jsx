@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import PasswordInput from "@/components/auth/PasswordInput";
@@ -10,12 +10,16 @@ import "@/index.css";
 
 const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { mutate, isPending } = useSignup();
+  const verifiedEmail = (
+    location.state?.email || localStorage.getItem("verifiedEmail") || ""
+  ).trim().toLowerCase();
 
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
-    email: "",
+    email: verifiedEmail,
     password: "",
     confirmPassword: "",
     accountType: "Student",
@@ -153,6 +157,8 @@ const Register = () => {
 
     mutate(payload, {
       onSuccess: () => {
+        localStorage.removeItem("verifiedEmail");
+        localStorage.removeItem("signupEmail");
         toast.success("Account created successfully! 🎉");
         navigate("/login");
       },
@@ -268,6 +274,7 @@ const Register = () => {
                   type="email"
                   placeholder="you@example.com"
                   value={form.email}
+                  readOnly={Boolean(verifiedEmail)}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   aria-invalid={touched.email && !!errors.email}

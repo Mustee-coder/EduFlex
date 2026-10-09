@@ -138,13 +138,24 @@ export const verifyOTP = async (req, res) => {
       });
     }
 
+    const existingUser = await User.findOne({ email: normalizedEmail }).select("_id");
+
+    if (existingUser) {
+      const userUpdate = await User.updateOne(
+        { _id: existingUser._id, email: normalizedEmail },
+        { $set: { isVerified: true } }
+      );
+
+      if (userUpdate.matchedCount !== 1) {
+        return res.status(409).json({
+          success: false,
+          message: "The account could not be verified. Please try again.",
+        });
+      }
+    }
+
     latestOtp.verifiedAt = new Date();
     await latestOtp.save();
-
-    await User.updateOne(
-      { email: normalizedEmail },
-      { isVerified: true }
-    );
 
     // mark verified
     return res.status(200).json({
@@ -212,6 +223,14 @@ export const signup = async (req, res) => {
       });
     }
 
+    if (!verifiedOtp) {
+      return res.status(403).json({
+        success: false,
+        message: "Please verify this email before creating an account",
+        code: "EMAIL_NOT_VERIFIED",
+      });
+    }
+
     // 4. Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -233,7 +252,7 @@ export const signup = async (req, res) => {
       approved: accountType === "Instructor" ? false : true,
       ...(accountType === "Instructor" ? { approvalStatus: "pending" } : {}),
       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
-      isVerified: Boolean(verifiedOtp),
+      isVerified: true,
     });
 
     if (verifiedOtp) {

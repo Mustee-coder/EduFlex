@@ -75,6 +75,7 @@ const SendOtp = () => {
       },
       {
         onSuccess: () => {
+          localStorage.removeItem("verifiedEmail");
           toast.success(
             "OTP sent to your email! 📧"
           );

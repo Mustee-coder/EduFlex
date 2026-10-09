@@ -11,8 +11,6 @@ export const useVerifyOtp = () => {
     },
 
     onError: (error) => {
-      console.log("FULL ERROR:", error);
-
       toast.error(
         error?.response?.data?.message || "Failed to verify OTP"
       );
