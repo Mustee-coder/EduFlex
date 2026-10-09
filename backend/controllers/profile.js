@@ -25,8 +25,6 @@ export const updateProfile = async (req, res) => {
       lastName,
     } = req.body;
 
-console.log("USER:", req.user);
-console.log("BODY:", req.body);
     const userDetails = await User.findById(userId);
 
     if (!userDetails) {
@@ -325,8 +323,6 @@ export const instructorDashboard = async (req, res) => {
       )
     : null;
         
-    console.log(bestCourse);
-
     const totalStudents = result.reduce(
       (acc, c) => acc + c.totalStudentsEnrolled,
       0

@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import {
   Layers,
   CheckCircle2,
@@ -15,7 +15,7 @@ const CourseBuilderHeader = ({
   courseId,
 }) => {
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       className="mb-6 sm:mb-8"
@@ -67,7 +67,7 @@ const CourseBuilderHeader = ({
         </div>
 
         {/* Publish Button */}
-        <motion.button
+        <Motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() =>
@@ -103,9 +103,9 @@ const CourseBuilderHeader = ({
               <span className="sm:hidden">Pub</span>
             </>
           )}
-        </motion.button>
+        </Motion.button>
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };
 

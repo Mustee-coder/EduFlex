@@ -1,322 +1,78 @@
-import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { AlertCircle, LoaderCircle, Mail } from "lucide-react";
 import PasswordInput from "@/components/auth/PasswordInput";
+import AuthLayout from "@/components/layouts/AuthLayout";
 import { useLogin } from "@/hooks/useLogin";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/useAuth";
 import { toast } from "sonner";
-import { Mail, AlertCircle, Loader } from "lucide-react";
-import "@/index.css";
+
+const getRememberedEmail = () => {
+  const email = localStorage.getItem("rememberEmail") || "";
+  return { email, password: "", rememberMe: Boolean(email) };
+};
 
 const Login = () => {
   const { mutate, isPending } = useLogin();
   const { user, login, loading } = useAuth();
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
-  });
-
+  const location = useLocation();
+  const [form, setForm] = useState(getRememberedEmail);
   const [errors, setErrors] = useState({});
+  const roleRoutes = { Admin: "/admin", Instructor: "/instructor", Student: "/dashboard" };
 
-  // Load remembered email
-  useEffect(() => {
-    const rememberedEmail = localStorage.getItem("rememberEmail");
+  if (loading) return <main className="flex min-h-[100svh] items-center justify-center" aria-label="Loading account"><LoaderCircle className="animate-spin text-indigo-700" /></main>;
+  if (user) return <Navigate to={roleRoutes[user.accountType] || "/dashboard"} replace />;
 
-    if (rememberedEmail) {
-      setFormData((prev) => ({
-        ...prev,
-        email: rememberedEmail,
-        rememberMe: true,
-      }));
-    }
-  }, []);
-
-  // Loading state
-  if (loading) {
-    return (
-      <div className="login-root min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader className="w-8 h-8 text-indigo-600 animate-spin" />
-      </div>
-    );
-  }
-
-  // Redirect authenticated users
-  if (user) {
-    const routes = {
-      Admin: "/admin",
-      Instructor: "/instructor",
-      Student: "/dashboard",
-    };
-
-    return (
-      <Navigate
-        to={routes[user?.accountType] || "/dashboard"}
-        replace
-      />
-    );
-  }
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-    ) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password =
-        "Password must be at least 6 characters";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
+  const onChange = (event) => {
+    const { name, value, checked, type } = event.target;
+    setForm((current) => ({ ...current, [name]: type === "checkbox" ? checked : value }));
+    setErrors((current) => ({ ...current, [name]: "", submit: "" }));
   };
 
+  const onSubmit = (event) => {
+    event.preventDefault();
+    const email = form.email.trim().toLowerCase();
+    const nextErrors = {};
+    if (!email) nextErrors.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) nextErrors.email = "Enter a valid email address";
+    if (!form.password) nextErrors.password = "Password is required";
+    else if (form.password.length < 6) nextErrors.password = "Password must be at least 6 characters";
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length) return;
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-  };
-
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-
-    mutate(
-      {
-        email: formData.email,
-        password: formData.password,
+    mutate({ email, password: form.password }, {
+      onSuccess: (data) => {
+        if (form.rememberMe) localStorage.setItem("rememberEmail", email);
+        else localStorage.removeItem("rememberEmail");
+        login(data?.user);
+        toast.success("Welcome back.");
+        navigate(roleRoutes[data?.user?.accountType || "Student"] || "/dashboard", { replace: true });
       },
-      {
-        onSuccess: (data) => {
-          toast.success("Welcome back! 🚀");
-
-
-          if (formData.rememberMe) {
-            localStorage.setItem(
-              "rememberEmail",
-              formData.email
-            );
-          } else {
-            localStorage.removeItem("rememberEmail");
-          }
-
-
-          login(data?.user);
-
-
-          const routes = {
-            Admin: "/admin",
-            Instructor: "/instructor",
-            Student: "/dashboard",
-          };
-
-          const role =
-            data?.user?.accountType || "Student";
-
-
-          navigate(routes[role] || "/dashboard", {
-            replace: true,
-          });
-        },
-
-        onError: (error) => {
-          const message =
-            error?.response?.data?.message ||
-            "Login failed. Please try again.";
-
-          toast.error(message);
-
-          setErrors({
-            submit: message,
-          });
-        },
-      }
-    );
+      onError: (error) => {
+        const message = error?.response?.data?.message || "We couldn’t sign you in. Check your details and try again.";
+        setErrors({ submit: message, code: error?.response?.data?.code || "" });
+      },
+    });
   };
 
-
-  const isFormValid =
-    Boolean(formData.email.trim()) &&
-    Boolean(formData.password.trim()) &&
-    !isPending;
-
-
-  return (
-    <div className="login-root min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="login-card w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8"
-      >
-
-        <div className="text-center mb-8">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl sm:rounded-3xl mx-auto mb-4 flex items-center justify-center shadow-lg">
-            <span className="login-title text-white font-black text-2xl sm:text-3xl">
-              E
-            </span>
-          </div>
-
-          <h1 className="login-title text-3xl sm:text-4xl font-black text-gray-900">
-            EduFlex
-          </h1>
-
-          <p className="text-gray-600 mt-2 text-sm">
-            Welcome back! Continue your learning journey.
-          </p>
-        </div>
-
-
-        {errors.submit && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex gap-3 text-red-600 text-sm">
-            <AlertCircle size={20}/>
-            {errors.submit}
-          </div>
-        )}
-
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-600 mb-2">
-              Email Address
-            </label>
-
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4"/>
-
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                className={`edu-focus-ring w-full pl-12 pr-4 py-3 rounded-xl border-2 text-gray-900 placeholder:text-gray-500 focus:outline-none transition-colors ${
-                  errors.email
-                    ? "border-red-600 bg-red-50"
-                    : "border-gray-200 bg-white focus:border-indigo-600"
-                }`}
-              />
-            </div>
-
-
-            {errors.email && (
-              <p className="text-red-600 text-xs mt-2 flex gap-1">
-                <AlertCircle size={14}/>
-                {errors.email}
-              </p>
-            )}
-          </div>
-
-
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-600 mb-2">
-              Password
-            </label>
-
-            <PasswordInput
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter your password"
-              error={errors.password}
-            />
-          </div>
-
-
-
-          <div className="flex justify-between items-center">
-
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="rememberMe"
-                checked={formData.rememberMe}
-                onChange={handleChange}
-                className="edu-focus-ring accent-indigo-600"
-              />
-
-              <span className="text-sm text-gray-600">
-                Remember me
-              </span>
-            </label>
-
-
-            <button
-              type="button"
-              onClick={() => navigate("/forgot-password")}
-              className="edu-focus-ring rounded-sm text-sm text-indigo-600 font-semibold hover:text-indigo-700"
-            >
-              Forgot Password?
-            </button>
-
-          </div>
-
-
-
-          <motion.button
-            whileHover={isFormValid ? {scale:1.02}:{}}
-            whileTap={isFormValid ? {scale:0.98}:{}}
-            disabled={!isFormValid}
-            className="edu-focus-ring w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-bold disabled:opacity-50 transition-colors"
-          >
-
-            {isPending ? (
-              <>
-                <Loader className="inline w-4 h-4 animate-spin mr-2"/>
-                Signing in...
-              </>
-            ) : (
-              "Sign In"
-            )}
-
-          </motion.button>
-
-        </form>
-
-
-        <p className="text-center text-sm text-gray-600 mt-6">
-          Don't have an account?{" "}
-          <button
-            onClick={() => navigate("/send-otp")}
-            className="edu-focus-ring rounded-sm text-indigo-600 font-bold hover:text-indigo-700"
-          >
-            Create Account
-          </button>
-        </p>
-
-      </motion.div>
-
-    </div>
-  );
+  return <AuthLayout title="Welcome back" subtitle="Sign in to continue where your learning left off.">
+    {location.state?.emailVerified && <p role="status" className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-sm text-emerald-900">Email verified. You can sign in now.</p>}
+    {location.state?.signupComplete && <p role="status" className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-sm text-emerald-900">Your account is ready. Sign in to continue.</p>}
+    <form onSubmit={onSubmit} noValidate className="space-y-5">
+      {errors.submit && <div role="alert" className="flex gap-3 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-800"><AlertCircle size={18} className="mt-0.5 shrink-0" /><div><p>{errors.submit}</p>{errors.code === "EMAIL_NOT_VERIFIED" && <button type="button" onClick={() => navigate("/send-otp", { state: { email: form.email.trim().toLowerCase(), verificationPurpose: "existing-account" } })} className="mt-2 font-semibold underline underline-offset-2">Verify your email</button>}</div></div>}
+      <div>
+        <label htmlFor="login-email" className="mb-1.5 block text-sm font-medium text-slate-800">Email address</label>
+        <div className="relative"><Mail size={17} aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" /><input id="login-email" name="email" type="email" autoComplete="email" inputMode="email" value={form.email} onChange={onChange} aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "login-email-error" : undefined} placeholder="you@example.com" className={`edu-focus-ring min-h-12 w-full rounded-xl border bg-white pl-10 pr-3 text-sm text-slate-950 placeholder:text-slate-400 ${errors.email ? "border-red-400" : "border-slate-300"}`} />
+        {errors.email && <p id="login-email-error" className="mt-1.5 text-xs text-red-700" role="alert">{errors.email}</p>}</div>
+      </div>
+      <div><div className="mb-1.5 flex justify-end"><button type="button" onClick={() => navigate("/forgot-password")} className="edu-focus-ring rounded text-sm font-medium text-indigo-700 hover:text-indigo-900">Forgot password?</button></div>
+        <PasswordInput name="password" label="Password" value={form.password} onChange={onChange} placeholder="Enter your password" error={errors.password} required /></div>
+      <label className="flex min-h-8 w-fit cursor-pointer items-center gap-2.5 text-sm text-slate-600"><input type="checkbox" name="rememberMe" checked={form.rememberMe} onChange={onChange} className="edu-focus-ring h-4 w-4 rounded border-slate-300 accent-indigo-700" />Remember this email</label>
+      <button type="submit" disabled={isPending} className="edu-focus-ring flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-700 px-4 font-semibold text-white transition-colors hover:bg-indigo-800 disabled:cursor-wait disabled:opacity-70">{isPending && <LoaderCircle size={18} className="animate-spin" />}{isPending ? "Signing in…" : "Sign in"}</button>
+    </form>
+    <p className="mt-6 text-center text-sm text-slate-600">New to EduFlex? <button type="button" onClick={() => navigate("/send-otp")} className="edu-focus-ring rounded font-semibold text-indigo-700 hover:text-indigo-900">Create an account</button></p>
+  </AuthLayout>;
 };
 
 export default Login;

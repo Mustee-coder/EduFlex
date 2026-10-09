@@ -6,9 +6,12 @@ export const connectDB = async () => {
 
     console.log("Database connected successfully");
   } catch (error) {
-    console.log("Error while connecting server with Database");
+    const errorName = error instanceof Error && /^[A-Za-z][A-Za-z0-9]*$/.test(error.name)
+      ? error.name
+      : "UnknownError";
+    const errorCode = Number.isInteger(error?.code) ? error.code : undefined;
 
-    console.log(error);
+    console.error("[database] connection failed", { errorName, errorCode });
 
     process.exit(1);
   }

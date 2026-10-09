@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { useCreateSubSection } from "@/hooks/useCreateSubSection";
 import { toast } from "sonner";
 import {
@@ -228,7 +228,7 @@ const CreateSubSection = () => {
         <div className="max-w-4xl mx-auto">
           
           {/* Header */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
@@ -246,10 +246,10 @@ const CreateSubSection = () => {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
 
           {/* Form Card */}
-          <motion.form
+          <Motion.form
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -292,14 +292,14 @@ const CreateSubSection = () => {
 
                 <div className="flex justify-between items-start">
                   {touched.title && errors.title && (
-                    <motion.p
+                    <Motion.p
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="text-red-600 text-xs font-semibold flex items-center gap-1"
                     >
                       <AlertCircle size={12} />
                       {errors.title}
-                    </motion.p>
+                    </Motion.p>
                   )}
                   <p className="text-xs text-gray-500 ml-auto">
                     {formData.title.length}/100
@@ -333,14 +333,14 @@ const CreateSubSection = () => {
 
                 <div className="flex justify-between items-start">
                   {touched.description && errors.description && (
-                    <motion.p
+                    <Motion.p
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="text-red-600 text-xs font-semibold flex items-center gap-1"
                     >
                       <AlertCircle size={12} />
                       {errors.description}
-                    </motion.p>
+                    </Motion.p>
                   )}
                   <p className="text-xs text-gray-500 ml-auto">
                     {formData.description.length}/1000
@@ -360,7 +360,7 @@ const CreateSubSection = () => {
 
               {/* Video Preview */}
               {videoPreview && videoInfo && (
-                <motion.div
+                <Motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="relative rounded-xl overflow-hidden border-2 border-emerald-200 bg-emerald-50 p-4"
@@ -398,7 +398,7 @@ const CreateSubSection = () => {
                   </div>
 
                   {/* Remove Button */}
-                  <motion.button
+                  <Motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     type="button"
@@ -406,8 +406,8 @@ const CreateSubSection = () => {
                     className="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition-all"
                   >
                     <X className="w-5 h-5" />
-                  </motion.button>
-                </motion.div>
+                  </Motion.button>
+                </Motion.div>
               )}
 
               {/* File Input */}
@@ -457,7 +457,7 @@ const CreateSubSection = () => {
             </div>
 
             {/* Submit Button */}
-            <motion.button
+            <Motion.button
               whileHover={isFormValid ? { scale: 1.02 } : {}}
               whileTap={isFormValid ? { scale: 0.98 } : {}}
               type="submit"
@@ -475,14 +475,14 @@ const CreateSubSection = () => {
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}
-            </motion.button>
+            </Motion.button>
 
             {/* Helper Text */}
             <p className="text-center text-xs text-gray-600">
               Uploading may take a few minutes depending on video size. Please
               don't close this page.
             </p>
-          </motion.form>
+          </Motion.form>
         </div>
       </div>
     </>

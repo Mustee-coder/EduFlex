@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   ChevronUp,
@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { useAllStudents } from "@/hooks/admin/hooks";
 
+const EMPTY_LIST = [];
+
 const StudentsTable = () => {
   const { data, isLoading } = useAllStudents();
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,7 +21,7 @@ const StudentsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const students = data?.data || [];
+  const students = data?.data ?? EMPTY_LIST;
 
   // Search and Sort
   const filteredAndSortedStudents = useMemo(() => {

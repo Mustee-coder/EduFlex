@@ -1,4 +1,4 @@
-import api, { authEndpoints ,profileEndpoints} from "../api/apis";
+import api, { authEndpoints } from "../api/apis";
 
 // LOGIN
 export const loginUser = async (data) => {

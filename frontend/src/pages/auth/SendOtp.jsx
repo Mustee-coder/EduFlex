@@ -1,280 +1,42 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AlertCircle, LoaderCircle, Mail, ArrowLeft } from "lucide-react";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import { useSendOtp } from "@/hooks/useSendOtp";
-import { toast } from "sonner";
-import {
-  Mail,
-  AlertCircle,
-  Loader,
-  CheckCircle,
-} from "lucide-react";
-import "@/index.css";
 
 const SendOtp = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { mutate, isPending } = useSendOtp();
-
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(location.state?.email || "");
   const [error, setError] = useState("");
-  const [isValidEmail, setIsValidEmail] = useState(false);
-
-
-  const checkEmail = (value) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-      value.trim()
-    );
-  };
-
-
-  const handleChange = (e) => {
-    const value = e.target.value;
-
-    setEmail(value);
-
-    if (!value.trim()) {
-      setError("");
-      setIsValidEmail(false);
+  const submit = (event) => {
+    event.preventDefault();
+    const normalized = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
+      setError(normalized ? "Enter a valid email address." : "Email is required.");
       return;
     }
-
-    const valid = checkEmail(value);
-
-    setIsValidEmail(valid);
-
-    setError(
-      valid
-        ? ""
-        : "Please enter a valid email address"
-    );
-  };
-
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const normalizedEmail = email.trim().toLowerCase();
-
-
-    if (!normalizedEmail) {
-      setError("Email address is required");
-      return;
-    }
-
-
-    if (!checkEmail(normalizedEmail)) {
-      setError("Please enter a valid email address");
-      return;
-    }
-
-
-    mutate(
-      {
-        email: normalizedEmail,
+    setError("");
+    mutate({ email: normalized }, {
+      onSuccess: () => {
+        localStorage.removeItem("verifiedEmail");
+        localStorage.setItem("signupEmail", normalized);
+        if (location.state?.verificationPurpose === "existing-account") localStorage.setItem("verificationPurpose", "existing-account");
+        else localStorage.removeItem("verificationPurpose");
+        navigate("/verify-email", { state: { email: normalized } });
       },
-      {
-        onSuccess: () => {
-          localStorage.removeItem("verifiedEmail");
-          toast.success(
-            "OTP sent to your email! 📧"
-          );
-
-
-          localStorage.setItem(
-            "signupEmail",
-            normalizedEmail
-          );
-
-
-          setEmail("");
-          setError("");
-
-
-          navigate("/verify-email", {
-            state: {
-              email: normalizedEmail,
-            },
-          });
-        },
-
-
-        onError: (error) => {
-          const message =
-            error?.response?.data?.message ||
-            "Failed to send OTP. Please try again.";
-
-
-          toast.error(message);
-          setError(message);
-        },
-      }
-    );
+      onError: (requestError) => setError(requestError?.response?.data?.message || "We couldn’t send a code. Please try again shortly."),
+    });
   };
-
-
-  const isFormValid = Boolean(
-    email.trim() &&
-    isValidEmail &&
-    !isPending
-  );
-
-
-  return (
-    <AuthLayout
-      title="Create Your Account"
-      subtitle="Enter your email to get started"
-    >
-
-      <div className="sendotp-root space-y-6">
-
-
-        {error && (
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: -10,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            className="p-4 bg-red-50 border border-red-200 rounded-xl flex gap-3"
-          >
-            <AlertCircle className="w-5 h-5 text-red-600" />
-
-            <p className="text-red-600 text-sm font-semibold">
-              {error}
-            </p>
-          </motion.div>
-        )}
-
-
-
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-5"
-        >
-
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-600 mb-2">
-              Email Address
-            </label>
-
-
-            <div className="relative">
-
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"/>
-
-
-              <input
-                type="email"
-                value={email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                className={`edu-focus-ring w-full pl-12 pr-12 py-3 rounded-xl border-2 bg-white text-gray-900 placeholder:text-gray-500 text-sm font-medium focus:outline-none transition ${
-                  error
-                    ? "border-red-600 bg-red-50"
-                    : isValidEmail
-                    ? "border-emerald-600 bg-emerald-50"
-                    : "border-gray-200 focus:border-indigo-600"
-                }`}
-              />
-
-
-              {email.trim() && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2">
-
-                  {error ? (
-                    <AlertCircle className="w-5 h-5 text-red-600"/>
-                  ) : isValidEmail ? (
-                    <CheckCircle className="w-5 h-5 text-emerald-600"/>
-                  ) : null}
-
-                </div>
-              )}
-
-            </div>
-
-
-            {isValidEmail && !error && (
-              <p className="mt-2 text-xs text-emerald-600 flex items-center gap-1 font-semibold">
-                <CheckCircle size={14}/>
-                Email is valid
-              </p>
-            )}
-
-          </div>
-
-
-
-          <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-xl">
-
-            <p className="text-xs text-indigo-600">
-              📧 We will send a verification code to confirm your email address.
-            </p>
-
-          </div>
-
-
-
-          <motion.button
-            whileHover={
-              isFormValid
-                ? { scale: 1.02 }
-                : {}
-            }
-            whileTap={
-              isFormValid
-                ? { scale: 0.98 }
-                : {}
-            }
-            type="submit"
-            disabled={!isFormValid || isPending}
-            className="edu-focus-ring w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
-          >
-
-            {isPending ? (
-              <>
-                <Loader className="w-4 h-4 animate-spin"/>
-                Sending OTP...
-              </>
-            ) : (
-              <>
-                <Mail className="w-4 h-4"/>
-                Send Verification Code
-              </>
-            )}
-
-          </motion.button>
-
-
-        </form>
-
-
-
-        <p className="text-center text-sm text-gray-600">
-
-          Already have an account?{" "}
-
-          <button
-            type="button"
-            onClick={() => navigate("/login")}
-            className="edu-focus-ring rounded-sm text-indigo-600 font-bold hover:text-indigo-700 hover:underline"
-          >
-            Sign In
-          </button>
-
-        </p>
-
-
-
-      </div>
-
-    </AuthLayout>
-  );
+  return <AuthLayout title="Verify your email" subtitle="We’ll send a one-time code before you create your account.">
+    <form onSubmit={submit} noValidate className="space-y-5">
+      {error && <div role="alert" className="flex gap-3 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-800"><AlertCircle size={18} className="mt-0.5 shrink-0" /><p>{error}</p></div>}
+      <div><label htmlFor="otp-email" className="mb-1.5 block text-sm font-medium text-slate-800">Email address</label><input id="otp-email" type="email" autoComplete="email" inputMode="email" value={email} onChange={(event) => { setEmail(event.target.value); setError(""); }} aria-invalid={Boolean(error)} aria-describedby={error ? "otp-email-error" : "otp-email-help"} placeholder="you@example.com" className={`edu-focus-ring min-h-12 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-950 placeholder:text-slate-400 ${error ? "border-red-400" : "border-slate-300"}`} />{error && <span id="otp-email-error" className="sr-only">{error}</span>}<p id="otp-email-help" className="mt-1.5 text-xs leading-5 text-slate-500">Use the address you want connected to your EduFlex account.</p></div>
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 text-sm leading-6 text-slate-600"><Mail size={17} aria-hidden="true" className="mr-2 inline text-indigo-700" />Your code expires after a short time. You can request another if needed.</div>
+      <button type="submit" disabled={isPending} className="edu-focus-ring flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-700 px-4 font-semibold text-white hover:bg-indigo-800 disabled:cursor-wait disabled:opacity-70">{isPending && <LoaderCircle size={18} className="animate-spin" />}{isPending ? "Sending code…" : "Send verification code"}</button>
+    </form>
+    <button type="button" onClick={() => navigate("/login")} className="edu-focus-ring mx-auto mt-5 flex min-h-10 items-center gap-1 rounded px-2 text-sm font-medium text-slate-600 hover:text-indigo-700"><ArrowLeft size={15} />Back to sign in</button>
+  </AuthLayout>;
 };
-
-
 export default SendOtp;

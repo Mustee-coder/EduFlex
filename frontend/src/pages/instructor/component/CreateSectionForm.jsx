@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { Plus, Loader } from "lucide-react";
 
 const CreateSectionForm = ({
@@ -9,7 +9,7 @@ const CreateSectionForm = ({
   handleCreateSection,
 }) => {
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
@@ -45,7 +45,7 @@ const CreateSectionForm = ({
           className="input-animate w-full flex-1 rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
         />
 
-        <motion.button
+        <Motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           type="submit"
@@ -63,9 +63,9 @@ const CreateSectionForm = ({
               <span>Add Section</span>
             </>
           )}
-        </motion.button>
+        </Motion.button>
       </form>
-    </motion.div>
+    </Motion.div>
   );
 };
 

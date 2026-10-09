@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteSubSection } from "@/services/courseService";
+import { toast } from "react-toastify";
 
 export const useDeleteSubSection = (courseId) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: deleteSubSection,
-    onSuccess: (data) => {
-
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["courseDetails", courseId],
       });

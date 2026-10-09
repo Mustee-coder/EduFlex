@@ -18,12 +18,18 @@ export const useCreateSubSection = () => {
     },
 
     onError: (error) => {
-  console.log(error);
-  console.log(error?.response?.data);
+      const status = error?.response?.status;
+      const code = error?.code;
+      console.error("[createSubSection] request failed", {
+        ...(Number.isInteger(status) ? { status } : {}),
+        ...(typeof code === "string" && /^[A-Z0-9_]{1,40}$/.test(code)
+          ? { code }
+          : {}),
+      });
 
-  toast.error(
-    error?.response?.data?.message || "Failed to create lesson"
-  );
-},
+      toast.error(
+        error?.response?.data?.message || "Failed to create lesson"
+      );
+    },
   });
 };

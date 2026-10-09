@@ -1,4 +1,5 @@
 import React from "react";
+// eslint-disable-next-line no-unused-vars -- Core ESLint does not count JSX member references.
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Menu, CheckCircle2, Play } from "lucide-react";
 
@@ -20,7 +21,10 @@ const CoursePlayerSidebar = ({
   initial={{ opacity: 0 }}
   animate={{ opacity: 1 }}
   onClick={() => setSidebarOpen(!sidebarOpen)}
-  className="md:hidden fixed top-4 left-4 z-[60] p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+  type="button"
+  aria-label={sidebarOpen ? "Close lesson list" : "Open lesson list"}
+  aria-expanded={sidebarOpen}
+  className="md:hidden fixed top-[4.5rem] left-3 z-[60] inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg bg-slate-900/90 shadow-lg transition-colors hover:bg-slate-800"
 >
         {sidebarOpen ? (
           <X className="w-6 h-6 text-white" />
@@ -47,7 +51,7 @@ const CoursePlayerSidebar = ({
               animate={{ x: 0 }}
               exit={{ x: -400 }}
               transition={{ duration: 0.3 }}
-              className="fixed md:relative top-0 left-0 w-[85%] sm:w-[350px] md:w-1/4 h-full md:h-screen bg-gradient-to-b from-gray-800 to-gray-900 border-r border-gray-700 z-40 overflow-y-auto">
+              className="fixed md:sticky top-16 md:top-16 left-0 z-40 h-[calc(100dvh-4rem)] w-[min(21rem,88vw)] shrink-0 overflow-y-auto border-r border-slate-700 bg-slate-900 md:h-[calc(100vh-4rem)] md:w-[19rem]">
               <div className="p-6 space-y-6">
                 
                 {/* Progress Summary Card */}
@@ -157,7 +161,7 @@ const CoursePlayerSidebar = ({
                                           {lesson.title}
                                         </p>
                                         <p className="text-xs text-gray-400 mt-1">
-                                          {lesson.timeDuration || "5"} min
+                                          {lesson.timeDuration ? `${lesson.timeDuration} min` : "Lesson"}
                                         </p>
                                       </div>
                                     </div>

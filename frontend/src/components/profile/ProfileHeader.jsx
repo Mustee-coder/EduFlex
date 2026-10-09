@@ -21,7 +21,9 @@ const ProfileHeader = ({ user, previewImage, profileCompletion, onEdit, fileInpu
           />
 
           <button
+            type="button"
             onClick={() => fileInputRef.current?.click()}
+            aria-label="Choose profile photo"
             disabled={isUploading}
             className="absolute bottom-0 right-0 p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg transition-all"
           >
@@ -76,6 +78,7 @@ const ProfileHeader = ({ user, previewImage, profileCompletion, onEdit, fileInpu
 
         {/* Edit */}
         <button
+          type="button"
           onClick={onEdit}
           className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-lg"
         >

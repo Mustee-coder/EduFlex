@@ -1,13 +1,12 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { useInstructorCourses } from "@/hooks/useInstructorCourses";
 import { toast } from "sonner";
 import {
   BookOpen,
   Users,
   DollarSign,
-  TrendingUp,
   Plus,
   AlertCircle,
   Loader,
@@ -33,12 +32,12 @@ const InstructorDashboard = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <motion.div
+        <Motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
         >
           <Loader className="w-12 h-12 text-emerald-600" />
-        </motion.div>
+        </Motion.div>
       </div>
     );
   }
@@ -47,7 +46,7 @@ const InstructorDashboard = () => {
   if (isError) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center border border-red-100"
@@ -67,7 +66,7 @@ const InstructorDashboard = () => {
           >
             Reload Dashboard
           </button>
-        </motion.div>
+        </Motion.div>
       </div>
     );
   }
@@ -91,7 +90,7 @@ const InstructorDashboard = () => {
         <div className="max-w-7xl mx-auto space-y-8">
           
           {/* Header */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
@@ -109,18 +108,18 @@ const InstructorDashboard = () => {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
 
           {/* Stats Grid */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"
           >
             
             {/* Total Courses */}
-            <motion.div
+            <Motion.div
               whileHover={{ translateY: -4 }}
               className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all p-6 border border-gray-100"
             >
@@ -133,10 +132,10 @@ const InstructorDashboard = () => {
               <p className="instructor-title text-3xl font-bold text-gray-900">
                 {stats.totalCourses ?? courses.length}
               </p>
-            </motion.div>
+            </Motion.div>
 
             {/* Published */}
-            <motion.div
+            <Motion.div
               whileHover={{ translateY: -4 }}
               transition={{ delay: 0.05 }}
               className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all p-6 border border-gray-100"
@@ -150,10 +149,10 @@ const InstructorDashboard = () => {
               <p className="instructor-title text-3xl font-bold text-gray-900">
                 {stats.publishedCount ?? 0}
               </p>
-            </motion.div>
+            </Motion.div>
 
             {/* Draft */}
-            <motion.div
+            <Motion.div
               whileHover={{ translateY: -4 }}
               transition={{ delay: 0.1 }}
               className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all p-6 border border-gray-100"
@@ -167,10 +166,10 @@ const InstructorDashboard = () => {
               <p className="instructor-title text-3xl font-bold text-gray-900">
                 {stats.draftCount ?? 0}
               </p>
-            </motion.div>
+            </Motion.div>
 
             {/* Students Enrolled */}
-            <motion.div
+            <Motion.div
               whileHover={{ translateY: -4 }}
               transition={{ delay: 0.15 }}
               className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all p-6 border border-gray-100"
@@ -184,10 +183,10 @@ const InstructorDashboard = () => {
               <p className="instructor-title text-3xl font-bold text-gray-900">
                 {(stats.totalStudents ?? 0).toLocaleString()}
               </p>
-            </motion.div>
+            </Motion.div>
 
             {/* Revenue */}
-            <motion.div
+            <Motion.div
               whileHover={{ translateY: -4 }}
               transition={{ delay: 0.2 }}
               className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all p-6 border border-gray-100"
@@ -201,29 +200,13 @@ const InstructorDashboard = () => {
               <p className="instructor-title text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                 ₦{(stats.totalRevenue ?? 0).toLocaleString()}
               </p>
-            </motion.div>
+            </Motion.div>
 
-            {/* Growth */}
-            <motion.div
-              whileHover={{ translateY: -4 }}
-              transition={{ delay: 0.25 }}
-              className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all p-6 border border-gray-100"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-gray-600 text-sm font-medium">Growth</p>
-                <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-emerald-600" />
-                </div>
-              </div>
-              <p className="instructor-title text-3xl font-bold text-emerald-600">
-                +{Math.round(Math.random() * 30)}%
-              </p>
-            </motion.div>
-          </motion.div>
+          </Motion.div>
 
           {/* Best Performing Course */}
           {bestCourse && (
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -255,18 +238,18 @@ const InstructorDashboard = () => {
                     </div>
                   </div>
                 </div>
-                <motion.div
+                <Motion.div
                   animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
                   <Trophy className="w-16 h-16 opacity-30" />
-                </motion.div>
+                </Motion.div>
               </div>
-            </motion.div>
+            </Motion.div>
           )}
 
           {/* Courses Section */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -282,7 +265,7 @@ const InstructorDashboard = () => {
                 </p>
               </div>
 
-              <motion.button
+              <Motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate("/add-course")}
@@ -290,11 +273,11 @@ const InstructorDashboard = () => {
               >
                 <Plus className="w-4 h-4" />
                 Create Course
-              </motion.button>
+              </Motion.button>
             </div>
 
             {courses.length === 0 ? (
-              <motion.div
+              <Motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white rounded-2xl shadow-md border border-dashed border-gray-300 p-12 text-center"
@@ -308,7 +291,7 @@ const InstructorDashboard = () => {
                 <p className="text-gray-600 mb-6">
                   Start creating your first course to reach learners worldwide
                 </p>
-                <motion.button
+                <Motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate("/add-course")}
@@ -316,12 +299,12 @@ const InstructorDashboard = () => {
                 >
                   <Plus className="w-4 h-4" />
                   Create Your First Course
-                </motion.button>
-              </motion.div>
+                </Motion.button>
+              </Motion.div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {courses.map((course, index) => (
-                  <motion.div
+                  <Motion.div
                     key={course._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -396,7 +379,7 @@ const InstructorDashboard = () => {
 
                       {/* Actions */}
                       <div className="grid grid-cols-2 gap-3 pt-4">
-                        <motion.button
+                        <Motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => navigate(`/course-builder/${course._id}`)}
@@ -404,9 +387,9 @@ const InstructorDashboard = () => {
                         >
                           <Edit3 className="w-4 h-4" />
                           Edit
-                        </motion.button>
+                        </Motion.button>
 
-                        <motion.button
+                        <Motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => toast.info("Delete feature coming soon!")}
@@ -414,14 +397,14 @@ const InstructorDashboard = () => {
                         >
                           <Trash2 className="w-4 h-4" />
                           Delete
-                        </motion.button>
+                        </Motion.button>
                       </div>
                     </div>
-                  </motion.div>
+                  </Motion.div>
                 ))}
               </div>
             )}
-          </motion.div>
+          </Motion.div>
         </div>
       </div>
     </>

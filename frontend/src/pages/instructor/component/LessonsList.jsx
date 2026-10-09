@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import {
   Plus,
   Edit2,
@@ -30,7 +30,7 @@ const LessonsList = ({
 
   if (!subSections || subSections.length === 0) {
     return (
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="space-y-3 sm:space-y-4"
@@ -45,7 +45,7 @@ const LessonsList = ({
         </div>
 
         {/* Add Lesson Button - Empty State */}
-        <motion.button
+        <Motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           type="button"
@@ -56,15 +56,15 @@ const LessonsList = ({
         >
           <Plus className="h-5 w-5 sm:h-6 sm:w-6" />
           Add First Lesson
-        </motion.button>
-      </motion.div>
+        </Motion.button>
+      </Motion.div>
     );
   }
 
   return (
     <div className="space-y-2.5 sm:space-y-3">
       {subSections.map((subSection, idx) => (
-        <motion.div
+        <Motion.div
           key={subSection._id}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -75,7 +75,7 @@ const LessonsList = ({
             {/* Lesson Info */}
             <div className="flex-1 min-w-0">
               {editingSubSection === subSection._id ? (
-                <motion.div
+                <Motion.div
                   className="space-y-2.5 sm:space-y-3"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -100,7 +100,7 @@ const LessonsList = ({
                     placeholder="Lesson description"
                     rows="2"
                   />
-                </motion.div>
+                </Motion.div>
               ) : (
                 <>
                   <h4 className="builder-title truncate text-base font-bold text-gray-900 sm:text-lg">
@@ -125,7 +125,7 @@ const LessonsList = ({
             <div className="flex flex-shrink-0 gap-1.5 sm:gap-2">
               {editingSubSection === subSection._id ? (
                 <>
-                  <motion.button
+                  <Motion.button
                     whileHover={{ scale: 1.08 }}
                     whileTap={{ scale: 0.92 }}
                     type="button"
@@ -140,9 +140,9 @@ const LessonsList = ({
                     ) : (
                       <Save className="h-4 w-4 sm:h-5 sm:w-5" />
                     )}
-                  </motion.button>
+                  </Motion.button>
 
-                  <motion.button
+                  <Motion.button
                     whileHover={{ scale: 1.08 }}
                     whileTap={{ scale: 0.92 }}
                     type="button"
@@ -154,11 +154,11 @@ const LessonsList = ({
                     className="flex items-center justify-center rounded-lg bg-gray-300 p-2 text-gray-900 transition-all hover:bg-gray-400 sm:p-2.5"
                   >
                     <X className="h-4 w-4 sm:h-5 sm:w-5" />
-                  </motion.button>
+                  </Motion.button>
                 </>
               ) : (
                 <>
-                  <motion.button
+                  <Motion.button
                     whileHover={{ scale: 1.08 }}
                     whileTap={{ scale: 0.92 }}
                     type="button"
@@ -173,9 +173,9 @@ const LessonsList = ({
                     title="Edit"
                   >
                     <Edit2 className="h-4 w-4 sm:h-5 sm:w-5" />
-                  </motion.button>
+                  </Motion.button>
 
-                  <motion.button
+                  <Motion.button
                     whileHover={{ scale: 1.08 }}
                     whileTap={{ scale: 0.92 }}
                     type="button"
@@ -186,16 +186,16 @@ const LessonsList = ({
                     title="Delete"
                   >
                     <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
-                  </motion.button>
+                  </Motion.button>
                 </>
               )}
             </div>
           </div>
-        </motion.div>
+        </Motion.div>
       ))}
 
       {/* Add Lesson Button */}
-      <motion.button
+      <Motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         type="button"
@@ -206,7 +206,7 @@ const LessonsList = ({
       >
         <Plus className="h-4 w-4" />
         Add Lesson
-      </motion.button>
+      </Motion.button>
     </div>
   );
 };

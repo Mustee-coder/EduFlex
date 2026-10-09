@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useMyLearning } from "@/hooks/useMyLearning";
 import { useNavigate } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars -- Core ESLint does not count JSX member references.
 import { motion } from "framer-motion";
-import { toast } from "sonner";
 import { Loading } from "@/components/Loader";
 import { CourseSkeletons } from "@/components/skeletons/student";
 
@@ -25,7 +25,7 @@ import "@/index.css";
 
 const MyCourses = () => {
   const navigate = useNavigate();
-  const { data, isLoading } = useMyLearning();
+  const { data, isLoading, isError, refetch } = useMyLearning();
 
   const courses = data?.data || [];
 
@@ -72,7 +72,10 @@ const MyCourses = () => {
   if (isLoading) {
     return <Loading />;
   }
-  
+
+  if (isError) {
+    return <div className="student-page mx-auto max-w-5xl px-4 py-8 sm:px-6"><div className="student-panel p-6" role="alert"><h1 className="text-lg font-semibold text-slate-900">Your courses couldn’t load</h1><p className="mt-2 text-sm text-slate-600">Please try again in a moment.</p><button type="button" onClick={() => refetch()} className="student-button-secondary mt-4">Try again</button></div></div>;
+  }
 
   // Empty State
   if (!courses.length) {
@@ -107,7 +110,7 @@ const MyCourses = () => {
 
   return (
 
-      <div className="mycourses-root bg-gradient-to-br from-gray-50 via-white to-gray-50 min-h-screen py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="mycourses-root student-page min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8">
         
         <div className="max-w-7xl mx-auto">
           
@@ -117,7 +120,7 @@ const MyCourses = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="mycourses-title text-4xl md:text-5xl font-bold text-gray-900">
+            <h1 className="student-heading">
               My Courses
             </h1>
             <p className="text-gray-600 mt-2">
@@ -173,7 +176,7 @@ const MyCourses = () => {
             </div>
 
             {/* Results Count */}
-            <div className="bg-white rounded-xl border-2 border-gray-200 px-4 py-3 flex items-center justify-between">
+            <div className="student-panel min-h-11 px-4 py-3 flex items-center justify-between">
               <span className="text-sm font-semibold text-gray-700">
                 {sortedCourses.length} courses
               </span>
@@ -232,15 +235,15 @@ const MyCourses = () => {
                     transition={{ delay: index * 0.05 }}
                     className="group h-full"
                   >
-                    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden h-full flex flex-col border border-gray-100">
+                    <div className="student-course-card h-full transition-all duration-200">
                       
                       {/* Thumbnail */}
-                      <div className="relative h-48 sm:h-56 bg-gradient-to-br from-indigo-500 to-purple-500 overflow-hidden">
+                      <div className="student-course-image relative">
                         {course.thumbnail ? (
                           <img
                             src={course.thumbnail}
                             alt={course.courseName}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                             onError={(e) => {
                               e.target.style.display = "none";
                             }}
@@ -293,12 +296,12 @@ const MyCourses = () => {
                         <div className="space-y-2 pt-2 border-t border-gray-100">
                           
                           {/* Progress Bar */}
-                          <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+                          <div className="w-full h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label={`${course.courseName} progress`} aria-valuemin="0" aria-valuemax="100" aria-valuenow={progress}>
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${progress}%` }}
                               transition={{ duration: 0.8, ease: "easeOut" }}
-                              className="h-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"
+                              className="h-full rounded-full bg-indigo-600"
                             />
                           </div>
 
@@ -323,10 +326,11 @@ const MyCourses = () => {
 
                         {/* CTA Button */}
                         <motion.button
+                          type="button"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => navigate(`/course/${course._id}`)}
-                          className="w-full mt-2 bg-gradient-to-r from-indigo-100 to-purple-100 hover:from-indigo-200 hover:to-purple-200 text-indigo-700 font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"
+                          className="student-button-secondary mt-2 w-full"
                         >
                           <Play className="w-4 h-4" />
                           {isCompleted ? "Review Course" : "Continue Learning"}

@@ -12,16 +12,10 @@ const Profile = () => {
   const user = data?.data;
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [previewImage, setPreviewImage] = useState(user?.image || "");
+  const [previewImage, setPreviewImage] = useState("");
   const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef(null);
   const { mutate: uploadImage, isPending: isUploading } = useUpdateProfileImage();
-
-useEffect(() => {
-  if (user?.image) {
-    setPreviewImage(user.image);
-  }
-}, [user]);
 
   // ━━ CLEANUP ━━
   useEffect(() => {
@@ -87,8 +81,9 @@ useEffect(() => {
     formData.append("profileImage", selectedImage);
 
     uploadImage(formData, {
-      onSuccess: (data) => {
-        toast.success("Profile picture updated successfully! 🎉");
+      onSuccess: (response) => {
+        toast.success("Profile picture updated successfully");
+        setPreviewImage(response?.data?.image || "");
         setSelectedImage(null);
         setUploadError("");
         if (fileInputRef.current) {
@@ -162,16 +157,16 @@ useEffect(() => {
     <>
       
 
-      <div className="profile-root min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 py-8 px-0 flex-center md:px-8">
-        <div className="max-w-xl mx-auto space-y-8">
+      <div className="profile-root student-page min-h-screen bg-slate-50 px-4 py-6 sm:px-6">
+        <div className="mx-auto max-w-3xl space-y-5">
             
           
           {/* Header */}
           <div>
-            <h1 className="profile-title text-4xl md:text-5xl font-black text-gray-900 text-center">
+            <h1 className="profile-title text-4xl md:text-5xl font-black text-gray-900 ">
               My Profile
             </h1>
-            <p className="text-gray-600 mt-2">Manage your account information</p>
+            <p className="mt-2 text-sm text-slate-600">Manage your account information.</p>
           </div>
 
           {/* ━━ PROFILE HEADER ━━ */}

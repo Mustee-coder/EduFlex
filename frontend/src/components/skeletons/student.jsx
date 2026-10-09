@@ -1,8 +1,8 @@
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 
 export const CourseSkeleton = () => {
   return (
-    <motion.div
+    <Motion.div
       className="bg-white rounded-2xl overflow-hidden shadow animate-pulse"
     >
       <div className="h-48 bg-gradient-to-br from-gray-300 to-gray-200" />
@@ -19,14 +19,14 @@ export const CourseSkeleton = () => {
 
         <div className="h-4 bg-purple-300 rounded w-1/3 mt-4" />
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };
 
 
 export const CourseSkeletons = () => {
   return (
-    <motion.div
+    <Motion.div
       className="bg-white rounded-2xl overflow-hidden shadow animate-pulse"
     >
       <div className="h-48 bg-gradient-to-br from-gray-300 to-gray-200" />
@@ -37,6 +37,6 @@ export const CourseSkeletons = () => {
         <div className="h-2 bg-gray-300 rounded w-full" />
         <div className="h-4 bg-gray-300 rounded w-1/3" />
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };

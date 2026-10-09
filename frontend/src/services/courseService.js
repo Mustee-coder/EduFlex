@@ -19,8 +19,8 @@ export const updateCourseProgress = async (courseId, subSectionId) => {
   return res.data.data;
 };
 
-export const getAllCourses = async () => {
-  const res = await api.get(courseEndpoints.GET_ALL_COURSES);
+export const getAllCourses = async (page = 1, limit = 12) => {
+  const res = await api.get(courseEndpoints.GET_ALL_COURSES, { params: { page, limit } });
   return res.data;
 };
 
@@ -86,8 +86,6 @@ export const createSubSection = async (formData) => {
     }
   );
 
-  console.log(res.data);
-
   return res.data;
 };
 
@@ -148,4 +146,3 @@ export const publishCourse = async ({ courseId, status }) => {
 
   return response.data;
 };
-

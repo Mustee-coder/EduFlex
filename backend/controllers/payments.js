@@ -9,6 +9,18 @@ import User from "../models/user.js";
 import Course from "../models/course.js";
 import CourseProgress from "../models/courseProgress.js";
 
+const getSafePaymentErrorContext = (error) => {
+  const status = error?.response?.status;
+  const code = error?.code;
+
+  return {
+    ...(Number.isInteger(status) ? { status } : {}),
+    ...(typeof code === "string" && /^[A-Z0-9_]{1,40}$/.test(code)
+      ? { code }
+      : {}),
+  };
+};
+
 
 // ─────────────────────────────
 //  INITIALIZE PAYMENT
@@ -81,7 +93,10 @@ export const initializePayment = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("[initializePayment]", error);
+    console.error(
+      "[initializePayment] payment provider request failed",
+      getSafePaymentErrorContext(error)
+    );
     return res.status(500).json({
       success: false,
       message: "Payment initialization failed.",
@@ -208,8 +223,8 @@ export const verifyPayment = async (req, res) => {
 
   } catch (error) {
     console.error(
-      "[PAYSTACK ERROR]",
-      error.response?.data || error.message
+      "[verifyPayment] payment provider request failed",
+      getSafePaymentErrorContext(error)
     );
 
     return res.status(500).json({
@@ -292,8 +307,8 @@ export const verifyPayment = async (req, res) => {
           `You're enrolled in ${course.courseName}!`,
           courseEnrollmentEmail(course.courseName, user.firstName)
         );
-      } catch (err) {
-        console.error("[EMAIL ERROR]", err.message);
+      } catch {
+        console.error("[enrollmentEmail] delivery failed");
       }
     }
 
@@ -354,7 +369,10 @@ export const sendPaymentSuccessEmail = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("[sendPaymentSuccessEmail]", error);
+    console.error(
+      "[sendPaymentSuccessEmail] delivery failed",
+      getSafePaymentErrorContext(error)
+    );
     return res.status(500).json({
       success: false,
       message: "Failed to send payment email.",

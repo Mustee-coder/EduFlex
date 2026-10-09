@@ -1,5 +1,5 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import { Layers, BookOpen } from "lucide-react";
 import SectionHeader from "./SectionHeader";
 import LessonsList from "./LessonsList";

@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'sonner'
+import { MotionConfig } from 'framer-motion'
 
 
 const queryClient = new QueryClient()
@@ -17,8 +18,10 @@ createRoot(document.getElementById('root')).render(
      
                 
              <AuthProvider>
-               <Toaster />
-          <App />
+               <MotionConfig reducedMotion="user">
+                 <Toaster />
+                 <App />
+               </MotionConfig>
                </AuthProvider>
    
       </QueryClientProvider>

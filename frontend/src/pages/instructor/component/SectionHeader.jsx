@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import {
   ChevronDown,
   ChevronUp,
@@ -25,13 +25,13 @@ const SectionHeader = ({
   totalCount,
 }) => {
   return (
-    <motion.div
+    <Motion.div
       onClick={() => toggleSectionExpand(section._id)}
       className="flex cursor-pointer items-center justify-between gap-3 bg-gradient-to-r from-gray-50 to-gray-100 p-4 transition-all hover:from-emerald-50 hover:to-teal-50 sm:gap-4 sm:p-6"
     >
       <div className="flex flex-1 items-center gap-3 min-w-0 sm:gap-4">
         {/* Chevron Icon */}
-        <motion.div
+        <Motion.div
           className="flex-shrink-0 text-emerald-600"
           initial={{ rotate: 0 }}
           animate={{
@@ -44,12 +44,12 @@ const SectionHeader = ({
           ) : (
             <ChevronDown className="h-5 w-5 sm:h-6 sm:w-6" />
           )}
-        </motion.div>
+        </Motion.div>
 
         {/* Section Info */}
         <div className="flex-1 min-w-0">
           {editingSection === section._id ? (
-            <motion.input
+            <Motion.input
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               type="text"
@@ -79,7 +79,7 @@ const SectionHeader = ({
       >
         {editingSection === section._id ? (
           <>
-            <motion.button
+            <Motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               type="button"
@@ -93,9 +93,9 @@ const SectionHeader = ({
               ) : (
                 <Save className="h-4 w-4 sm:h-5 sm:w-5" />
               )}
-            </motion.button>
+            </Motion.button>
 
-            <motion.button
+            <Motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               type="button"
@@ -107,11 +107,11 @@ const SectionHeader = ({
               title="Cancel"
             >
               <X className="h-4 w-4 sm:h-5 sm:w-5" />
-            </motion.button>
+            </Motion.button>
           </>
         ) : (
           <>
-            <motion.button
+            <Motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               type="button"
@@ -123,9 +123,9 @@ const SectionHeader = ({
               title="Edit"
             >
               <Edit2 className="h-4 w-4 sm:h-5 sm:w-5" />
-            </motion.button>
+            </Motion.button>
 
-            <motion.button
+            <Motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               type="button"
@@ -134,11 +134,11 @@ const SectionHeader = ({
               title="Delete"
             >
               <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
-            </motion.button>
+            </Motion.button>
           </>
         )}
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };
 

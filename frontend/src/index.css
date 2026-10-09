@@ -54,7 +54,7 @@
           background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
           background-size: 1000px 100%;
         }
-     
+
 /* top navbar */
 
 .topbar-root {
@@ -111,7 +111,7 @@
         .modal-content {
           animation: modalFadeIn 0.3s ease-out forwards;
         }
-      
+
         /* browse course*/
         .browse-root {
           font-family: 'Poppins', sans-serif;
@@ -135,13 +135,13 @@
         .filter-panel {
           animation: slideDown 0.3s ease-out;
         }
-   
-      
-      
-      /* checkout */ 
-      
-      
-       
+
+
+
+      /* checkout */
+
+
+
         .checkout-root {
           font-family: 'Poppins', sans-serif;
         }
@@ -149,10 +149,10 @@
         .checkout-title {
           font-family: 'Syne', sans-serif;
         }
-     
-      
+
+
       /* course player  */
-      
+
 
         .player-root {
           font-family: 'Poppins', sans-serif;
@@ -165,7 +165,7 @@
         .lesson-card:hover {
           background-color: rgba(99, 102, 241, 0.1);
         }
-     
+
 /* course preview */
 
 
@@ -177,7 +177,7 @@
           font-family: 'Syne', sans-serif;
         }
     /* my Courses */
-       
+
 
         .mycourses-root {
           font-family: 'Poppins', sans-serif;
@@ -186,10 +186,10 @@
         .mycourses-title {
           font-family: 'Syne', sans-serif;
         }
-        
-        
+
+
         /* instructor style*/
-        
+
 
         .instructor-courses-root {
           font-family: 'Poppins', sans-serif;
@@ -198,11 +198,11 @@
         .instructor-courses-title {
           font-family: 'Syne', sans-serif;
         }
-      
 
-       
-        
-    
+
+
+
+
 /* Profile */
         .profile-root {
           font-family: 'Poppins', sans-serif;
@@ -233,8 +233,8 @@
         .progress-fill {
           transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-      
-     
+
+
 
         .login-root {
           font-family: 'Poppins', sans-serif;
@@ -266,12 +266,12 @@
         .input-field:focus {
           box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
-     
-     
-     
-     
+
+
+
+
       /*  password input*/
-     
+
 
         .password-input-root {
           font-family: 'Poppins', sans-serif;
@@ -300,8 +300,8 @@
         .toggle-btn:active {
           transform: scale(0.95);
         }
-      
-      
+
+
       /* send otp */
         .sendotp-root {
           font-family: 'Poppins', sans-serif;
@@ -333,10 +333,10 @@
         .error-message {
           animation: slideUp 0.3s ease-out;
         }
-     
-     
+
+
      /* Auth layout */
-      
+
 
         .auth-root {
           font-family: 'Poppins', sans-serif;
@@ -456,11 +456,11 @@
             height: 120px;
           }
         }
-        
-        
-        
+
+
+
         /* verify email*/
-     
+
 
         .verify-root {
           font-family: 'Poppins', sans-serif;
@@ -488,8 +488,8 @@
         .error-message {
           animation: slideUp 0.3s ease-out;
         }
-    
-    
+
+
    /* signup */
 
         .register-root {
@@ -518,4 +518,48 @@
         .error-message {
           animation: slideUp 0.3s ease-out;
         }
-    
+
+
+/* Shared student experience */
+.student-page { color: #172033; }
+.student-eyebrow { color: #64748b; font-size: .72rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+.student-heading { color: #0f172a; font-size: clamp(1.85rem, 4vw, 2.55rem); font-weight: 650; letter-spacing: -.045em; line-height: 1.12; }
+.student-panel, .student-stat, .student-course-card, .student-feature { border: 1px solid #e5eaf2; border-radius: 1rem; background: #fff; box-shadow: 0 1px 2px rgb(15 23 42 / .035); }
+.student-feature { transition: border-color .2s ease, box-shadow .2s ease; }
+.student-feature:hover, .student-course-card:hover { border-color: #c7d2fe; box-shadow: 0 12px 28px rgb(15 23 42 / .08); }
+.student-feature-image { min-height: 12rem; }
+.student-stat { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.25rem; }
+.student-icon-tile { display: inline-flex; width: 2.75rem; height: 2.75rem; flex: 0 0 auto; align-items: center; justify-content: center; border-radius: .8rem; }
+.student-icon-tile svg { width: 1.2rem; height: 1.2rem; }
+.student-chip { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid #dbeafe; border-radius: 999px; background: #eff6ff; padding: .35rem .65rem; color: #3730a3; font-size: .75rem; font-weight: 650; }
+.student-button-primary, .student-button-secondary { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; gap: .55rem; border-radius: .7rem; padding: .65rem 1rem; font-size: .875rem; font-weight: 650; transition: background-color .18s ease, border-color .18s ease, color .18s ease; }
+.student-button-primary { background: #4338ca; color: white; }
+.student-button-primary:hover { background: #3730a3; }
+.student-button-secondary { border: 1px solid #dbe2eb; background: white; color: #334155; }
+.student-button-secondary:hover { background: #f8fafc; border-color: #cbd5e1; }
+.student-link { display: inline-flex; min-height: 2.5rem; align-items: center; gap: .35rem; color: #4338ca; font-size: .875rem; font-weight: 650; }
+.student-link:hover { color: #312e81; }
+.student-course-card { display: block; overflow: hidden; transition: border-color .2s ease, box-shadow .2s ease; }
+.student-course-image { display: flex; aspect-ratio: 16 / 9; align-items: center; justify-content: center; overflow: hidden; background: #f1f5f9; }
+.student-page :is(a, button, input, select, textarea):focus-visible, .sidebar-root :is(a, button):focus-visible, .topbar-root :is(a, button, input):focus-visible { outline: 3px solid #818cf8; outline-offset: 2px; }
+@media (max-width: 639px) { .student-page { padding-top: 1.25rem; padding-bottom: 2rem; } .student-panel { border-radius: .875rem; } .student-button-primary, .student-button-secondary { min-height: 2.8rem; } }
+@media (prefers-reduced-motion: reduce) { .student-page *, .sidebar-root *, .topbar-root * { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+
+/* Apply the student surface system to existing student routes. */
+:is(.browse-root, .mycourses-root, .mylearning-root, .profile-root, .settings-root, .checkout-root, .detail-root) {
+  background-color: #f8fafc;
+  background-image: none;
+}
+:is(.mycourses-root, .mylearning-root) :is(.bg-white.rounded-2xl, .bg-white.rounded-xl) {
+  border: 1px solid #e5eaf2;
+  box-shadow: 0 1px 2px rgb(15 23 42 / .035);
+}
+:is(.browse-root, .mycourses-root, .mylearning-root, .profile-root, .settings-root, .checkout-root) input:not([type="checkbox"]),
+:is(.browse-root, .mycourses-root, .mylearning-root, .profile-root, .settings-root, .checkout-root) select,
+:is(.browse-root, .mycourses-root, .mylearning-root, .profile-root, .settings-root, .checkout-root) textarea {
+  max-width: 100%;
+}
+.browse-root, .mycourses-root, .mylearning-root, .profile-root, .settings-root, .checkout-root { min-width: 0; }
+.mylearning-root > div > div:first-child input,
+.mycourses-root input,
+.browse-root input { font-size: 16px; }

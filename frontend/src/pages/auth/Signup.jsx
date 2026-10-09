@@ -1,418 +1,90 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { AlertCircle, ArrowLeft, LoaderCircle, Mail, ShieldCheck, UserRound } from "lucide-react";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { useSignup } from "@/hooks/useSignup";
-import { toast } from "sonner";
-import { AlertCircle, CheckCircle, Loader, User, Mail, Lock } from "lucide-react";
-import "@/index.css";
 
-const Register = () => {
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const Signup = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { mutate, isPending } = useSignup();
-  const verifiedEmail = (
-    location.state?.email || localStorage.getItem("verifiedEmail") || ""
-  ).trim().toLowerCase();
-
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: verifiedEmail,
-    password: "",
-    confirmPassword: "",
-    accountType: "Student",
-  });
-
+  const verifiedEmail = (location.state?.email || localStorage.getItem("verifiedEmail") || "").trim().toLowerCase();
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: verifiedEmail, password: "", confirmPassword: "", accountType: "Student" });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [passwordStrength, setPasswordStrength] = useState(0);
 
-  // ━━ VALIDATION ━━
-  const validateField = (name, value) => {
-    const newErrors = { ...errors };
-
-    switch (name) {
-      case "firstName":
-        if (!value.trim()) {
-          newErrors.firstName = "First name is required";
-        } else if (value.trim().length < 2) {
-          newErrors.firstName = "First name must be at least 2 characters";
-        } else {
-          delete newErrors.firstName;
-        }
-        break;
-
-      case "lastName":
-        if (!value.trim()) {
-          newErrors.lastName = "Last name is required";
-        } else if (value.trim().length < 2) {
-          newErrors.lastName = "Last name must be at least 2 characters";
-        } else {
-          delete newErrors.lastName;
-        }
-        break;
-
-      case "email":
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value.trim()) {
-          newErrors.email = "Email is required";
-        } else if (!emailRegex.test(value.trim())) {
-          newErrors.email = "Please enter a valid email";
-        } else {
-          delete newErrors.email;
-        }
-        break;
-
-      case "password":
-        if (!value) {
-          newErrors.password = "Password is required";
-        } else if (value.length < 8) {
-          newErrors.password = "Password must be at least 8 characters";
-        } else if (!/[A-Z]/.test(value)) {
-          newErrors.password = "Password must contain an uppercase letter";
-        } else if (!/[0-9]/.test(value)) {
-          newErrors.password = "Password must contain a number";
-        } else {
-          delete newErrors.password;
-        }
-
-        // Calculate strength
-        let strength = 0;
-        if (value.length >= 8) strength++;
-        if (/[A-Z]/.test(value)) strength++;
-        if (/[0-9]/.test(value)) strength++;
-        if (/[^A-Za-z0-9]/.test(value)) strength++;
-        setPasswordStrength(strength);
-
-        // Check password match
-        if (form.confirmPassword && value !== form.confirmPassword) {
-          newErrors.confirmPassword = "Passwords do not match";
-        } else if (form.confirmPassword) {
-          delete newErrors.confirmPassword;
-        }
-        break;
-
-      case "confirmPassword":
-        if (!value) {
-          newErrors.confirmPassword = "Please confirm your password";
-        } else if (value !== form.password) {
-          newErrors.confirmPassword = "Passwords do not match";
-        } else {
-          delete newErrors.confirmPassword;
-        }
-        break;
-
-      default:
-        break;
-    }
-
-    setErrors(newErrors);
+  const validate = (values) => {
+    const result = {};
+    if (!values.firstName.trim()) result.firstName = "First name is required";
+    else if (values.firstName.trim().length < 2) result.firstName = "Use at least 2 characters";
+    if (!values.lastName.trim()) result.lastName = "Last name is required";
+    else if (values.lastName.trim().length < 2) result.lastName = "Use at least 2 characters";
+    if (!values.email.trim()) result.email = "Email is required";
+    else if (!emailPattern.test(values.email.trim())) result.email = "Enter a valid email address";
+    if (!values.password) result.password = "Password is required";
+    else if (values.password.length < 8) result.password = "Use at least 8 characters";
+    else if (!/[A-Z]/.test(values.password)) result.password = "Include an uppercase letter";
+    else if (!/[0-9]/.test(values.password)) result.password = "Include a number";
+    if (!values.confirmPassword) result.confirmPassword = "Please confirm your password";
+    else if (values.confirmPassword !== values.password) result.confirmPassword = "Passwords do not match";
+    return result;
   };
 
-  // ━━ HANDLERS ━━
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    if (touched[name]) {
-      validateField(name, value);
-    }
+  const onChange = (event) => {
+    const { name, value } = event.target;
+    const next = { ...form, [name]: value };
+    setForm(next);
+    setErrors(validate(next));
   };
-
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
-    setTouched((prev) => ({
-      ...prev,
-      [name]: true,
-    }));
-    validateField(name, value);
+  const onBlur = (event) => {
+    const { name } = event.target;
+    setTouched((current) => ({ ...current, [name]: true }));
+    setErrors(validate(form));
   };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Validate all fields
-    Object.keys(form).forEach((key) => {
-      validateField(key, form[key]);
-    });
-
-    if (Object.keys(errors).length > 0) {
-      toast.error("Please fix the errors in the form");
+  const onSubmit = (event) => {
+    event.preventDefault();
+    const validationErrors = validate(form);
+    setErrors(validationErrors);
+    setTouched({ firstName: true, lastName: true, email: true, password: true, confirmPassword: true });
+    if (Object.keys(validationErrors).length) return;
+    if (form.email.trim().toLowerCase() !== verifiedEmail) {
+      setErrors({ submit: "Verify this email address before creating your account." });
       return;
     }
-
-    const payload = {
-      firstName: form.firstName.trim(),
-      lastName: form.lastName.trim(),
-      email: form.email.trim().toLowerCase(),
-      password: form.password,
-      confirmPassword: form.confirmPassword,
-      accountType: form.accountType,
-    };
-
-    mutate(payload, {
+    mutate({ firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: verifiedEmail, password: form.password, confirmPassword: form.confirmPassword, accountType: form.accountType }, {
       onSuccess: () => {
         localStorage.removeItem("verifiedEmail");
         localStorage.removeItem("signupEmail");
-        toast.success("Account created successfully! 🎉");
-        navigate("/login");
+        localStorage.removeItem("verificationPurpose");
+        navigate("/login", { replace: true, state: { signupComplete: true } });
       },
-      onError: (error) => {
-        const errorMsg =
-          error?.response?.data?.message || "Signup failed. Please try again.";
-        toast.error(errorMsg);
-        setErrors({ submit: errorMsg });
-      },
+      onError: (error) => setErrors({ submit: error?.response?.data?.message || "We couldn’t create your account. Please try again." }),
     });
   };
 
-  const isFormValid =
-    form.firstName.trim() &&
-    form.lastName.trim() &&
-    form.email.trim() &&
-    form.password &&
-    form.confirmPassword &&
-    Object.keys(errors).length === 0 &&
-    !isPending;
+  if (!verifiedEmail) return <AuthLayout title="Verify your email first" subtitle="A verified address is required before account creation.">
+    <div className="space-y-4"><div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4 text-sm leading-6 text-indigo-950">We’ll send a one-time code to your email. Once verified, you can return here to finish signing up.</div><button onClick={() => navigate("/send-otp")} type="button" className="edu-focus-ring flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-700 px-4 font-semibold text-white hover:bg-indigo-800"><Mail size={18} />Verify email</button><p className="text-center text-sm text-slate-600">Already have an account? <button type="button" onClick={() => navigate("/login")} className="edu-focus-ring rounded font-semibold text-indigo-700">Sign in</button></p></div>
+  </AuthLayout>;
 
-  return (
-    <>
-      
-
-      <AuthLayout
-        title="Create Your Account"
-        subtitle="Join EduFlex and start learning"
-      >
-        <div className="register-root space-y-6">
-          {/* Submit Error */}
-          {errors.submit && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="error-message p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3"
-            >
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-red-600 text-sm font-semibold">{errors.submit}</p>
-            </motion.div>
-          )}
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name Row */}
-            <div className="grid grid-cols-2 gap-3">
-              {/* First Name */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-600">First Name</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                  <input
-                    name="firstName"
-                    placeholder="First"
-                    value={form.firstName}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    aria-invalid={touched.firstName && !!errors.firstName}
-                    className={`edu-focus-ring input-field w-full pl-10 pr-3 py-2.5 border-2 rounded-xl bg-white text-gray-900 placeholder:text-gray-500 font-medium text-sm focus:outline-none transition-all ${
-                      touched.firstName && errors.firstName
-                        ? "border-red-600 bg-red-50 focus:ring-2 focus:ring-red-200"
-                        : touched.firstName && !errors.firstName
-                        ? "border-emerald-600 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                        : "border-gray-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
-                    }`}
-                  />
-                </div>
-                {touched.firstName && errors.firstName && (
-                  <p className="text-red-600 text-xs font-semibold flex items-center gap-1">
-                    <AlertCircle size={12} />
-                    {errors.firstName}
-                  </p>
-                )}
-              </div>
-
-              {/* Last Name */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-600">Last Name</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                  <input
-                    name="lastName"
-                    placeholder="Last"
-                    value={form.lastName}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    aria-invalid={touched.lastName && !!errors.lastName}
-                    className={`edu-focus-ring input-field w-full pl-10 pr-3 py-2.5 border-2 rounded-xl bg-white text-gray-900 placeholder:text-gray-500 font-medium text-sm focus:outline-none transition-all ${
-                      touched.lastName && errors.lastName
-                        ? "border-red-600 bg-red-50 focus:ring-2 focus:ring-red-200"
-                        : touched.lastName && !errors.lastName
-                        ? "border-emerald-600 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                        : "border-gray-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
-                    }`}
-                  />
-                </div>
-                {touched.lastName && errors.lastName && (
-                  <p className="text-red-600 text-xs font-semibold flex items-center gap-1">
-                    <AlertCircle size={12} />
-                    {errors.lastName}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-gray-600">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={form.email}
-                  readOnly={Boolean(verifiedEmail)}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  aria-invalid={touched.email && !!errors.email}
-                  className={`edu-focus-ring input-field w-full pl-10 pr-12 py-2.5 border-2 rounded-xl bg-white text-gray-900 placeholder:text-gray-500 font-medium text-sm focus:outline-none transition-all ${
-                    touched.email && errors.email
-                      ? "border-red-600 bg-red-50 focus:ring-2 focus:ring-red-200"
-                      : touched.email && !errors.email
-                      ? "border-emerald-600 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                      : "border-gray-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
-                  }`}
-                />
-                {touched.email && form.email && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    {errors.email ? (
-                      <AlertCircle className="w-4 h-4 text-red-600" />
-                    ) : (
-                      <CheckCircle className="w-4 h-4 text-emerald-600" />
-                    )}
-                  </div>
-                )}
-              </div>
-              {touched.email && errors.email && (
-                <p className="text-red-600 text-xs font-semibold flex items-center gap-1">
-                  <AlertCircle size={12} />
-                  {errors.email}
-                </p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-gray-600">Password</label>
-              <PasswordInput
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Create a strong password"
-                error={touched.password ? errors.password : ""}
-                showStrength={true}
-              />
-            </div>
-
-            {/* Confirm Password */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-gray-600">Confirm Password</label>
-              <PasswordInput
-                name="confirmPassword"
-                value={form.confirmPassword}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Confirm your password"
-                error={touched.confirmPassword ? errors.confirmPassword : ""}
-              />
-            </div>
-
-            {/* Account Type */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-gray-600">I am a:</label>
-              <select
-                name="accountType"
-                value={form.accountType}
-                onChange={handleChange}
-                className="edu-focus-ring w-full px-4 py-2.5 border-2 border-gray-200 bg-white text-gray-900 rounded-xl font-medium text-sm focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
-              >
-                <option value="Student">👨‍🎓 Student</option>
-                <option value="Instructor">🎓 Instructor</option>
-              </select>
-            </div>
-
-            {/* Info Box */}
-            <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-200">
-              <p className="text-xs text-indigo-600 leading-relaxed">
-                <span className="font-bold">✅ Your password must have:</span> At least 8 characters, uppercase letter, and a number.
-              </p>
-            </div>
-
-            {/* Submit Button */}
-            <motion.button
-              whileHover={isFormValid ? { scale: 1.02 } : {}}
-              whileTap={isFormValid ? { scale: 0.98 } : {}}
-              type="submit"
-              disabled={!isFormValid}
-              className="edu-focus-ring w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2"
-            >
-              {isPending ? (
-                <>
-                  <Loader className="w-4 h-4 animate-spin" />
-                  Creating Account...
-                </>
-              ) : (
-                "Create Account"
-              )}
-            </motion.button>
-          </form>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs text-gray-500 font-medium">OR</span>
-            <div className="flex-1 h-px bg-gray-200" />
-          </div>
-
-          {/* Sign In Link */}
-          <p className="text-center text-sm text-gray-600">
-            Already have an account?{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/login")}
-              className="edu-focus-ring rounded-sm text-indigo-600 font-bold hover:text-indigo-700 hover:underline transition-colors"
-            >
-              Sign In
-            </button>
-          </p>
-
-          {/* Terms */}
-          <p className="text-center text-xs text-gray-500 leading-relaxed">
-            By creating an account, you agree to our{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/terms")}
-              className="edu-focus-ring rounded-sm text-indigo-600 hover:text-indigo-700 hover:underline"
-            >
-              Terms
-            </button>{" "}
-            and{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/privacy")}
-              className="edu-focus-ring rounded-sm text-indigo-600 hover:text-indigo-700 hover:underline"
-            >
-              Privacy Policy
-            </button>
-          </p>
-        </div>
-      </AuthLayout>
-    </>
-  );
+  const showError = (field) => touched[field] ? errors[field] : "";
+  return <AuthLayout title="Create your account" subtitle="A few details, then you’re ready to start learning.">
+    <form onSubmit={onSubmit} noValidate className="space-y-4">
+      {errors.submit && <div role="alert" className="flex gap-3 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-800"><AlertCircle size={18} className="mt-0.5 shrink-0" /><p>{errors.submit}</p></div>}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {[['firstName','First name'],['lastName','Last name']].map(([name,label]) => <div key={name}><label htmlFor={`signup-${name}`} className="mb-1.5 block text-sm font-medium text-slate-800">{label}</label><div className="relative"><UserRound size={16} aria-hidden="true" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" /><input id={`signup-${name}`} name={name} autoComplete={name === "firstName" ? "given-name" : "family-name"} value={form[name]} onChange={onChange} onBlur={onBlur} aria-invalid={Boolean(showError(name))} aria-describedby={showError(name) ? `${name}-error` : undefined} className={`edu-focus-ring min-h-12 w-full rounded-xl border bg-white pl-10 pr-3 text-sm text-slate-950 ${showError(name) ? "border-red-400" : "border-slate-300"}`} />{showError(name) && <p id={`${name}-error`} role="alert" className="mt-1.5 text-xs text-red-700">{showError(name)}</p>}</div></div>)}
+      </div>
+      <div><label htmlFor="signup-email" className="mb-1.5 block text-sm font-medium text-slate-800">Verified email</label><div className="relative"><Mail size={16} aria-hidden="true" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" /><input id="signup-email" name="email" type="email" autoComplete="email" value={form.email} readOnly aria-describedby="verified-email-hint" className="min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm text-slate-700" /><ShieldCheck size={17} aria-hidden="true" className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-700" /></div><p id="verified-email-hint" className="mt-1.5 text-xs text-slate-500">Verified before signup. The server checks this address again.</p></div>
+      <div><PasswordInput name="password" label="Password" value={form.password} onChange={onChange} onBlur={onBlur} placeholder="At least 8 characters" error={showError("password")} showStrength required /></div>
+      <div><PasswordInput name="confirmPassword" label="Confirm password" value={form.confirmPassword} onChange={onChange} onBlur={onBlur} placeholder="Enter your password again" error={showError("confirmPassword")} required /></div>
+      <div><label htmlFor="signup-account-type" className="mb-1.5 block text-sm font-medium text-slate-800">I’m joining as</label><select id="signup-account-type" name="accountType" value={form.accountType} onChange={onChange} className="edu-focus-ring min-h-12 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900"><option value="Student">Student</option><option value="Instructor">Instructor</option></select>{form.accountType === "Instructor" && <p className="mt-1.5 text-xs leading-5 text-slate-500">Instructor accounts require administrator approval before instructor access is available.</p>}</div>
+      <p className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs leading-5 text-slate-600">Use at least 8 characters, including an uppercase letter and a number.</p>
+      <button type="submit" disabled={isPending} className="edu-focus-ring flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-700 px-4 font-semibold text-white transition-colors hover:bg-indigo-800 disabled:cursor-wait disabled:opacity-70">{isPending && <LoaderCircle size={18} className="animate-spin" />}{isPending ? "Creating account…" : "Create account"}</button>
+    </form>
+    <p className="mt-5 text-center text-sm text-slate-600">Already have an account? <button type="button" onClick={() => navigate("/login")} className="edu-focus-ring rounded font-semibold text-indigo-700">Sign in</button></p>
+    <button type="button" onClick={() => { localStorage.removeItem("verifiedEmail"); localStorage.removeItem("signupEmail"); localStorage.removeItem("verificationPurpose"); navigate("/send-otp"); }} className="edu-focus-ring mx-auto mt-3 flex min-h-10 items-center gap-1 rounded px-2 text-xs text-slate-500 hover:text-indigo-700"><ArrowLeft size={14} />Use a different email</button>
+  </AuthLayout>;
 };
 
-export default Register;
+export default Signup;

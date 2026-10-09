@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import { Users, GraduationCap } from "lucide-react";
 import StudentsTable from "@/pages/admin/StudentsTable";
 import InstructorsTable from "@/pages/admin/InstructorsTable";

@@ -13,10 +13,14 @@ export const useDeleteCourse = () => {
     },
 
     onError: (error) => {
-      console.log(
-        "DELETE ERROR:",
-        error.response?.data || error.message
-      );
+      const status = error?.response?.status;
+      const code = error?.code;
+      console.error("[deleteCourse] request failed", {
+        ...(Number.isInteger(status) ? { status } : {}),
+        ...(typeof code === "string" && /^[A-Z0-9_]{1,40}$/.test(code)
+          ? { code }
+          : {}),
+      });
     },
   });
 };

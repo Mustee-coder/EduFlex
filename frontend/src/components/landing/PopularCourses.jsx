@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, BookOpen, Clock3, GraduationCap, Star, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getAllCourses } from "@/services/courseService";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/useAuth";
 
 const CourseCard = ({ course }) => {
   const instructor = course.instructor;

@@ -1,7 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "@/api/apis";
-
-const AuthContext = createContext();
+import { AuthContext } from "@/context/authContextValue";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -17,7 +16,7 @@ export const AuthProvider = ({ children }) => {
         if (isMounted) {
           setUser(response.data?.data || null);
         }
-      } catch (error) {
+      } catch {
         if (isMounted) {
           setUser(null);
           localStorage.removeItem("user");
@@ -74,6 +73,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-// custom hook
-export const useAuth = () => useContext(AuthContext);

@@ -1,6 +1,7 @@
 import React from "react";
+// eslint-disable-next-line no-unused-vars -- Core ESLint does not count JSX member references.
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, SkipBack, SkipForward } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const LessonNavigation = ({
   goToPreviousLesson,
@@ -23,15 +24,15 @@ const LessonNavigation = ({
         whileTap={!isFirstLesson ? { scale: 0.95 } : {}}
         onClick={goToPreviousLesson}
         disabled={isFirstLesson}
-        className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-600 rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all group"
+        className="flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 py-3 text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 group"
       >
         <ChevronLeft className="w-4 h-4 group-hover:translate-x-[-2px] transition-transform" />
         <span className="hidden sm:inline text-sm font-semibold">Previous</span>
       </motion.button>
 
       {/* Lesson Counter - Mobile Only */}
-      <div className="md:hidden flex items-center justify-center px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg">
-        <span className="text-xs font-bold text-gray-300">
+      <div className="md:hidden flex items-center justify-center rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+        <span className="text-xs font-semibold text-slate-600">
           {currentIndex + 1} / {totalLessons}
         </span>
       </div>
@@ -42,24 +43,13 @@ const LessonNavigation = ({
         whileTap={!isLastLesson ? { scale: 0.95 } : {}}
         onClick={goToNextLesson}
         disabled={isLastLesson}
-        className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-all group md:col-span-1 col-span-2"
+        className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-indigo-700 px-4 py-3 font-semibold text-white transition-colors hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-50 group md:col-span-1 col-span-2"
       >
         <span className="hidden sm:inline text-sm">Next Lesson</span>
         <span className="sm:hidden text-sm">Next</span>
         <ChevronRight className="w-4 h-4 group-hover:translate-x-[2px] transition-transform" />
       </motion.button>
 
-      {/* End Course Button - Desktop */}
-      {isLastLesson && (
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="hidden md:flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-all"
-        >
-          <SkipForward className="w-4 h-4" />
-          Course Complete
-        </motion.button>
-      )}
     </motion.div>
   );
 };

@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 const CourseSkeleton = () => {
   return (
-    <motion.div className="bg-white rounded-2xl overflow-hidden shadow animate-pulse">
+    <Motion.div className="bg-white rounded-2xl overflow-hidden shadow animate-pulse">
       <div className="h-48 bg-gray-300" />
 
       <div className="p-6 space-y-4">
@@ -14,7 +14,7 @@ const CourseSkeleton = () => {
           <div className="h-4 bg-gray-300 rounded flex-1" />
         </div>
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };
 

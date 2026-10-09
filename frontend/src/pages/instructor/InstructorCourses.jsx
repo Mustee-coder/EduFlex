@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import { useInstructorCourses } from "@/hooks/useInstructorCourses";
 import { useDeleteCourse } from "@/hooks/useDeleteCourse";
 import { toast } from "sonner";

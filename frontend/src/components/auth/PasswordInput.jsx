@@ -45,7 +45,7 @@ const PasswordInput = ({
       <div className="password-input-root space-y-2">
         {/* Label */}
         {label && (
-          <label className="block text-sm font-semibold text-gray-600">
+          <label htmlFor={`auth-${name}`} className="block text-sm font-semibold text-gray-700">
             {label}
             {required && <span className="text-red-600 ml-1">*</span>}
           </label>
@@ -54,6 +54,7 @@ const PasswordInput = ({
         {/* Input Container */}
         <div className="relative">
           <input
+            id={`auth-${name}`}
             name={name}
             type={showPassword ? "text" : "password"}
             value={value}
@@ -91,6 +92,7 @@ const PasswordInput = ({
         {error && (
           <div
             id={`${name}-error`}
+            role="alert"
             className="flex items-center gap-2 text-red-600 text-sm font-medium"
           >
             <AlertCircle size={16} />

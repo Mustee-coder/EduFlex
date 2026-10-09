@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+// eslint-disable-next-line no-unused-vars -- Core ESLint does not count JSX member references.
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMyLearning } from "@/hooks/useMyLearning";
-import { toast } from "sonner";
 import {
   Search,
   Filter,
@@ -111,31 +111,19 @@ const MyLearning = () => {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
-
-        .mylearning-root {
-          font-family: 'Poppins', sans-serif;
-        }
-
-        .mylearning-title {
-          font-family: 'Syne', sans-serif;
-        }
-      `}</style>
-
-      <div className="mylearning-root bg-gradient-to-br from-gray-50 via-white to-gray-50 min-h-screen py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="mylearning-root student-page min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8">
         
         <div className="max-w-7xl mx-auto">
           
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-7"
           >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h1 className="mylearning-title text-4xl md:text-5xl font-bold text-gray-900">
+                <h1 className="student-heading">
                   My Learning
                 </h1>
                 <p className="text-gray-600 mt-2">
@@ -147,7 +135,7 @@ const MyLearning = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate("/browse-courses")}
-                className="flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg"
+                className="student-button-primary"
               >
                 <BookOpen className="w-5 h-5" />
                 Browse Courses
@@ -170,7 +158,7 @@ const MyLearning = () => {
                 placeholder="Search your courses..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+                className="min-h-11 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" aria-label="Search enrolled courses"
               />
             </div>
 
@@ -180,7 +168,7 @@ const MyLearning = () => {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all appearance-none bg-white"
+                className="min-h-11 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
               >
                 <option value="all">All Courses</option>
                 <option value="completed">Completed</option>
@@ -195,7 +183,7 @@ const MyLearning = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all appearance-none bg-white"
+                className="min-h-11 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"
               >
                 <option value="progress">Progress</option>
                 <option value="name">Name</option>
@@ -208,7 +196,7 @@ const MyLearning = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center"
+              className="student-panel p-7 text-center sm:p-10"
             >
               <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="w-8 h-8 text-emerald-600" />
@@ -233,7 +221,7 @@ const MyLearning = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center"
+              className="student-panel p-7 text-center sm:p-10"
             >
               <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-bold text-gray-900 mb-2">
@@ -262,15 +250,15 @@ const MyLearning = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all overflow-hidden group border border-gray-100"
+                        className="student-course-card overflow-hidden transition-all duration-200"
                       >
                         {/* Thumbnail */}
-                        <div className="relative h-48 overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-500">
+                        <div className="student-course-image relative">
                           {course.thumbnail ? (
                             <img
                               src={course.thumbnail}
                               alt={course.courseName}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                               onError={(e) => {
                                 e.target.style.display = "none";
                               }}
@@ -293,18 +281,7 @@ const MyLearning = () => {
                             </motion.div>
                           )}
 
-                          {/* Overlay */}
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
-                            {!isCompleted && (
-                              <motion.button
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                className="bg-white text-emerald-600 p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all"
-                              >
-                                <Play className="w-6 h-6" />
-                              </motion.button>
-                            )}
-                          </div>
+
                         </div>
 
                         {/* Content */}
@@ -326,13 +303,15 @@ const MyLearning = () => {
                               </p>
                             </div>
 
-                            <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="w-full overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label={`${course.courseName} progress`} aria-valuemin="0" aria-valuemax="100" aria-valuenow={progress}>
+                              <div className="h-2.5">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${progress}%` }}
                                 transition={{ duration: 1, ease: "easeOut" }}
-                                className="h-full bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full"
+                                className="h-full rounded-full bg-indigo-600"
                               />
+                              </div>
                             </div>
                           </div>
 
@@ -345,11 +324,9 @@ const MyLearning = () => {
                           )}
 
                           {/* CTA Button */}
-                          <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => navigate(`/course/${course._id}`)}
-                            className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                          <Link
+                            to={`/course/${course._id}`}
+                            className="student-button-primary w-full"
                           >
                             {isCompleted ? (
                               <>
@@ -362,7 +339,7 @@ const MyLearning = () => {
                                 Continue Learning
                               </>
                             )}
-                          </motion.button>
+                          </Link>
                         </div>
                       </motion.div>
                     );

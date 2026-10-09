@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars -- Core ESLint does not count JSX member references.
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
@@ -13,7 +14,43 @@ import {
   FolderTree,
   Star,
 } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/useAuth";
+
+const NavLinkItem = ({ link, theme, closeSidebar }) => {
+  const Icon = link.icon;
+  const handleNavClick = () => closeSidebar?.();
+
+  return (
+      <NavLink
+        to={link.path}
+        onClick={handleNavClick}
+        className={({ isActive }) =>
+          `nav-link flex min-h-11 items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sm transition-colors ${
+            isActive
+              ? `${theme.active} font-semibold`
+              : "text-gray-700 hover:bg-gray-100"
+          }`
+        }
+      >
+        {({ isActive }) => (
+          <>
+            <Icon className="w-5 h-5 flex-shrink-0" />
+            <span className="flex-1">{link.label}</span>
+            {isActive && (
+              <motion.div
+                initial={{ opacity: 0, x: -4 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </motion.div>
+            )}
+          </>
+        )}
+      </NavLink>
+  );
+};
+
 
 const SidebarClean = ({ isOpen, closeSidebar }) => {
   const { user } = useAuth();
@@ -92,45 +129,6 @@ const SidebarClean = ({ isOpen, closeSidebar }) => {
   };
 
   const links = navigationLinks[role] || navigationLinks.Student;
-
-  const handleNavClick = () => {
-    closeSidebar?.();
-  };
-
-  // Helper component for individual nav links
-  const NavLinkItem = ({ link }) => {
-    const Icon = link.icon;
-
-    return (
-      <NavLink
-        to={link.path}
-        onClick={handleNavClick}
-        className={({ isActive }) =>
-          `nav-link flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
-            isActive
-              ? `${theme.active} shadow-md`
-              : "text-gray-700 hover:bg-gray-100"
-          }`
-        }
-      >
-        {({ isActive }) => (
-          <>
-            <Icon className="w-5 h-5 flex-shrink-0" />
-            <span className="flex-1">{link.label}</span>
-            {isActive && (
-              <motion.div
-                initial={{ opacity: 0, x: -4 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </motion.div>
-            )}
-          </>
-        )}
-      </NavLink>
-    );
-  };
 
   return (
     <>
@@ -230,15 +228,15 @@ const SidebarClean = ({ isOpen, closeSidebar }) => {
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: -300, opacity: 0 }}
         transition={{ duration: 0.25 }}
-        className="sidebar-root fixed md:static top-16 md:top-0 left-0 z-40 w-72 h-[calc(100vh-4rem)] md:h-screen bg-white shadow-lg overflow-y-auto flex flex-col"
+        className="sidebar-root relative md:sticky md:top-0 left-0 z-40 h-full w-full md:h-screen md:w-72 shrink-0 border-r border-slate-200 bg-white overflow-y-auto flex flex-col"
       >
         {/* Logo Section */}
         <div className="p-6 flex-shrink-0 border-b border-gray-100">
           <div
-            className={`p-4 rounded-2xl bg-gradient-to-r ${theme.gradient} text-white`}
+            className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900"
           >
-            <h1 className="sidebar-title text-2xl font-black">EduFlex</h1>
-            <p className="text-xs opacity-80 mt-1">Platform</p>
+            <h1 className="sidebar-title text-xl font-bold tracking-tight">EduFlex</h1>
+            <p className="mt-1 text-xs text-slate-500">{role === "Student" ? "Your learning space" : `${role} workspace`}</p>
           </div>
         </div>
 
@@ -254,7 +252,7 @@ const SidebarClean = ({ isOpen, closeSidebar }) => {
               {/* Links */}
               <div className="space-y-2">
                 {section.links.map((link) => (
-                  <NavLinkItem key={link.path} link={link} />
+                  <NavLinkItem key={link.path} link={link} theme={theme} closeSidebar={closeSidebar} />
                 ))}
               </div>
             </div>

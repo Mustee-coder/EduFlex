@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllCourses } from "@/services/courseService";
 
-export const useGetAllCourses = () => {
+export const useGetAllCourses = (page = 1, limit = 12) => {
   return useQuery({
-    queryKey: ["courses"],
-    queryFn: getAllCourses,
+    queryKey: ["courses", page, limit],
+    queryFn: () => getAllCourses(page, limit),
+    placeholderData: (previousData) => previousData,
   });
 };

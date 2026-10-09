@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 
 const StatCard = ({
   title,
@@ -10,7 +10,7 @@ const StatCard = ({
   textColor = "text-emerald-600",
 }) => {
   return (
-    <motion.div
+    <Motion.div
       whileHover={{ y: -4 }}
       className="relative overflow-hidden rounded-2xl bg-white p-4 sm:p-6 shadow-md hover:shadow-lg transition-all border border-gray-100"
     >
@@ -22,7 +22,9 @@ const StatCard = ({
       <div className="relative z-10">
         {/* Icon */}
         <div className={`${bgColor} w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-3 sm:mb-4`}>
-          <Icon className={`${textColor} w-6 h-6 sm:w-7 sm:h-7`} />
+          {React.createElement(Icon, {
+            className: `${textColor} w-6 h-6 sm:w-7 sm:h-7`,
+          })}
         </div>
 
         {/* Content */}
@@ -42,7 +44,7 @@ const StatCard = ({
           className={`mt-3 sm:mt-4 h-1 w-8 bg-gradient-to-r ${color} rounded-full`}
         />
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };
 

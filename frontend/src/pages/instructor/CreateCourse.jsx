@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { useCreateCourse } from "@/hooks/useCreateCourse";
 import { toast } from "sonner";
 import {
@@ -238,7 +238,7 @@ const CreateCourse = () => {
 
       <div className="create-root bg-gradient-to-br from-gray-50 via-white to-gray-50 min-h-screen py-8 md:py-12 px-4 sm:px-6 lg:px-8">
         
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-4xl mx-auto"
@@ -260,7 +260,7 @@ const CreateCourse = () => {
           </div>
 
           {/* Form Card */}
-          <motion.form
+          <Motion.form
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -301,14 +301,14 @@ const CreateCourse = () => {
                 />
 
                 {touched.courseName && errors.courseName && (
-                  <motion.p
+                  <Motion.p
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-red-600 text-xs font-semibold flex items-center gap-1"
                   >
                     <AlertCircle size={12} />
                     {errors.courseName}
-                  </motion.p>
+                  </Motion.p>
                 )}
               </div>
 
@@ -336,14 +336,14 @@ const CreateCourse = () => {
                 />
 
                 {touched.courseDescription && errors.courseDescription && (
-                  <motion.p
+                  <Motion.p
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-red-600 text-xs font-semibold flex items-center gap-1"
                   >
                     <AlertCircle size={12} />
                     {errors.courseDescription}
-                  </motion.p>
+                  </Motion.p>
                 )}
               </div>
 
@@ -372,14 +372,14 @@ const CreateCourse = () => {
                 />
 
                 {touched.whatYouWillLearn && errors.whatYouWillLearn && (
-                  <motion.p
+                  <Motion.p
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-red-600 text-xs font-semibold flex items-center gap-1"
                   >
                     <AlertCircle size={12} />
                     {errors.whatYouWillLearn}
-                  </motion.p>
+                  </Motion.p>
                 )}
               </div>
             </div>
@@ -422,14 +422,14 @@ const CreateCourse = () => {
                   />
 
                   {touched.price && errors.price && (
-                    <motion.p
+                    <Motion.p
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="text-red-600 text-xs font-semibold flex items-center gap-1"
                     >
                       <AlertCircle size={12} />
                       {errors.price}
-                    </motion.p>
+                    </Motion.p>
                   )}
                 </div>
 
@@ -463,14 +463,14 @@ const CreateCourse = () => {
                   </select>
 
                   {touched.category && errors.category && (
-                    <motion.p
+                    <Motion.p
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="text-red-600 text-xs font-semibold flex items-center gap-1"
                     >
                       <AlertCircle size={12} />
                       {errors.category}
-                    </motion.p>
+                    </Motion.p>
                   )}
                 </div>
               </div>
@@ -487,7 +487,7 @@ const CreateCourse = () => {
 
               {/* Thumbnail Preview */}
               {thumbnailPreview && (
-                <motion.div
+                <Motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="relative rounded-xl overflow-hidden border-2 border-emerald-200 bg-emerald-50 p-2"
@@ -501,7 +501,7 @@ const CreateCourse = () => {
                     <CheckCircle2 className="w-4 h-4" />
                     Ready
                   </div>
-                </motion.div>
+                </Motion.div>
               )}
 
               {/* File Input */}
@@ -530,7 +530,7 @@ const CreateCourse = () => {
             </div>
 
             {/* Submit Button */}
-            <motion.button
+            <Motion.button
               whileHover={isFormValid ? { scale: 1.02 } : {}}
               whileTap={isFormValid ? { scale: 0.98 } : {}}
               type="submit"
@@ -549,14 +549,14 @@ const CreateCourse = () => {
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}
-            </motion.button>
+            </Motion.button>
 
             {/* Helper Text */}
             <p className="text-center text-xs text-gray-600">
               After creating, you'll be able to add sections, lessons, and videos in the course builder.
             </p>
-          </motion.form>
-        </motion.div>
+          </Motion.form>
+        </Motion.div>
       </div>
     </>
   );

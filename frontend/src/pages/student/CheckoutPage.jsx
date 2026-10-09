@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars -- Core ESLint does not count JSX member references.
 import { motion } from "framer-motion";
 import { useGetCourseDetails } from "@/hooks/useGetCourseDetails";
 import { useInitializePayment } from "@/hooks/useInitializePayment";
@@ -9,10 +10,6 @@ import {
   ArrowLeft,
   Lock,
   CheckCircle2,
-  Star,
-  Users,
-  Clock,
-  Shield,
   Zap,
   AlertCircle,  
   Loader,
@@ -74,7 +71,7 @@ if (isLoading) {
   // Error State
   if (isError || !course) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+      <div className="student-page flex min-h-[60vh] items-center justify-center bg-slate-50 p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -100,13 +97,13 @@ if (isLoading) {
     );
   }
 
-  const price = course.amount || course.price || 0;
+  const price = course.amount ?? course.price ?? 0;
 
   return (
     <>
      
 
-      <div className="checkout-root min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="checkout-root student-page min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8">
         
         {/* Back Button */}
         <motion.button
@@ -130,7 +127,7 @@ if (isLoading) {
             <div className="lg:col-span-2 space-y-6">
               
               {/* Course Card */}
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="student-panel overflow-hidden">
                 <div className="grid sm:grid-cols-3 gap-6 p-6">
                   
                   {/* Thumbnail */}
@@ -174,78 +171,17 @@ if (isLoading) {
                       {course.courseDescription}
                     </p>
 
-                    {/* Stats */}
-                    <div className="flex flex-wrap gap-4 pt-2">
-                      <div className="flex items-center gap-2">
-                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                        <span className="font-semibold text-gray-900">
-                          {course.rating || 4.8}
-                        </span>
-                        <span className="text-gray-500 text-sm">
-                          ({course.reviewsCount || 0})
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-indigo-600" />
-                        <span className="text-gray-700 text-sm">
-                          {(course.studentsEnrolled || 0).toLocaleString()} students
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-purple-600" />
-                        <span className="text-gray-700 text-sm">
-                          {course.duration || "Self-paced"}
-                        </span>
-                      </div>
-                    </div>
+                    <p className="text-sm text-slate-500">{course.sections?.length || 0} sections · {(course.sections || []).reduce((count, section) => count + (section.subSections?.length || 0), 0)} lessons</p>
                   </div>
                 </div>
               </div>
 
-              {/* What You'll Learn */}
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                <h2 className="checkout-title text-xl font-bold text-gray-900 mb-4">
-                  What You'll Learn
-                </h2>
-                <ul className="space-y-3">
-                  {[
-                    "Master the core concepts and fundamentals",
-                    "Work on real-world projects and assignments",
-                    "Get lifetime access to course materials",
-                    "Access exclusive resources and downloads",
-                  ].map((item, i) => (
-                    <motion.li
-                      key={i}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="flex items-start gap-3"
-                    >
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-700">{item}</span>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Money-Back Guarantee */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 flex items-start gap-4"
-              >
-                <Shield className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="font-bold text-emerald-900 mb-1">
-                    30-Day Money-Back Guarantee
-                  </h3>
-                  <p className="text-sm text-emerald-800">
-                    Not happy with the course? Get your full refund within 30 days, no questions asked.
-                  </p>
+              {course.whatYouWillLearn && (
+                <div className="student-panel p-5 sm:p-6">
+                  <h2 className="font-semibold text-slate-900">What you’ll learn</h2>
+                  <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600">{course.whatYouWillLearn}</p>
                 </div>
-              </motion.div>
+              )}
             </div>
 
             {/* Right - Payment Summary (1/3) */}
@@ -256,7 +192,7 @@ if (isLoading) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-8 space-y-6"
+                className="student-panel space-y-6 p-5 sm:p-6 lg:sticky lg:top-24"
               >
                 
                 {/* Order Summary */}
@@ -271,14 +207,9 @@ if (isLoading) {
                       <span className="font-semibold">₦{price.toLocaleString()}</span>
                     </div>
 
-                    <div className="flex justify-between text-gray-600">
-                      <span>Discount</span>
-                      <span className="font-semibold text-emerald-600">₦0</span>
-                    </div>
-
                     <div className="border-t pt-2 flex justify-between font-bold text-lg text-gray-900">
                       <span>Total</span>
-                      <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                      <span className="text-indigo-700">
                         ₦{price.toLocaleString()}
                       </span>
                     </div>
@@ -303,7 +234,7 @@ if (isLoading) {
                   whileTap={!isPending ? { scale: 0.98 } : {}}
                   onClick={handlePayment}
                   disabled={isPending}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                  className="student-button-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isPending ? (
                     <>
@@ -327,27 +258,12 @@ if (isLoading) {
 
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>Instant enrollment after payment</span>
+                    <span>Enrollment follows payment confirmation</span>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>Lifetime access to materials</span>
-                  </div>
+
                 </div>
 
-                {/* Trust Badges */}
-                <div className="pt-4 border-t border-gray-100">
-                  <p className="text-xs text-gray-500 mb-3">Trusted by</p>
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex-1 h-8 bg-gray-100 rounded flex items-center justify-center text-xs font-bold text-gray-600">
-                      Paystack
-                    </div>
-                    <div className="flex-1 h-8 bg-gray-100 rounded flex items-center justify-center text-xs font-bold text-gray-600">
-                      SSL Secure
-                    </div>
-                  </div>
-                </div>
               </motion.div>
             </div>
           </motion.div>

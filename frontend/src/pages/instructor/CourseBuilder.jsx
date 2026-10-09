@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import {
   AlertCircle,
   Loader,
@@ -183,12 +183,12 @@ const CourseBuilder = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <motion.div
+        <Motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
         >
           <Loader className="w-12 h-12 text-emerald-600" />
-        </motion.div>
+        </Motion.div>
       </div>
     );
   }
@@ -197,7 +197,7 @@ const CourseBuilder = () => {
   if (!course) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center border border-red-100"
@@ -210,7 +210,7 @@ const CourseBuilder = () => {
           >
             Back to Courses
           </button>
-        </motion.div>
+        </Motion.div>
       </div>
     );
   }
@@ -257,7 +257,7 @@ const CourseBuilder = () => {
         />
 
         {/* Course Structure */}
-        <motion.section
+        <Motion.section
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -295,7 +295,7 @@ const CourseBuilder = () => {
             isUpdatingSubSection={isUpdatingSubSection}
             courseId={courseId}
           />
-        </motion.section>
+        </Motion.section>
       </div>
     </div>
 

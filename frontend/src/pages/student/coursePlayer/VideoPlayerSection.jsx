@@ -1,10 +1,10 @@
 import React, { forwardRef } from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { BookOpen } from "lucide-react";
 
 const VideoPlayerSection = forwardRef(({ currentLesson, handleVideoEnd }, ref) => {
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="bg-black w-full aspect-video relative group overflow-hidden"
@@ -33,7 +33,7 @@ const VideoPlayerSection = forwardRef(({ currentLesson, handleVideoEnd }, ref) =
           </p>
         </div>
       )}
-    </motion.div>
+    </Motion.div>
   );
 });
 

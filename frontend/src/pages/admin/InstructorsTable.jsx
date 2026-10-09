@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   AlertCircle,
@@ -18,6 +18,8 @@ import {
   approveInstructor,
   rejectInstructor,
 } from "@/services/adminService";
+
+const EMPTY_LIST = [];
 
 const InstructorsTable = () => {
   const { data, isLoading, error } = useAllInstructors();
@@ -53,7 +55,7 @@ const InstructorsTable = () => {
     approvalMutation.mutate({ instructorId: instructor._id, action });
   };
 
-  const instructors = data?.data || [];
+  const instructors = data?.data ?? EMPTY_LIST;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);

@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { useAdminStats } from "@/hooks/admin/hooks";
 import StatCard from "./component/StatCard";
 import {
@@ -19,7 +19,7 @@ const AdminDashboard = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <motion.div
+        <Motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           className="flex flex-col items-center gap-4"
@@ -28,7 +28,7 @@ const AdminDashboard = () => {
           <p className="text-lg font-semibold text-gray-700">
             Loading dashboard...
           </p>
-        </motion.div>
+        </Motion.div>
       </div>
     );
   }
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
   if (isError) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center border border-red-100"
@@ -57,7 +57,7 @@ const AdminDashboard = () => {
           >
             Try Again
           </button>
-        </motion.div>
+        </Motion.div>
       </div>
     );
   }
@@ -115,7 +115,7 @@ const AdminDashboard = () => {
 
       <div className="admin-root max-w-7xl mx-auto">
         {/* Header */}
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 md:mb-12"
@@ -128,17 +128,17 @@ const AdminDashboard = () => {
               Monitor and manage the EduFlex platform
             </p>
           </div>
-        </motion.div>
+        </Motion.div>
 
         {/* Stats Grid */}
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
         >
           {dashboardStats.map((item, index) => (
-            <motion.div
+            <Motion.div
               key={item.title}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -152,9 +152,9 @@ const AdminDashboard = () => {
                 bgColor={item.bgColor}
                 textColor={item.textColor}
               />
-            </motion.div>
+            </Motion.div>
           ))}
-        </motion.div>
+        </Motion.div>
       </div>
       
     </div>
