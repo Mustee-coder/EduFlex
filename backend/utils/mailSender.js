@@ -1,34 +1,37 @@
-import nodemailer from "nodemailer";
+import axios from "axios";
+
+const BREVO_EMAILS_URL = "https://api.brevo.com/v3/smtp/email";
 
 const mailSender = async (email, title, body) => {
+  const content = String(body);
+  const isHtml = /<\/?[a-z][^>]*>/i.test(content);
+  const payload = {
+    sender: { name: "EduFlex", email: process.env.MAIL_FROM },
+    to: [{ email }],
+    subject: title,
+    ...(isHtml ? { htmlContent: content } : { textContent: content }),
+  };
+
   try {
-
-    
-    const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
-
-
-    const info = await transporter.sendMail({
-      from: `EduFlex <${process.env.MAIL_USER}>`,
-      to: email,
-      subject: title,
-      html: body,
+    const response = await axios.post(BREVO_EMAILS_URL, payload, {
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        accept: "application/json",
+        "content-type": "application/json",
+      },
+      timeout: 10000,
+      maxRedirects: 0,
     });
 
-    console.log("Email sent successfully");
-
-    return info;
-
+    return response.data;
   } catch (error) {
-
-    console.log("MAIL ERROR:", error);
-
-    throw error;
+    const status = error?.response?.status;
+    const safeMessage = status
+      ? `Brevo email request failed (HTTP ${status}).`
+      : "Brevo email request failed due to a network error.";
+    // Do not attach the Axios error: it can contain request configuration or
+    // provider response data. Existing callers receive a safe, generic error.
+    throw new Error(safeMessage);
   }
 };
 

@@ -9,14 +9,18 @@ const requiredVariables = [
   "CLOUD_API_KEY",
   "CLOUD_API_SECRET",
   "PAYSTACK_SECRET_KEY",
-  "MAIL_USER",
-  "MAIL_PASS",
+  "BREVO_API_KEY",
+  "MAIL_FROM",
 ];
 
 for (const name of requiredVariables) {
   if (!process.env[name] || !process.env[name].trim()) {
     throw new Error(`Missing required environment variable: ${name}`);
   }
+}
+
+if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(process.env.MAIL_FROM)) {
+  throw new Error("MAIL_FROM must be a valid email address.");
 }
 
 const validateUrl = (name) => {
@@ -58,6 +62,8 @@ export const env = Object.freeze({
   ),
   CLIENT_URL: process.env.CLIENT_URL,
   FRONTEND_URL: process.env.FRONTEND_URL,
+  BREVO_API_KEY: process.env.BREVO_API_KEY,
+  MAIL_FROM: process.env.MAIL_FROM,
   FOLDER_NAME: process.env.FOLDER_NAME,
   NODE_ENV: process.env.NODE_ENV,
   PORT: process.env.PORT || 5000,
