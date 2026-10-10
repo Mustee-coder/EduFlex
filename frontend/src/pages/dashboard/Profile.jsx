@@ -1,313 +1,164 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useUserDetails } from "@/hooks/useProfile";
 import { useUpdateProfileImage } from "@/hooks/useUpdateProfileImage";
 import EditProfileModal from "@/components/profile/EditProfileModal";
-import { Upload, CheckCircle, AlertCircle, Loader } from "lucide-react";
+import { AlertCircle, CheckCircle2, LoaderCircle, Upload, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import "@/index.css";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 
 const Profile = () => {
-  const { data, isLoading, isError } = useUserDetails();
+  const { data, isLoading, isError, refetch, isFetching } = useUserDetails();
   const user = data?.data;
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState("");
   const [uploadError, setUploadError] = useState("");
+  const [uploadSuccess, setUploadSuccess] = useState("");
   const fileInputRef = useRef(null);
   const { mutate: uploadImage, isPending: isUploading } = useUpdateProfileImage();
 
-  // ━━ CLEANUP ━━
-  useEffect(() => {
-    return () => {
-      if (previewImage && previewImage.startsWith("blob:")) {
-        URL.revokeObjectURL(previewImage);
-      }
-    };
+  useEffect(() => () => {
+    if (previewImage?.startsWith("blob:")) URL.revokeObjectURL(previewImage);
   }, [previewImage]);
 
-  // ━━ IMAGE VALIDATION ━━
-  const validateImage = (file) => {
-    const maxSize = 5 * 1024 * 1024;
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
     const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-
     if (!validTypes.includes(file.type)) {
-      setUploadError("Please upload a valid image (JPG, PNG, WebP, GIF)");
-      return false;
-    }
-
-    if (file.size > maxSize) {
-      setUploadError("Image size must be less than 5MB");
-      return false;
-    }
-
-    setUploadError("");
-    return true;
-  };
-
-  // ━━ HANDLERS ━━
-  const handleImageChange = (e) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-
-  if (!validateImage(file)) {
-    if (previewImage?.startsWith("blob:")) {
-      URL.revokeObjectURL(previewImage);
-    }
-    setSelectedImage(null);
-    setPreviewImage(user?.image || "");
-    e.currentTarget.value = "";
-    return;
-  }
-
-  // Share old blob URL
-  if (previewImage?.startsWith("blob:")) {
-    URL.revokeObjectURL(previewImage);
-  }
-
-  const newPreview = URL.createObjectURL(file);
-
-  setSelectedImage(file);
-  setPreviewImage(newPreview);
-};
-
-  const handleUploadImage = () => {
-    if (!selectedImage) {
-      toast.error("Please select an image first");
+      setUploadError("Choose a JPG, PNG, WebP, or GIF image.");
+      setUploadSuccess("");
+      event.currentTarget.value = "";
       return;
     }
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Image size must be less than 5 MB.");
+      setUploadSuccess("");
+      event.currentTarget.value = "";
+      return;
+    }
+    setUploadError("");
+    setUploadSuccess("");
+    setSelectedImage(file);
+    setPreviewImage(URL.createObjectURL(file));
+  };
 
+  const handleUploadImage = () => {
+    if (!selectedImage) return;
     const formData = new FormData();
     formData.append("profileImage", selectedImage);
-
+    setUploadError("");
+    setUploadSuccess("");
     uploadImage(formData, {
       onSuccess: (response) => {
-        toast.success("Profile picture updated successfully");
         setPreviewImage(response?.data?.image || "");
         setSelectedImage(null);
-        setUploadError("");
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
+        setUploadSuccess("Your profile photo has been updated.");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        toast.success("Profile picture updated successfully");
       },
-      onError: (err) => {
-        const errMsg = err?.response?.data?.message || "Failed to upload image";
-        toast.error(errMsg);
-        setUploadError(errMsg);
+      onError: (error) => {
+        setUploadError(error?.response?.data?.message || "We couldn’t upload your photo. Please try again.");
       },
     });
   };
 
-  // ━━ PROFILE COMPLETION ━━
-  const getProfileCompletion = () => {
-    if (!user) return 0;
-    const fields = [
-      user?.firstName,
-      user?.lastName,
-      user?.email,
-      user?.image,
-      user?.additionalDetails?.contactNumber,
-      user?.additionalDetails?.gender,
-      user?.additionalDetails?.dateOfBirth,
-      user?.additionalDetails?.about,
-    ];
-    const completed = fields.filter(Boolean).length;
-    return Math.round((completed / fields.length) * 100);
-  };
+  const profileCompletion = user ? Math.round(([
+    user.firstName, user.lastName, user.email, user.image,
+    user.additionalDetails?.contactNumber, user.additionalDetails?.gender,
+    user.additionalDetails?.dateOfBirth, user.additionalDetails?.about,
+  ].filter(Boolean).length / 8) * 100) : 0;
 
-  const profileCompletion = getProfileCompletion();
-
-  // ━━ SKELETON LOADER ━━
   if (isLoading) {
     return (
-      <div className="max-w-5xl mx-auto p-6 space-y-8">
-        <div className="h-10 w-32 bg-gray-200 rounded-lg animate-pulse" />
-        <div className="bg-white rounded-2xl p-6 h-48 animate-pulse" />
-        <div className="bg-white rounded-2xl p-6 space-y-4 animate-pulse">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-8 bg-gray-200 rounded-lg" />
-          ))}
+      <main className="profile-root student-page min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8" aria-label="Loading profile" aria-busy="true">
+        <div className="mx-auto max-w-4xl space-y-6">
+          <div className="space-y-2"><div className="h-7 w-40 animate-pulse rounded bg-slate-200" /><div className="h-4 w-64 max-w-full animate-pulse rounded bg-slate-200" /></div>
+          <div className="h-44 animate-pulse rounded-2xl border border-slate-200 bg-white" />
+          <div className="h-72 animate-pulse rounded-2xl border border-slate-200 bg-white" />
         </div>
-      </div>
+      </main>
     );
   }
 
-  // ━━ ERROR STATE ━━
   if (isError) {
     return (
-      <div className="max-w-5xl mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-8 flex flex-col items-center justify-center">
-          <AlertCircle className="w-12 h-12 text-red-600 mb-4" />
-          <h2 className="text-2xl font-bold text-red-700 mb-2">Failed to Load Profile</h2>
-          <p className="text-red-600 text-center mb-6">
-            We couldn't load your profile information. Please try again later.
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-colors"
-          >
-            Retry
+      <main className="profile-root student-page min-h-[60vh] bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-2xl rounded-2xl border border-rose-200 bg-white p-6 shadow-sm sm:p-8" role="alert">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-rose-50 text-rose-700"><AlertCircle className="h-5 w-5" aria-hidden="true" /></div>
+          <h1 className="profile-title mt-4 text-2xl font-semibold text-slate-900">Profile couldn’t load</h1>
+          <p className="mt-2 text-sm leading-6 text-slate-600">We couldn’t retrieve your account details. Check your connection and try again.</p>
+          <button type="button" onClick={() => refetch()} disabled={isFetching} className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-60">
+            {isFetching && <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />}{isFetching ? "Retrying…" : "Try again"}
           </button>
-        </div>
-      </div>
+        </section>
+      </main>
     );
   }
 
+  const details = [
+    { label: "First name", value: user?.firstName },
+    { label: "Last name", value: user?.lastName },
+    { label: "Email address", value: user?.email },
+    { label: "Phone number", value: user?.additionalDetails?.contactNumber },
+    { label: "Gender", value: user?.additionalDetails?.gender },
+    { label: "Date of birth", value: user?.additionalDetails?.dateOfBirth },
+  ];
+
   return (
-    <>
-      
+    <main className="profile-root student-page min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl space-y-5 sm:space-y-6">
+        <header>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-indigo-700">Account</p>
+          <h1 className="profile-title mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">My profile</h1>
+          <p className="mt-1 text-sm text-slate-600">Manage your personal details and profile photo.</p>
+        </header>
 
-      <div className="profile-root student-page min-h-screen bg-slate-50 px-4 py-6 sm:px-6">
-        <div className="mx-auto max-w-3xl space-y-5">
-            
-          
-          {/* Header */}
-          <div>
-            <h1 className="profile-title text-4xl md:text-5xl font-black text-gray-900 ">
-              My Profile
-            </h1>
-            <p className="mt-2 text-sm text-slate-600">Manage your account information.</p>
+        <ProfileHeader user={user} previewImage={previewImage} profileCompletion={profileCompletion} fileInputRef={fileInputRef} isUploading={isUploading} onEdit={() => setOpenEditModal(true)} />
+
+        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="personal-information-title">
+          <div className="border-b border-slate-100 px-5 py-4 sm:px-6">
+            <h2 id="personal-information-title" className="text-base font-semibold text-slate-900">Personal information</h2>
+            <p className="mt-1 text-sm text-slate-600">Details associated with your EduFlex account.</p>
           </div>
-
-          {/* ━━ PROFILE HEADER ━━ */}
-          <ProfileHeader
-  user={user}
-  previewImage={previewImage}
-  profileCompletion={profileCompletion}
-  fileInputRef={fileInputRef}
-  isUploading={isUploading}
-  onEdit={() => setOpenEditModal(true)}
-/>
-          {/* ━━ PERSONAL INFORMATION ━━ */}
-          <div
-            className="profile-card bg-white rounded-3xl shadow-sm border border-gray-100 p-8 hover:shadow-lg transition-shadow"
-            style={{ animationDelay: "0.1s" }}
-          >
-            <h2 className="profile-title text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
-              <span className="p-3 bg-indigo-100 rounded-xl">ℹ️</span>
-              Personal Information
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                { label: "First Name", value: user?.firstName },
-                { label: "Last Name", value: user?.lastName },
-                { label: "Email", value: user?.email },
-                { label: "Phone Number", value: user?.additionalDetails?.contactNumber },
-                { label: "Gender", value: user?.additionalDetails?.gender },
-                { label: "Date of Birth", value: user?.additionalDetails?.dateOfBirth },
-              ].map((field, idx) => (
-                <div key={idx} className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl">
-                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                    {field.label}
-                  </p>
-                  <p className="text-lg font-semibold text-gray-900">
-                    {field.value || "Not provided"}
-                  </p>
-                </div>
-              ))}
-
-              {/* About Section - Full Width */}
-              <div className="md:col-span-2 bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-100">
-                <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-2">
-                  About You
-                </p>
-                <p className="text-gray-900 leading-relaxed">
-                  {user?.additionalDetails?.about || "No bio added yet. Add one to help others know you better!"}
-                </p>
+          <dl className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
+            {details.map(({ label, value }) => (
+              <div key={label} className="min-w-0 border-b border-slate-100 px-5 py-4 last:border-b-0 sm:px-6">
+                <dt className="text-xs font-medium text-slate-500">{label}</dt>
+                <dd className="mt-1 break-words text-sm font-medium text-slate-900">{value || <span className="font-normal text-slate-400">Not provided</span>}</dd>
               </div>
+            ))}
+            <div className="min-w-0 px-5 py-4 sm:col-span-2 sm:px-6">
+              <dt className="text-xs font-medium text-slate-500">About</dt>
+              <dd className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-slate-800">{user?.additionalDetails?.about || <span className="text-slate-400">Not provided</span>}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="profile-photo-title">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700"><UserRound className="h-5 w-5" aria-hidden="true" /></div>
+            <div className="min-w-0">
+              <h2 id="profile-photo-title" className="text-base font-semibold text-slate-900">Profile photo</h2>
+              <p className="mt-1 text-sm leading-5 text-slate-600">JPG, PNG, WebP, or GIF. Maximum file size 5 MB.</p>
             </div>
           </div>
-
-          {/* ━━ CHANGE PROFILE PICTURE ━━ */}
-          <div
-            className="profile-card bg-gradient-to-br from-blue-50 to-cyan-50 rounded-3xl shadow-sm border border-blue-100 p-8 hover:shadow-lg transition-shadow"
-            style={{ animationDelay: "0.2s" }}
-          >
-            <h2 className="profile-title text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-              <span className="p-3 bg-blue-100 rounded-xl">🖼️</span>
-              Change Profile Picture
-            </h2>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              onChange={handleImageChange}
-              className="hidden"
-            />
-
-            {/* Preview */}
-            {selectedImage && (
-              <div className="mb-6">
-                <p className="text-sm font-bold text-gray-600 mb-3">Preview</p>
-                <div className="relative inline-block">
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="w-24 h-24 rounded-lg object-cover border-2 border-white shadow-lg"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Error Message */}
-            {uploadError && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-red-700 text-sm font-semibold">
-                <AlertCircle className="w-5 h-5" />
-                {uploadError}
-              </div>
-            )}
-
-            {/* Buttons */}
-            <div className="flex flex-wrap gap-4">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-                className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-300 disabled:opacity-50"
-              >
-                <Upload className="w-4 h-4" />
-                Choose Picture
-              </button>
-
-              {selectedImage && (
-                <button
-                  type="button"
-                  onClick={handleUploadImage}
-                  disabled={isUploading}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all duration-300 disabled:opacity-50"
-                >
-                  {isUploading ? (
-                    <>
-                      <Loader className="w-4 h-4 animate-spin" />
-                      Uploading...
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle className="w-4 h-4" />
-                      Upload Picture
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-
-            <p className="text-xs text-gray-600 mt-4">
-              📋 Supported: JPG, PNG, WebP, GIF (Max 5MB)
-            </p>
+          <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleImageChange} className="sr-only" aria-label="Choose profile photo file" />
+          {selectedImage && <div className="mt-5 flex min-w-0 items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+            <img src={previewImage} alt="Selected profile photo preview" className="h-14 w-14 shrink-0 rounded-lg object-cover" />
+            <p className="min-w-0 flex-1 break-all text-sm font-medium text-slate-800">{selectedImage.name}</p>
+          </div>}
+          {uploadError && <p role="alert" className="mt-4 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-rose-800">{uploadError}</p>}
+          {uploadSuccess && <p role="status" className="mt-4 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-sm text-emerald-800"><CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />{uploadSuccess}</p>}
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isUploading} className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 sm:w-auto"><Upload className="h-4 w-4" aria-hidden="true" />Choose photo</button>
+            {selectedImage && <button type="button" onClick={handleUploadImage} disabled={isUploading} className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-wait disabled:opacity-60 sm:w-auto">{isUploading && <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />}{isUploading ? "Uploading…" : "Upload photo"}</button>}
           </div>
-        </div>
-
-        {/* Edit Modal */}
-        {openEditModal && (
-          <EditProfileModal
-            user={user}
-            onClose={() => setOpenEditModal(false)}
-          />
-        )}
+        </section>
       </div>
-    </>
+      {openEditModal && <EditProfileModal user={user} onClose={() => setOpenEditModal(false)} />}
+    </main>
   );
 };
 

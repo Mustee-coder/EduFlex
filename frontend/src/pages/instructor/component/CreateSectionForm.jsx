@@ -21,7 +21,7 @@ const CreateSectionForm = ({
           <Plus className="h-5 w-5 text-[#6C5CE7]" />
         </div>
 
-        <div>
+        <div className="min-w-0">
           <h2 className="builder-title text-lg font-bold text-gray-900 sm:text-xl">
             Create Section
           </h2>
@@ -34,7 +34,7 @@ const CreateSectionForm = ({
       {/* Form */}
       <form
         onSubmit={handleCreateSection}
-        className="flex flex-col gap-4 md:flex-row"
+        className="flex min-w-0 flex-col gap-3 sm:gap-4 md:flex-row"
       >
         <input
           type="text"
@@ -42,7 +42,7 @@ const CreateSectionForm = ({
           value={sectionName}
           onChange={(e) => setSectionName(e.target.value)}
           disabled={isPending}
-          className="input-animate w-full flex-1 rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:border-[#8577F4] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#F0EDFF] disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
+          className="input-animate min-h-11 w-full min-w-0 flex-1 rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:border-[#8577F4] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#F0EDFF] disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
         />
 
         <Motion.button
@@ -50,7 +50,7 @@ const CreateSectionForm = ({
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6C5CE7] to-[#8577F4] px-6 py-3 font-semibold text-white transition-all hover:from-[#5749C8] hover:to-[#7464E8] disabled:cursor-not-allowed disabled:opacity-60 md:w-auto md:min-w-[180px]"
+          className="flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6C5CE7] to-[#8577F4] px-6 py-3 font-semibold text-white transition-all hover:from-[#5749C8] hover:to-[#7464E8] disabled:cursor-not-allowed disabled:opacity-60 md:w-auto md:min-w-[180px]"
         >
           {isPending ? (
             <>

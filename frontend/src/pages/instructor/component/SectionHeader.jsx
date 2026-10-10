@@ -27,9 +27,9 @@ const SectionHeader = ({
   return (
     <Motion.div
       onClick={() => toggleSectionExpand(section._id)}
-      className="flex cursor-pointer items-center justify-between gap-3 bg-gradient-to-r from-gray-50 to-gray-100 p-4 transition-all hover:from-[#F8F6FF] hover:to-[#F8F6FF] sm:gap-4 sm:p-6"
+      className="flex cursor-pointer flex-col gap-3 bg-gradient-to-r from-gray-50 to-gray-100 p-3 transition-all hover:from-[#F8F6FF] hover:to-[#F8F6FF] sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-6"
     >
-      <div className="flex flex-1 items-center gap-3 min-w-0 sm:gap-4">
+      <div className="flex min-w-0 flex-1 items-start gap-2 sm:items-center sm:gap-4">
         {/* Chevron Icon */}
         <Motion.div
           className="flex-shrink-0 text-[#6C5CE7]"
@@ -61,7 +61,7 @@ const SectionHeader = ({
             />
           ) : (
             <>
-              <h3 className="builder-title truncate text-base font-bold text-gray-900 sm:text-lg">
+              <h3 className="builder-title whitespace-normal break-words text-sm font-bold leading-5 text-gray-900 sm:text-lg sm:leading-6">
                 {section.sectionName}
               </h3>
               <p className="mt-1 text-xs text-gray-600 sm:mt-1.5 sm:text-sm">
@@ -74,7 +74,7 @@ const SectionHeader = ({
 
       {/* Action Buttons */}
       <div
-        className="flex flex-shrink-0 gap-1.5 sm:gap-2"
+        className="flex shrink-0 self-end gap-1 sm:self-auto sm:gap-2"
         onClick={(e) => e.stopPropagation()}
       >
         {editingSection === section._id ? (
@@ -85,7 +85,7 @@ const SectionHeader = ({
               type="button"
               onClick={() => handleUpdateSection(section._id)}
               disabled={isUpdatingSection}
-              className="flex items-center justify-center rounded-lg bg-[#6C5CE7] p-2 text-white transition-all hover:bg-[#5749C8] disabled:cursor-not-allowed disabled:opacity-60 sm:p-2.5"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-lg bg-[#6C5CE7] p-2 text-white transition-all hover:bg-[#5749C8] disabled:cursor-not-allowed disabled:opacity-60 sm:p-2.5"
               title="Save"
             >
               {isUpdatingSection ? (
@@ -103,7 +103,7 @@ const SectionHeader = ({
                 setEditingSection(null);
                 setEditSectionName("");
               }}
-              className="flex items-center justify-center rounded-lg bg-gray-300 p-2 text-gray-900 transition-all hover:bg-gray-400 sm:p-2.5"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-lg bg-gray-300 p-2 text-gray-900 transition-all hover:bg-gray-400 sm:p-2.5"
               title="Cancel"
             >
               <X className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -119,7 +119,7 @@ const SectionHeader = ({
                 setEditingSection(section._id);
                 setEditSectionName(section.sectionName);
               }}
-              className="p-2 text-[#6C5CE7] transition-all hover:bg-[#F0EDFF] rounded-lg sm:p-2.5"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-[#6C5CE7] transition-all hover:bg-[#F0EDFF] sm:p-2.5"
               title="Edit"
             >
               <Edit2 className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -130,7 +130,7 @@ const SectionHeader = ({
               whileTap={{ scale: 0.92 }}
               type="button"
               onClick={() => handleDeleteSection(section._id)}
-              className="p-2 text-red-600 transition-all hover:bg-red-100 rounded-lg sm:p-2.5"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-lg p-2 text-red-600 transition-all hover:bg-red-100 sm:p-2.5"
               title="Delete"
             >
               <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />

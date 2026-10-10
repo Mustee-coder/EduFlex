@@ -31,16 +31,16 @@ const CourseBuilderHeader = ({
           <h1 className="builder-title break-words text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl lg:text-5xl">
             {course.courseName}
           </h1>
-          <p className="mt-1 line-clamp-2 text-sm text-gray-600 sm:mt-2 sm:text-base">
+          <p className="mt-1 whitespace-normal break-words text-sm leading-6 text-gray-600 sm:mt-2 sm:text-base">
             {course.courseDescription}
           </p>
         </div>
       </div>
 
       {/* Header Actions */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
         {/* Status & Stats */}
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold sm:px-4 sm:py-2 sm:text-sm ${
               course.status === "Published"
@@ -56,7 +56,7 @@ const CourseBuilderHeader = ({
             {course.status}
           </span>
 
-          <span className="text-xs font-semibold text-gray-600 sm:text-sm">
+          <span className="text-xs font-semibold leading-5 text-gray-600 sm:text-sm">
             {course.sections?.length || 0} sections •{" "}
             {course.sections?.reduce(
               (acc, s) => acc + (s.subSections?.length || 0),
@@ -78,7 +78,7 @@ const CourseBuilderHeader = ({
             })
           }
           disabled={isPublishing}
-          className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-semibold transition-all sm:w-auto sm:px-6 sm:py-3 ${
+          className={`flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-semibold transition-all md:w-auto md:px-6 md:py-3 ${
             course.status === "Published"
               ? "bg-red-600 hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60 text-white text-sm sm:text-base"
               : "bg-gradient-to-r from-[#6C5CE7] to-[#8577F4] hover:from-[#5749C8] hover:to-[#7464E8] disabled:cursor-not-allowed disabled:opacity-60 text-white text-sm sm:text-base"

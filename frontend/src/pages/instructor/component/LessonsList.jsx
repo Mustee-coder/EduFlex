@@ -103,7 +103,7 @@ const LessonsList = ({
                 </Motion.div>
               ) : (
                 <>
-                  <h4 className="builder-title truncate text-base font-bold text-gray-900 sm:text-lg">
+                  <h4 className="builder-title whitespace-normal break-words text-base font-bold text-gray-900 sm:text-lg">
                     {subSection.title}
                   </h4>
 
