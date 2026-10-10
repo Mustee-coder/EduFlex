@@ -27,12 +27,12 @@ const SectionHeader = ({
   return (
     <Motion.div
       onClick={() => toggleSectionExpand(section._id)}
-      className="flex cursor-pointer items-center justify-between gap-3 bg-gradient-to-r from-gray-50 to-gray-100 p-4 transition-all hover:from-emerald-50 hover:to-teal-50 sm:gap-4 sm:p-6"
+      className="flex cursor-pointer items-center justify-between gap-3 bg-gradient-to-r from-gray-50 to-gray-100 p-4 transition-all hover:from-[#F8F6FF] hover:to-[#F8F6FF] sm:gap-4 sm:p-6"
     >
       <div className="flex flex-1 items-center gap-3 min-w-0 sm:gap-4">
         {/* Chevron Icon */}
         <Motion.div
-          className="flex-shrink-0 text-emerald-600"
+          className="flex-shrink-0 text-[#6C5CE7]"
           initial={{ rotate: 0 }}
           animate={{
             rotate: expandedSections[section._id] ? 180 : 0,
@@ -55,7 +55,7 @@ const SectionHeader = ({
               type="text"
               value={editSectionName}
               onChange={(e) => setEditSectionName(e.target.value)}
-              className="input-animate w-full rounded-lg border-2 border-emerald-500 px-3 py-2 text-sm font-bold text-gray-900 focus:outline-none sm:text-base"
+              className="input-animate w-full rounded-lg border-2 border-[#8577F4] px-3 py-2 text-sm font-bold text-gray-900 focus:outline-none sm:text-base"
               autoFocus
               onClick={(e) => e.stopPropagation()}
             />
@@ -85,7 +85,7 @@ const SectionHeader = ({
               type="button"
               onClick={() => handleUpdateSection(section._id)}
               disabled={isUpdatingSection}
-              className="flex items-center justify-center rounded-lg bg-emerald-600 p-2 text-white transition-all hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60 sm:p-2.5"
+              className="flex items-center justify-center rounded-lg bg-[#6C5CE7] p-2 text-white transition-all hover:bg-[#5749C8] disabled:cursor-not-allowed disabled:opacity-60 sm:p-2.5"
               title="Save"
             >
               {isUpdatingSection ? (
@@ -119,7 +119,7 @@ const SectionHeader = ({
                 setEditingSection(section._id);
                 setEditSectionName(section.sectionName);
               }}
-              className="p-2 text-emerald-600 transition-all hover:bg-emerald-100 rounded-lg sm:p-2.5"
+              className="p-2 text-[#6C5CE7] transition-all hover:bg-[#F0EDFF] rounded-lg sm:p-2.5"
               title="Edit"
             >
               <Edit2 className="h-4 w-4 sm:h-5 sm:w-5" />

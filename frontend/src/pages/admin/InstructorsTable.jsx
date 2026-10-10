@@ -88,28 +88,28 @@ const InstructorsTable = () => {
   // Loading State
   if (isLoading) {
     return (
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="flex flex-col items-center justify-center py-12 sm:py-16 md:py-20"
       >
-        <motion.div
+        <Motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
         >
-          <Loader className="w-8 h-8 text-emerald-600" />
-        </motion.div>
+          <Loader className="w-8 h-8 text-blue-700" />
+        </Motion.div>
         <p className="mt-3 text-gray-600 font-medium text-sm sm:text-base">
           Loading instructors...
         </p>
-      </motion.div>
+      </Motion.div>
     );
   }
 
   // Error State
   if (error) {
     return (
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="bg-red-50 border-2 border-red-200 rounded-2xl p-6 sm:p-8 text-center"
@@ -123,14 +123,14 @@ const InstructorsTable = () => {
         <p className="text-red-600 text-sm mt-2">
           An error occurred while loading instructor data
         </p>
-      </motion.div>
+      </Motion.div>
     );
   }
 
   // Empty State
   if (!instructors.length) {
     return (
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="bg-white rounded-2xl shadow-md border border-gray-100 p-8 sm:p-12 text-center"
@@ -142,14 +142,14 @@ const InstructorsTable = () => {
         <p className="text-gray-600 text-sm sm:text-base">
           No instructors have joined the platform yet
         </p>
-      </motion.div>
+      </Motion.div>
     );
   }
 
   // Filtered but empty
   if (filteredInstructors.length === 0) {
     return (
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="bg-white rounded-2xl shadow-md border border-gray-100 p-8 sm:p-12 text-center"
@@ -161,12 +161,12 @@ const InstructorsTable = () => {
         <p className="text-gray-600 text-sm sm:text-base">
           No instructors match your search. Try a different query.
         </p>
-      </motion.div>
+      </Motion.div>
     );
   }
 
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="space-y-4 sm:space-y-6"
@@ -200,7 +200,7 @@ const InstructorsTable = () => {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full border-2 border-gray-200 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 text-sm sm:text-base transition-all"
+                className="w-full border-2 border-gray-200 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-600 text-sm sm:text-base transition-all"
               />
             </div>
           </div>
@@ -210,13 +210,13 @@ const InstructorsTable = () => {
         <div className="p-4 sm:p-5 md:p-6 grid gap-3 sm:gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence>
             {paginatedInstructors.map((instructor, index) => (
-              <motion.div
+              <Motion.div
                 key={instructor._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="rounded-2xl border border-gray-100 bg-white p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-emerald-200 transition-all group"
+                className="rounded-2xl border border-gray-100 bg-white p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-blue-200 transition-all group"
               >
                 {/* Avatar & Name */}
                 <div className="flex items-start gap-3 sm:gap-4 mb-4">
@@ -224,10 +224,10 @@ const InstructorsTable = () => {
                     <img
                       src={instructor.image}
                       alt={instructor.firstName}
-                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-emerald-200 flex-shrink-0"
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-slate-200 flex-shrink-0"
                     />
                   ) : (
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center flex-shrink-0 font-bold text-emerald-700 text-sm sm:text-base">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center flex-shrink-0 font-bold text-slate-700 text-sm sm:text-base">
                       {instructor.firstName[0]}
                       {instructor.lastName[0]}
                     </div>
@@ -237,7 +237,7 @@ const InstructorsTable = () => {
                     <h3 className="font-bold text-base sm:text-lg text-gray-900 truncate">
                       {instructor.firstName} {instructor.lastName}
                     </h3>
-                    <span className="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full inline-block mt-1">
+                    <span className="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full inline-block mt-1">
                       👨‍🏫 Instructor
                     </span>
                   </div>
@@ -254,7 +254,7 @@ const InstructorsTable = () => {
                 {/* Courses */}
                 <div className="flex items-center gap-2 mb-3 text-sm">
                   <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BookOpen size={16} className="text-blue-600" />
+                    <BookOpen size={16} className="text-blue-700" />
                   </div>
                   <span className="font-semibold text-gray-900">
                     {instructor.courses?.length || 0} Course
@@ -315,15 +315,7 @@ const InstructorsTable = () => {
                   </div>
                 )}
 
-                {/* Button */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-2.5 sm:py-3 font-bold text-sm sm:text-base transition-all shadow-md group-hover:shadow-lg"
-                >
-                  View Profile
-                </motion.button>
-              </motion.div>
+              </Motion.div>
             ))}
           </AnimatePresence>
         </div>
@@ -352,7 +344,7 @@ const InstructorsTable = () => {
               </p>
 
               <div className="flex items-center justify-center gap-2">
-                <motion.button
+                <Motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   disabled={currentPage === 1}
@@ -361,13 +353,13 @@ const InstructorsTable = () => {
                   title="Previous"
                 >
                   <ChevronLeft size={18} />
-                </motion.button>
+                </Motion.button>
 
                 <span className="px-3 py-2 rounded-lg bg-emerald-100 text-emerald-700 font-bold text-sm">
                   {currentPage} / {totalPages}
                 </span>
 
-                <motion.button
+                <Motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   disabled={currentPage === totalPages}
@@ -376,7 +368,7 @@ const InstructorsTable = () => {
                   title="Next"
                 >
                   <ChevronRight size={18} />
-                </motion.button>
+                </Motion.button>
               </div>
             </div>
 
@@ -401,7 +393,7 @@ const InstructorsTable = () => {
               </p>
 
               <div className="flex items-center gap-1 sm:gap-2">
-                <motion.button
+                <Motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   disabled={currentPage === 1}
@@ -409,7 +401,7 @@ const InstructorsTable = () => {
                   className="px-3 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm sm:text-base font-bold"
                 >
                   Prev
-                </motion.button>
+                </Motion.button>
 
                 {/* Show limited page numbers on mobile */}
                 {Array.from({ length: totalPages }, (_, index) => {
@@ -424,7 +416,7 @@ const InstructorsTable = () => {
                   if (!isVisible && totalPages > 5) return null;
 
                   return (
-                    <motion.button
+                    <Motion.button
                       key={pageNum}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -436,11 +428,11 @@ const InstructorsTable = () => {
                       }`}
                     >
                       {pageNum}
-                    </motion.button>
+                    </Motion.button>
                   );
                 })}
 
-                <motion.button
+                <Motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   disabled={currentPage === totalPages}
@@ -448,13 +440,13 @@ const InstructorsTable = () => {
                   className="px-3 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm sm:text-base font-bold"
                 >
                   Next
-                </motion.button>
+                </Motion.button>
               </div>
             </div>
           </div>
         )}
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };
 

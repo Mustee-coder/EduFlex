@@ -52,7 +52,7 @@ const LessonsList = ({
           onClick={() =>
             navigate(`/add-subsection/${courseId}/${sectionId}`)
           }
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:from-emerald-700 hover:to-teal-700 sm:py-4 sm:text-base"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6C5CE7] to-[#8577F4] px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:from-[#5749C8] hover:to-[#7464E8] sm:py-4 sm:text-base"
         >
           <Plus className="h-5 w-5 sm:h-6 sm:w-6" />
           Add First Lesson
@@ -69,7 +69,7 @@ const LessonsList = ({
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: idx * 0.05 }}
-          className="rounded-xl border-2 border-gray-100 bg-white p-3 transition-all hover:border-emerald-200 hover:shadow-sm sm:p-4"
+          className="rounded-xl border-2 border-gray-100 bg-white p-3 transition-all hover:border-[#DDD6FF] hover:shadow-sm sm:p-4"
         >
           <div className="flex items-start justify-between gap-3 sm:gap-4">
             {/* Lesson Info */}
@@ -86,7 +86,7 @@ const LessonsList = ({
                     onChange={(e) =>
                       setEditSubSectionTitle(e.target.value)
                     }
-                    className="input-animate w-full rounded-lg border-2 border-emerald-500 px-3 py-2 text-sm font-bold text-gray-900 focus:outline-none sm:text-base"
+                    className="input-animate w-full rounded-lg border-2 border-[#8577F4] px-3 py-2 text-sm font-bold text-gray-900 focus:outline-none sm:text-base"
                     placeholder="Lesson title"
                     autoFocus
                   />
@@ -96,7 +96,7 @@ const LessonsList = ({
                     onChange={(e) =>
                       setEditSubSectionDescription(e.target.value)
                     }
-                    className="input-animate w-full rounded-lg border-2 border-emerald-500 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none sm:text-base"
+                    className="input-animate w-full rounded-lg border-2 border-[#8577F4] px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none sm:text-base"
                     placeholder="Lesson description"
                     rows="2"
                   />
@@ -133,7 +133,7 @@ const LessonsList = ({
                       handleUpdateSubSection(subSection._id)
                     }
                     disabled={isUpdatingSubSection}
-                    className="flex items-center justify-center rounded-lg bg-emerald-600 p-2 text-white transition-all hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60 sm:p-2.5"
+                    className="flex items-center justify-center rounded-lg bg-[#6C5CE7] p-2 text-white transition-all hover:bg-[#5749C8] disabled:cursor-not-allowed disabled:opacity-60 sm:p-2.5"
                   >
                     {isUpdatingSubSection ? (
                       <Loader className="h-4 w-4 animate-spin sm:h-5 sm:w-5" />
@@ -169,7 +169,7 @@ const LessonsList = ({
                         subSection.description || ""
                       );
                     }}
-                    className="p-2 text-emerald-600 transition-all hover:bg-emerald-100 rounded-lg sm:p-2.5"
+                    className="p-2 text-[#6C5CE7] transition-all hover:bg-[#F0EDFF] rounded-lg sm:p-2.5"
                     title="Edit"
                   >
                     <Edit2 className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -202,7 +202,7 @@ const LessonsList = ({
         onClick={() =>
           navigate(`/add-subsection/${courseId}/${sectionId}`)
         }
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-emerald-300 py-2.5 px-4 text-sm font-bold text-emerald-700 transition-all hover:bg-emerald-50 sm:mt-5 sm:py-3 sm:text-base"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#C4B9FF] py-2.5 px-4 text-sm font-bold text-[#5749C8] transition-all hover:bg-[#F8F6FF] sm:mt-5 sm:py-3 sm:text-base"
       >
         <Plus className="h-4 w-4" />
         Add Lesson

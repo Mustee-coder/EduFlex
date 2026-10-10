@@ -1,163 +1,65 @@
 import React from "react";
 import { motion as Motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { useAdminStats } from "@/hooks/admin/hooks";
 import StatCard from "./component/StatCard";
-import {
-  Users,
-  GraduationCap,
-  BookOpen,
-  Wallet,
-  AlertCircle,
-  Loader,
-} from "lucide-react";
-
+import { Users, GraduationCap, BookOpen, Wallet, AlertCircle } from "lucide-react";
 
 const AdminDashboard = () => {
-  const { data, isLoading, isError, error } = useAdminStats();
+  const { data, isLoading, isError, error, refetch } = useAdminStats();
 
-  // Loading State
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <Motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="flex flex-col items-center gap-4"
-        >
-          <Loader className="w-12 h-12 text-red-600" />
-          <p className="text-lg font-semibold text-gray-700">
-            Loading dashboard...
-          </p>
-        </Motion.div>
-      </div>
+      <main className="min-h-[60vh] bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Loading dashboard">
+          {Array.from({ length: 4 }, (_, index) => <div key={index} className="h-36 animate-pulse rounded-xl border border-slate-200 bg-white" />)}
+        </div>
+      </main>
     );
   }
 
-  // Error State
   if (isError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <Motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center border border-red-100"
-        >
-          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-6 h-6 text-red-600" />
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
-            Failed to Load Dashboard
-          </h2>
-          <p className="text-gray-600 mb-6">
-            {error?.message || "An error occurred while loading dashboard data"}
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold transition-all"
-          >
-            Try Again
-          </button>
-        </Motion.div>
-      </div>
+      <main className="flex min-h-[60vh] items-center justify-center bg-slate-50 px-4 py-10">
+        <section role="alert" className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm sm:p-8">
+          <AlertCircle className="mx-auto mb-3 h-10 w-10 text-rose-600" aria-hidden="true" />
+          <h1 className="text-xl font-bold text-slate-900">Dashboard data unavailable</h1>
+          <p className="mt-2 text-sm text-slate-600">{error?.message || "We couldn't load platform metrics."}</p>
+          <button type="button" onClick={() => refetch()} className="mt-5 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Try again</button>
+        </section>
+      </main>
     );
   }
 
   const stats = data?.data || {};
-
   const dashboardStats = [
-    {
-      title: "Total Students",
-      value: stats.totalStudents || 0,
-      icon: Users,
-      color: "from-blue-600 to-blue-500",
-      bgColor: "bg-blue-100",
-      textColor: "text-blue-600",
-    },
-    {
-      title: "Total Instructors",
-      value: stats.totalInstructors || 0,
-      icon: GraduationCap,
-      color: "from-emerald-600 to-teal-600",
-      bgColor: "bg-emerald-100",
-      textColor: "text-emerald-600",
-    },
-    {
-      title: "Total Courses",
-      value: stats.totalCourses || 0,
-      icon: BookOpen,
-      color: "from-purple-600 to-pink-600",
-      bgColor: "bg-purple-100",
-      textColor: "text-purple-600",
-    },
-    {
-      title: "Total Revenue",
-      value: `₦${(stats.totalRevenue || 0).toLocaleString()}`,
-      icon: Wallet,
-      color: "from-amber-600 to-orange-600",
-      bgColor: "bg-amber-100",
-      textColor: "text-amber-600",
-    },
+    { title: "Total students", value: stats.totalStudents || 0, icon: Users, color: "from-blue-600 to-blue-600", bgColor: "bg-blue-50", textColor: "text-blue-700" },
+    { title: "Total instructors", value: stats.totalInstructors || 0, icon: GraduationCap, color: "from-slate-700 to-slate-700", bgColor: "bg-slate-100", textColor: "text-slate-700" },
+    { title: "Total courses", value: stats.totalCourses || 0, icon: BookOpen, color: "from-indigo-600 to-indigo-600", bgColor: "bg-indigo-50", textColor: "text-indigo-700" },
+    { title: "Reported revenue", value: `₦${(stats.totalRevenue || 0).toLocaleString("en-NG")}`, icon: Wallet, color: "from-sky-600 to-sky-600", bgColor: "bg-sky-50", textColor: "text-sky-700" },
   ];
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 via-white to-gray-50 min-h-screen py-6 md:py-12 px-3 sm:px-4 md:px-6 lg:px-8">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
-
-        .admin-root {
-          font-family: 'Poppins', sans-serif;
-        }
-
-        .admin-title {
-          font-family: 'Syne', sans-serif;
-        }
-      `}</style>
-
-      <div className="admin-root max-w-7xl mx-auto">
-        {/* Header */}
-        <Motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 md:mb-12"
-        >
-          <div className="flex flex-col gap-2">
-            <h1 className="admin-title text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">
-              Admin Dashboard
-            </h1>
-            <p className="text-gray-600 text-sm md:text-base">
-              Monitor and manage the EduFlex platform
-            </p>
+    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+      <div className="mx-auto max-w-7xl">
+        <Motion.header initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold tracking-wide text-blue-700">EDUFLEX OPERATIONS</p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Admin dashboard</h1>
+            <p className="mt-2 text-sm text-slate-600 sm:text-base">A current overview of platform activity.</p>
           </div>
-        </Motion.div>
-
-        {/* Stats Grid */}
-        <Motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
-        >
+          <Link to="/admin/users" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Manage users <span aria-hidden="true" className="ml-2">→</span></Link>
+        </Motion.header>
+        <section aria-label="Platform metrics" className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {dashboardStats.map((item, index) => (
-            <Motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <StatCard
-                title={item.title}
-                value={item.value}
-                icon={item.icon}
-                color={item.color}
-                bgColor={item.bgColor}
-                textColor={item.textColor}
-              />
+            <Motion.div key={item.title} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.04 }}>
+              <StatCard {...item} />
             </Motion.div>
           ))}
-        </Motion.div>
+        </section>
+        <p className="mt-5 text-xs text-slate-500">Metrics are supplied by the platform dashboard service.</p>
       </div>
-      
-    </div>
+    </main>
   );
 };
 

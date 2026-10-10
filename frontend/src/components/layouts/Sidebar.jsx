@@ -11,10 +11,9 @@ import {
   Users,
   Plus,
   ChevronRight,
-  FolderTree,
-  Star,
 } from "lucide-react";
 import { useAuth } from "@/context/useAuth";
+import { roleTheme } from "@/utils/roleTheme";
 
 const NavLinkItem = ({ link, theme, closeSidebar }) => {
   const Icon = link.icon;
@@ -59,23 +58,7 @@ const SidebarClean = ({ isOpen, closeSidebar }) => {
 
   const role = user?.accountType || user?.role || "Student";
 
-  // Role themes
-  const roleThemes = {
-    Student: {
-      gradient: "from-indigo-600 to-purple-600",
-      active: "bg-indigo-100 text-indigo-700",
-    },
-    Instructor: {
-      gradient: "from-emerald-600 to-teal-600",
-      active: "bg-emerald-100 text-emerald-700",
-    },
-    Admin: {
-      gradient: "from-red-600 to-pink-600",
-      active: "bg-red-100 text-red-700",
-    },
-  };
-
-  const theme = roleThemes[role] || roleThemes.Student;
+  const theme = roleTheme[role] || roleTheme.Student;
 
   // Navigation links by role
   const navigationLinks = {
@@ -115,14 +98,6 @@ const SidebarClean = ({ isOpen, closeSidebar }) => {
         links: [
           { path: "/admin", label: "Dashboard", icon: Home },
           { path: "/admin/users", label: "Users", icon: Users },
-          { path: "/admin/courses", label: "Courses", icon: BookOpen },
-          {
-            path: "/admin/categories",
-            label: "Categories",
-            icon: FolderTree,
-          },
-          { path: "/admin/reviews", label: "Reviews", icon: Star },
-          { path: "/admin/analytics", label: "Analytics", icon: BarChart3 },
         ],
       },
     ],

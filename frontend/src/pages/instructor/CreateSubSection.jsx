@@ -219,11 +219,11 @@ const CreateSubSection = () => {
         }
 
         .input-field:focus {
-          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+          box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.14);
         }
       `}</style>
 
-      <div className="subsection-root bg-gradient-to-br from-gray-50 via-white to-gray-50 min-h-screen py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="subsection-root min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8 md:py-8">
         
         <div className="max-w-4xl mx-auto">
           
@@ -234,7 +234,7 @@ const CreateSubSection = () => {
             className="mb-8"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#6C5CE7] to-[#8577F4] rounded-xl flex items-center justify-center">
                 <Plus className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -254,13 +254,13 @@ const CreateSubSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             onSubmit={handleSubmit}
-            className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 space-y-8"
+            className="space-y-7 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8"
           >
             
             {/* Section: Basic Info */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 pb-4 border-b border-gray-200">
-                <FileText className="w-5 h-5 text-emerald-600" />
+                <FileText className="w-5 h-5 text-[#6C5CE7]" />
                 <h2 className="subsection-title font-bold text-lg text-gray-900">
                   Lesson Information
                 </h2>
@@ -285,8 +285,8 @@ const CreateSubSection = () => {
                     touched.title && errors.title
                       ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
                       : touched.title && !errors.title
-                      ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                      : "border-gray-200 bg-gray-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                      ? "border-[#8577F4] bg-[#F8F6FF] focus:ring-2 focus:ring-[#DDD6FF]"
+                      : "border-gray-200 bg-gray-50 focus:border-[#8577F4] focus:ring-2 focus:ring-[#DDD6FF]"
                   }`}
                 />
 
@@ -326,8 +326,8 @@ const CreateSubSection = () => {
                     touched.description && errors.description
                       ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
                       : touched.description && !errors.description
-                      ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                      : "border-gray-200 bg-gray-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                      ? "border-[#8577F4] bg-[#F8F6FF] focus:ring-2 focus:ring-[#DDD6FF]"
+                      : "border-gray-200 bg-gray-50 focus:border-[#8577F4] focus:ring-2 focus:ring-[#DDD6FF]"
                   }`}
                 />
 
@@ -352,7 +352,7 @@ const CreateSubSection = () => {
             {/* Section: Video */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 pb-4 border-b border-gray-200">
-                <Video className="w-5 h-5 text-emerald-600" />
+                <Video className="w-5 h-5 text-[#6C5CE7]" />
                 <h2 className="subsection-title font-bold text-lg text-gray-900">
                   Lesson Video
                 </h2>
@@ -363,7 +363,7 @@ const CreateSubSection = () => {
                 <Motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="relative rounded-xl overflow-hidden border-2 border-emerald-200 bg-emerald-50 p-4"
+                  className="relative rounded-xl overflow-hidden border-2 border-[#DDD6FF] bg-[#F8F6FF] p-4"
                 >
                   <video
                     src={videoPreview}
@@ -372,17 +372,17 @@ const CreateSubSection = () => {
                   />
 
                   {/* Video Info */}
-                  <div className="mt-4 grid grid-cols-3 gap-4">
+                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <div className="bg-white rounded-lg p-3 text-center">
                       <p className="text-xs text-gray-600 mb-1">Duration</p>
-                      <p className="font-bold text-emerald-600">
+                      <p className="font-bold text-[#6C5CE7]">
                         {videoInfo.duration}
                       </p>
                     </div>
 
                     <div className="bg-white rounded-lg p-3 text-center">
                       <p className="text-xs text-gray-600 mb-1">File Size</p>
-                      <p className="font-bold text-emerald-600">
+                      <p className="font-bold text-[#6C5CE7]">
                         {videoInfo.size} MB
                       </p>
                     </div>
@@ -391,7 +391,7 @@ const CreateSubSection = () => {
                       <p className="text-xs text-gray-600 mb-1 line-clamp-1">
                         File
                       </p>
-                      <p className="font-bold text-emerald-600 text-xs line-clamp-1">
+                      <p className="font-bold text-[#6C5CE7] text-xs line-clamp-1">
                         {videoInfo.name.split(".")[0]}
                       </p>
                     </div>
@@ -423,11 +423,11 @@ const CreateSubSection = () => {
 
                   <label
                     htmlFor="video-input"
-                    className="block cursor-pointer border-2 border-dashed border-emerald-300 rounded-xl p-8 text-center hover:bg-emerald-50 transition-colors"
+                    className="block cursor-pointer border-2 border-dashed border-[#C4B9FF] rounded-xl p-8 text-center hover:bg-[#F8F6FF] transition-colors"
                   >
                     <div className="flex flex-col items-center gap-3">
-                      <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                        <Upload className="w-6 h-6 text-emerald-600" />
+                      <div className="w-12 h-12 bg-[#F0EDFF] rounded-xl flex items-center justify-center">
+                        <Upload className="w-6 h-6 text-[#6C5CE7]" />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-900">
@@ -462,7 +462,7 @@ const CreateSubSection = () => {
               whileTap={isFormValid ? { scale: 0.98 } : {}}
               type="submit"
               disabled={!isFormValid || isPending}
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg"
+              className="w-full bg-gradient-to-r from-[#6C5CE7] to-[#8577F4] hover:from-[#5749C8] hover:to-[#7464E8] disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg"
             >
               {isPending ? (
                 <>

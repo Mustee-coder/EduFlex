@@ -38,10 +38,9 @@ import Analytics from "@/pages/instructor/Analytics";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
-import UsersPage from "@/pages/admin/UsersPage";
 import LandingPage from "@/pages/LandingPage";
 
-UsersPage
+
 
 const App = () => {
   return (
@@ -81,105 +80,41 @@ const App = () => {
           }
         >
           <Route element={<DashboardLayout />}>
+            {/* Shared account pages */}
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
 
-            {/* Shared */}
-            <Route
-              path="/profile"
-              element={<Profile />}
-            />
+            {/* Student pages */}
+            <Route element={<RoleRoute allowedRoles={["Student"]} />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/browse-courses" element={<BrowseCourses />} />
+              <Route path="/my-learning" element={<MyLearning />} />
+              <Route path="/my-courses" element={<MyCourses />} />
+              <Route path="/course/:courseId" element={<CoursePlayer />} />
+              <Route path="/course-preview/:courseId" element={<CoursePreview />} />
+              <Route path="/checkout/:courseId" element={<CheckoutPage />} />
+              <Route path="/payment/verify" element={<VerifyPaymentPage />} />
+            </Route>
 
-            <Route
-              path="/settings"
-              element={<Settings />}
-            />
+            {/* Instructor pages */}
+            <Route element={<RoleRoute allowedRoles={["Instructor"]} />}>
+              <Route path="/instructor" element={<InstructorDashboard />} />
+              <Route path="/courses" element={<InstructorCourses />} />
+              <Route path="/add-course" element={<CreateCourse />} />
+              <Route path="/course-builder/:courseId" element={<CourseBuilder />} />
+              <Route
+                path="/add-subsection/:courseId/:sectionId"
+                element={<CreateSubSection />}
+              />
+              <Route path="/students" element={<Students />} />
+              <Route path="/analytics" element={<Analytics />} />
+            </Route>
 
-            {/* Student */}
-            <Route
-              path="/dashboard"
-              element={<Dashboard />}
-            />
-
-            <Route
-              path="/browse-courses"
-              element={<BrowseCourses />}
-            />
-
-            <Route
-              path="/my-learning"
-              element={<MyLearning />}
-            />
-
-            <Route
-              path="/my-courses"
-              element={<MyCourses />}
-            />
-
-            <Route
-              path="/course/:courseId"
-              element={<CoursePlayer />}
-            />
-
-            <Route
-              path="/course-preview/:courseId"
-              element={<CoursePreview />}
-            />
-
-            <Route
-              path="/checkout/:courseId"
-              element={<CheckoutPage />}
-            />
-
-            <Route
-              path="/payment/verify"
-              element={<VerifyPaymentPage />}
-            />
-
-            {/* Instructor */}
-            <Route
-              path="/instructor"
-              element={<InstructorDashboard />}
-            />
-
-            <Route
-              path="/courses"
-              element={<InstructorCourses />}
-            />
-
-            <Route
-              path="/add-course"
-              element={<CreateCourse />}
-            />
-
-            <Route
-              path="/course-builder/:courseId"
-              element={<CourseBuilder />}
-            />
-
-            <Route
-              path="/add-subsection/:courseId/:sectionId"
-              element={<CreateSubSection />}
-            />
-
-            <Route
-              path="/students"
-              element={<Students />}
-            />
-
-            <Route
-              path="/analytics"
-              element={<Analytics />}
-            />
-
-            {/* Admin */}
-            <Route
-              path="/admin"
-              element={<AdminDashboard />}
-             />
-                 <Route
-                path="/admin/users"
-              element={<UsersPage />}
-               />
-
+            {/* Admin pages */}
+            <Route element={<RoleRoute allowedRoles={["Admin"]} />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<UsersPage />} />
+            </Route>
           </Route>
         </Route>
 

@@ -9,82 +9,57 @@ import {
 } from "recharts";
 
 import { useEnrollmentTrend } from "@/hooks/useEnrollmentTrend";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const EnrollmentTrendChart = () => {
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useEnrollmentTrend();
+  const { data, isLoading, isError, refetch } = useEnrollmentTrend();
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-3xl shadow-sm border p-6 flex justify-center items-center h-80">
-        <LoadingSpinner />
+      <div className="flex h-80 items-center justify-center rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" aria-label="Loading enrollment trend">
+        <div className="h-full w-full animate-pulse rounded-xl bg-slate-100" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="bg-white rounded-3xl shadow-sm border p-6 h-80 flex items-center justify-center">
-        <p className="text-red-500 font-medium">
-          Failed to load enrollment trend.
-        </p>
+      <div className="flex h-80 flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm" role="alert">
+        <p className="font-medium text-slate-900">Enrollment trend couldn’t load.</p>
+        <button type="button" onClick={() => refetch()} className="mt-3 rounded-lg px-3 py-2 text-sm font-semibold text-[#5749C8] transition-colors hover:bg-[#F0EDFF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6C5CE7]">Try again</button>
       </div>
     );
   }
 
-  const chartData = data?.data || [];
+  const chartData = (data?.data || []).map((point) => ({
+    ...point,
+    label: `${point.month} '${String(point.year).slice(-2)}`,
+  }));
 
   return (
-    <div className="mt-8 bg-white rounded-3xl shadow-sm border border-gray-200 p-6">
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900">
-          📈 Enrollment Trend
-        </h2>
-
-        <p className="text-sm text-gray-500 mt-1">
-          Monthly student enrollments for your courses.
-        </p>
+    <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="enrollment-trend-title">
+      <div className="mb-5">
+        <h2 id="enrollment-trend-title" className="text-lg font-semibold text-slate-950">Monthly successful enrollments</h2>
+        <p className="mt-1 text-sm text-slate-500">Successful payment records grouped by month.</p>
       </div>
 
       {chartData.length === 0 ? (
-        <div className="h-72 flex items-center justify-center">
-          <p className="text-gray-500">
-            No enrollment data available.
-          </p>
+        <div className="flex h-64 items-center justify-center rounded-xl bg-slate-50 px-4 text-center">
+          <p className="text-sm text-slate-600">No successful enrollment data is available yet.</p>
         </div>
       ) : (
-        <ResponsiveContainer width="100%" height={320}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-
-            <XAxis
-              dataKey="month"
-              tick={{ fontSize: 12 }}
-            />
-
-            <YAxis
-              allowDecimals={false}
-              tick={{ fontSize: 12 }}
-            />
-
-            <Tooltip />
-
-            <Line
-              type="monotone"
-              dataKey="enrollments"
-              stroke="#7c3aed"
-              strokeWidth={3}
-              dot={{ r: 5 }}
-              activeDot={{ r: 8 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="h-64 w-full" role="img" aria-label="Line chart of successful monthly enrollments">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData} margin={{ top: 8, right: 12, bottom: 4, left: -18 }}>
+              <CartesianGrid vertical={false} stroke="#E2E8F0" strokeDasharray="4 4" />
+              <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#64748B" }} tickLine={false} axisLine={false} minTickGap={16} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#64748B" }} tickLine={false} axisLine={false} width={42} />
+              <Tooltip formatter={(value) => [value, "Successful enrollments"]} contentStyle={{ borderRadius: 12, borderColor: "#E2E8F0", boxShadow: "0 8px 24px rgba(15, 23, 42, 0.08)" }} />
+              <Line type="monotone" dataKey="enrollments" stroke="#6C5CE7" strokeWidth={2.5} dot={{ r: 3, fill: "#6C5CE7", strokeWidth: 0 }} activeDot={{ r: 5 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       )}
-    </div>
+    </section>
   );
 };
 

@@ -8,7 +8,6 @@ import {
   Plus,
   Search,
   Filter,
-  Eye,
   Edit,
   Trash2,
   BookOpen,
@@ -77,7 +76,7 @@ const InstructorCourses = () => {
   if (isError) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center border border-red-100"
@@ -93,11 +92,11 @@ const InstructorCourses = () => {
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold transition-all"
+            className="w-full bg-[#6C5CE7] hover:bg-[#5749C8] text-white py-3 rounded-xl font-bold transition-all"
           >
             Refresh Page
           </button>
-        </motion.div>
+        </Motion.div>
       </div>
     );
   }
@@ -106,18 +105,18 @@ const InstructorCourses = () => {
     <>
      
     
-      <div className="instructor-courses-root bg-gradient-to-br from-gray-50 via-white to-gray-50 min-h-screen py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="instructor-courses-root min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8 md:py-8">
         
         <div className="max-w-7xl mx-auto">
           
           {/* Header */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8"
           >
             <div>
-              <h1 className="instructor-courses-title text-4xl md:text-5xl font-bold text-gray-900">
+              <h1 className="instructor-courses-title text-3xl font-bold text-slate-950 sm:text-4xl">
                 My Courses
               </h1>
               <p className="text-gray-600 mt-2">
@@ -125,19 +124,19 @@ const InstructorCourses = () => {
               </p>
             </div>
 
-            <motion.button
+            <Motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/add-course")}
-              className="flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg"
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#6C5CE7] to-[#8577F4] hover:from-[#5749C8] hover:to-[#7464E8] text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg"
             >
               <Plus className="w-5 h-5" />
               Create Course
-            </motion.button>
-          </motion.div>
+            </Motion.button>
+          </Motion.div>
 
           {/* Controls */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -148,11 +147,12 @@ const InstructorCourses = () => {
             <div className="relative lg:col-span-2">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
-                type="text"
+                type="search"
+                aria-label="Search courses by name"
                 placeholder="Search courses by name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+                className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-4 transition-colors placeholder:text-slate-400 focus:border-[#6C5CE7] focus:outline-none focus:ring-4 focus:ring-[#6C5CE7]/15"
               />
             </div>
 
@@ -160,26 +160,33 @@ const InstructorCourses = () => {
             <div className="relative">
               <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <select
+                aria-label="Filter courses by status"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all appearance-none bg-white"
+                className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-4 transition-colors focus:border-[#6C5CE7] focus:outline-none focus:ring-4 focus:ring-[#6C5CE7]/15"
               >
                 <option value="All">All Courses</option>
                 <option value="Published">Published</option>
                 <option value="Draft">Drafts</option>
               </select>
             </div>
-          </motion.div>
+          </Motion.div>
 
           {/* Empty State */}
-          {filteredCourses.length === 0 ? (
-            <motion.div
+          {isLoading ? (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <CourseSkeleton key={i} />
+              ))}
+            </div>
+          ) : filteredCourses.length === 0 ? (
+            <Motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center"
             >
-              <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-emerald-600" />
+              <div className="w-16 h-16 bg-[#F0EDFF] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="w-8 h-8 text-[#6C5CE7]" />
               </div>
               <h3 className="instructor-courses-title text-2xl font-bold text-gray-900 mb-2">
                 No Courses Found
@@ -189,55 +196,48 @@ const InstructorCourses = () => {
                   ? "Start creating your first course to reach learners"
                   : "Try adjusting your search or filter"}
               </p>
-              <motion.button
+              <Motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate("/add-course")}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-3 rounded-xl font-bold transition-all"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#6C5CE7] to-[#8577F4] hover:from-[#5749C8] hover:to-[#7464E8] text-white px-8 py-3 rounded-xl font-bold transition-all"
               >
                 <Plus className="w-5 h-5" />
                 Create First Course
-              </motion.button>
-            </motion.div>
-          ) : isLoading ? (
-            // Loading Skeleton
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <CourseSkeleton key={i} />
-              ))}
-            </div>
+              </Motion.button>
+            </Motion.div>
           ) : (
             // Courses Grid
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCourses.map((course, index) => (
-                <motion.div
+                <Motion.div
                   key={course._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all overflow-hidden group border border-gray-100"
+                  className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
                 >
                   
                   {/* Thumbnail */}
-                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-500">
+                  <div className="relative h-44 overflow-hidden bg-[#F0EDFF]">
                     {course.thumbnail ? (
                       <img
                         src={course.thumbnail}
                         alt={course.courseName}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                         onError={(e) => {
                           e.target.style.display = "none";
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <BookOpen className="w-12 h-12 text-white opacity-50" />
+                      <div className="flex h-full w-full items-center justify-center text-[#6C5CE7]">
+                        <BookOpen className="h-10 w-10" />
                       </div>
                     )}
 
                     {/* Status Badge */}
                     <div className="absolute top-3 right-3">
-                      <motion.span
+                      <Motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold ${
@@ -252,7 +252,7 @@ const InstructorCourses = () => {
                           <Clock className="w-3 h-3" />
                         )}
                         {course.status}
-                      </motion.span>
+                      </Motion.span>
                     </div>
                   </div>
 
@@ -261,7 +261,7 @@ const InstructorCourses = () => {
                     
                     {/* Title */}
                     <div>
-                      <p className="text-xs text-emerald-600 font-bold uppercase tracking-wide">
+                      <p className="text-xs text-[#6C5CE7] font-bold uppercase tracking-wide">
                         {course.category?.name || "Uncategorized"}
                       </p>
                       <h3 className="instructor-courses-title text-lg font-bold text-gray-900 mt-1 line-clamp-2">
@@ -277,55 +277,42 @@ const InstructorCourses = () => {
                     {/* Stats */}
                     <div className="grid grid-cols-2 gap-3 py-4 border-t border-gray-100">
                       <div className="flex items-center gap-2">
-                        <DollarSign className="w-4 h-4 text-emerald-600" />
+                        <DollarSign className="w-4 h-4 text-[#6C5CE7]" />
                         <div>
                           <p className="text-xs text-gray-500">Price</p>
-                          <p className="font-bold text-emerald-600">
+                          <p className="font-bold text-[#6C5CE7]">
                             ₦{(course.price || 0).toLocaleString()}
                           </p>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-teal-600" />
+                        <Users className="w-4 h-4 text-[#6C5CE7]" />
                         <div>
                           <p className="text-xs text-gray-500">Students</p>
                           <p className="font-bold text-gray-900">
-                            {course.totalStudentsEnrolled || 0}
+                            {course.studentsCount ?? course.studentsEnrolled?.length ?? course.totalStudentsEnrolled ?? 0}
                           </p>
                         </div>
                       </div>
                     </div>
 
                     {/* Actions */}
-                    <div className="grid grid-cols-3 gap-2">
-                      
-                      {/* View */}
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => navigate(`/course/${course._id}`)}
-                        className="flex items-center justify-center gap-1 border-2 border-emerald-200 hover:bg-emerald-50 text-emerald-700 py-2.5 rounded-lg font-semibold transition-all text-sm"
-                        title="View Course"
-                      >
-                        <Eye className="w-4 h-4" />
-                        <span className="hidden sm:inline">View</span>
-                      </motion.button>
-
+                    <div className="grid grid-cols-2 gap-2">
                       {/* Edit */}
-                      <motion.button
+                      <Motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => navigate(`/course-builder/${course._id}`)}
-                        className="flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-lg font-semibold transition-all text-sm"
+                        className="flex items-center justify-center gap-1 bg-[#6C5CE7] hover:bg-[#5749C8] text-white py-2.5 rounded-lg font-semibold transition-all text-sm"
                         title="Edit Course"
                       >
                         <Edit className="w-4 h-4" />
                         <span className="hidden sm:inline">Edit</span>
-                      </motion.button>
+                      </Motion.button>
 
                       {/* Delete */}
-                      <motion.button
+                      <Motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleDeleteClick(course._id, course.courseName)}
@@ -334,10 +321,10 @@ const InstructorCourses = () => {
                       >
                         <Trash2 className="w-4 h-4" />
                         <span className="hidden sm:inline">Delete</span>
-                      </motion.button>
+                      </Motion.button>
                     </div>
                   </div>
-                </motion.div>
+                </Motion.div>
               ))}
             </div>
           )}
@@ -347,14 +334,14 @@ const InstructorCourses = () => {
       {/* Delete Modal */}
       <AnimatePresence>
         {deleteModalOpen && (
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
             onClick={() => setDeleteModalOpen(false)}
           >
-            <motion.div
+            <Motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
@@ -376,16 +363,16 @@ const InstructorCourses = () => {
               </p>
 
               <div className="flex gap-3">
-                <motion.button
+                <Motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setDeleteModalOpen(false)}
                   className="flex-1 border-2 border-gray-200 hover:bg-gray-50 text-gray-700 py-3 rounded-xl font-bold transition-all"
                 >
                   Cancel
-                </motion.button>
+                </Motion.button>
 
-                <motion.button
+                <Motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={confirmDelete}
@@ -403,10 +390,10 @@ const InstructorCourses = () => {
                       Delete
                     </>
                   )}
-                </motion.button>
+                </Motion.button>
               </div>
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </>

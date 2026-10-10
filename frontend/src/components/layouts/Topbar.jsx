@@ -119,7 +119,7 @@ const Topbar = ({ openSidebar, isSidebarOpen, menuButtonRef }) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearch}
-                className="search-input w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg text-sm font-medium border border-gray-200 focus:outline-none focus:bg-white focus:border-indigo-500"
+                className={`search-input w-full rounded-lg border border-gray-200 bg-gray-100 py-2 pl-10 pr-4 text-sm font-medium focus:bg-white focus:outline-none ${theme.focusBorder}`}
               />
             </div>
           </div>
@@ -155,7 +155,7 @@ const Topbar = ({ openSidebar, isSidebarOpen, menuButtonRef }) => {
                         `https://api.dicebear.com/7.x/initials/svg?seed=${fullName}`
                       }
                       alt={fullName ? `${fullName} profile` : "Account profile"}
-                      className="w-10 h-10 md:w-11 md:h-11 rounded-full object-cover border-2 border-gray-200 hover:border-indigo-500 transition-colors"
+                      className={`h-10 w-10 rounded-full border-2 border-gray-200 object-cover transition-colors md:h-11 md:w-11 ${theme.borderHover}`}
                     />
                     <ChevronDown
                       className={`w-4 h-4 text-gray-600 hidden md:block transition-transform duration-300 ${
@@ -192,7 +192,7 @@ const Topbar = ({ openSidebar, isSidebarOpen, menuButtonRef }) => {
                     <div className="py-2">
                       <button
                         onClick={() => handleNavigation("/profile")}
-                        className="w-full px-4 py-3 text-left text-sm font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-3"
+                        className={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-700 transition-colors ${theme.hover} ${theme.text}`}
                       >
                         <User className="w-4 h-4" />
                         Profile
@@ -200,7 +200,7 @@ const Topbar = ({ openSidebar, isSidebarOpen, menuButtonRef }) => {
 
                       <button
                         onClick={() => handleNavigation("/settings")}
-                        className="w-full px-4 py-3 text-left text-sm font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-3"
+                        className={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-700 transition-colors ${theme.hover} ${theme.text}`}
                       >
                         <Settings className="w-4 h-4" />
                         Settings

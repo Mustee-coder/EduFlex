@@ -232,11 +232,11 @@ const CreateCourse = () => {
         }
 
         .input-field:focus {
-          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+          box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.14);
         }
       `}</style>
 
-      <div className="create-root bg-gradient-to-br from-gray-50 via-white to-gray-50 min-h-screen py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="create-root min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8 md:py-8">
         
         <Motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -247,10 +247,10 @@ const CreateCourse = () => {
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#6C5CE7] to-[#8577F4] rounded-xl flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
-              <h1 className="create-title text-4xl md:text-5xl font-bold text-gray-900">
+              <h1 className="create-title text-3xl font-bold text-slate-950 sm:text-4xl">
                 Create New Course
               </h1>
             </div>
@@ -265,13 +265,13 @@ const CreateCourse = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             onSubmit={handleSubmit}
-            className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 space-y-8"
+            className="space-y-7 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8"
           >
             
             {/* Section: Basic Info */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 pb-4 border-b border-gray-200">
-                <BookOpen className="w-5 h-5 text-emerald-600" />
+                <BookOpen className="w-5 h-5 text-[#6C5CE7]" />
                 <h2 className="create-title font-bold text-lg text-gray-900">
                   Basic Information
                 </h2>
@@ -295,8 +295,8 @@ const CreateCourse = () => {
                     touched.courseName && errors.courseName
                       ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
                       : touched.courseName && !errors.courseName
-                      ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                      : "border-gray-200 bg-gray-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                      ? "border-[#8577F4] bg-[#F8F6FF] focus:ring-2 focus:ring-[#DDD6FF]"
+                      : "border-gray-200 bg-gray-50 focus:border-[#8577F4] focus:ring-2 focus:ring-[#DDD6FF]"
                   }`}
                 />
 
@@ -330,8 +330,8 @@ const CreateCourse = () => {
                     touched.courseDescription && errors.courseDescription
                       ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
                       : touched.courseDescription && !errors.courseDescription
-                      ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                      : "border-gray-200 bg-gray-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                      ? "border-[#8577F4] bg-[#F8F6FF] focus:ring-2 focus:ring-[#DDD6FF]"
+                      : "border-gray-200 bg-gray-50 focus:border-[#8577F4] focus:ring-2 focus:ring-[#DDD6FF]"
                   }`}
                 />
 
@@ -366,8 +366,8 @@ const CreateCourse = () => {
                     touched.whatYouWillLearn && errors.whatYouWillLearn
                       ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
                       : touched.whatYouWillLearn && !errors.whatYouWillLearn
-                      ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                      : "border-gray-200 bg-gray-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                      ? "border-[#8577F4] bg-[#F8F6FF] focus:ring-2 focus:ring-[#DDD6FF]"
+                      : "border-gray-200 bg-gray-50 focus:border-[#8577F4] focus:ring-2 focus:ring-[#DDD6FF]"
                   }`}
                 />
 
@@ -387,7 +387,7 @@ const CreateCourse = () => {
             {/* Section: Details */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 pb-4 border-b border-gray-200">
-                <Tag className="w-5 h-5 text-teal-600" />
+                <Tag className="w-5 h-5 text-[#6C5CE7]" />
                 <h2 className="create-title font-bold text-lg text-gray-900">
                   Course Details
                 </h2>
@@ -416,8 +416,8 @@ const CreateCourse = () => {
                       touched.price && errors.price
                         ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
                         : touched.price && !errors.price
-                        ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                        : "border-gray-200 bg-gray-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                        ? "border-[#8577F4] bg-[#F8F6FF] focus:ring-2 focus:ring-[#DDD6FF]"
+                        : "border-gray-200 bg-gray-50 focus:border-[#8577F4] focus:ring-2 focus:ring-[#DDD6FF]"
                     }`}
                   />
 
@@ -450,8 +450,8 @@ const CreateCourse = () => {
                       touched.category && errors.category
                         ? "border-red-500 bg-red-50 focus:ring-2 focus:ring-red-200"
                         : touched.category && !errors.category
-                        ? "border-emerald-500 bg-emerald-50 focus:ring-2 focus:ring-emerald-200"
-                        : "border-gray-200 bg-gray-50 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                        ? "border-[#8577F4] bg-[#F8F6FF] focus:ring-2 focus:ring-[#DDD6FF]"
+                        : "border-gray-200 bg-gray-50 focus:border-[#8577F4] focus:ring-2 focus:ring-[#DDD6FF]"
                     }`}
                   >
                     <option value="">Select a category</option>
@@ -479,7 +479,7 @@ const CreateCourse = () => {
             {/* Section: Thumbnail */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 pb-4 border-b border-gray-200">
-                <Upload className="w-5 h-5 text-emerald-600" />
+                <Upload className="w-5 h-5 text-[#6C5CE7]" />
                 <h2 className="create-title font-bold text-lg text-gray-900">
                   Course Thumbnail
                 </h2>
@@ -490,14 +490,14 @@ const CreateCourse = () => {
                 <Motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="relative rounded-xl overflow-hidden border-2 border-emerald-200 bg-emerald-50 p-2"
+                  className="relative rounded-xl overflow-hidden border-2 border-[#DDD6FF] bg-[#F8F6FF] p-2"
                 >
                   <img
                     src={thumbnailPreview}
                     alt="Thumbnail preview"
                     className="w-full h-48 object-cover rounded-lg"
                   />
-                  <div className="absolute top-4 right-4 bg-emerald-600 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
+                  <div className="absolute top-4 right-4 bg-[#6C5CE7] text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
                     <CheckCircle2 className="w-4 h-4" />
                     Ready
                   </div>
@@ -516,9 +516,9 @@ const CreateCourse = () => {
 
                 <label
                   htmlFor="thumbnail-input"
-                  className="block cursor-pointer border-2 border-dashed border-emerald-300 rounded-xl p-8 text-center hover:bg-emerald-50 transition-colors"
+                  className="block cursor-pointer border-2 border-dashed border-[#C4B9FF] rounded-xl p-8 text-center hover:bg-[#F8F6FF] transition-colors"
                 >
-                  <Upload className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
+                  <Upload className="w-8 h-8 text-[#6C5CE7] mx-auto mb-2" />
                   <p className="text-sm font-semibold text-gray-900">
                     Drop your image here or click to browse
                   </p>
@@ -535,7 +535,7 @@ const CreateCourse = () => {
               whileTap={isFormValid ? { scale: 0.98 } : {}}
               type="submit"
               disabled={!isFormValid || isPending}
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#6C5CE7] py-3.5 text-base font-semibold text-white shadow-sm transition-colors hover:bg-[#5749C8] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#6C5CE7]/25 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isPending ? (
                 <>
@@ -544,7 +544,6 @@ const CreateCourse = () => {
                 </>
               ) : (
                 <>
-                  Create Course
     Create Course
                   <ArrowRight className="w-5 h-5" />
                 </>

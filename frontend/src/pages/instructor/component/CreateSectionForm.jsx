@@ -17,8 +17,8 @@ const CreateSectionForm = ({
     >
       {/* Header */}
       <div className="mb-6 flex items-center gap-3 border-b border-gray-100 pb-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100">
-          <Plus className="h-5 w-5 text-emerald-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F0EDFF]">
+          <Plus className="h-5 w-5 text-[#6C5CE7]" />
         </div>
 
         <div>
@@ -42,7 +42,7 @@ const CreateSectionForm = ({
           value={sectionName}
           onChange={(e) => setSectionName(e.target.value)}
           disabled={isPending}
-          className="input-animate w-full flex-1 rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
+          className="input-animate w-full flex-1 rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:border-[#8577F4] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#F0EDFF] disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
         />
 
         <Motion.button
@@ -50,7 +50,7 @@ const CreateSectionForm = ({
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 font-semibold text-white transition-all hover:from-emerald-700 hover:to-teal-700 disabled:cursor-not-allowed disabled:opacity-60 md:w-auto md:min-w-[180px]"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6C5CE7] to-[#8577F4] px-6 py-3 font-semibold text-white transition-all hover:from-[#5749C8] hover:to-[#7464E8] disabled:cursor-not-allowed disabled:opacity-60 md:w-auto md:min-w-[180px]"
         >
           {isPending ? (
             <>

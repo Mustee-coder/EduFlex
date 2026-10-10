@@ -14,7 +14,7 @@ import { useAllStudents } from "@/hooks/admin/hooks";
 const EMPTY_LIST = [];
 
 const StudentsTable = () => {
-  const { data, isLoading } = useAllStudents();
+  const { data, isLoading, isError, refetch } = useAllStudents();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState("firstName");
   const [sortDirection, setSortDirection] = useState("asc");
@@ -76,30 +76,41 @@ const StudentsTable = () => {
   // Loading State
   if (isLoading) {
     return (
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mt-8 bg-white rounded-2xl shadow-md border border-gray-100 p-6 md:p-8"
       >
         <div className="flex items-center justify-center py-12">
-          <motion.div
+          <Motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           >
-            <Loader className="w-8 h-8 text-emerald-600" />
-          </motion.div>
+            <Loader className="w-8 h-8 text-blue-600" />
+          </Motion.div>
           <p className="ml-3 text-gray-600 font-medium">
             Loading students...
           </p>
         </div>
-      </motion.div>
+      </Motion.div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Motion.section role="alert" className="mt-8 rounded-xl border border-rose-200 bg-white p-8 text-center shadow-sm">
+        <AlertCircle className="mx-auto mb-3 h-9 w-9 text-rose-600" aria-hidden="true" />
+        <h2 className="text-lg font-bold text-slate-900">Student data unavailable</h2>
+        <p className="mt-2 text-sm text-slate-600">We couldn't load student accounts.</p>
+        <button type="button" onClick={() => refetch()} className="mt-4 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Try again</button>
+      </Motion.section>
     );
   }
 
   // Empty State
   if (students.length === 0) {
     return (
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mt-8 bg-white rounded-2xl shadow-md border border-gray-100 p-8 text-center"
@@ -109,21 +120,21 @@ const StudentsTable = () => {
           No Students Found
         </h3>
         <p className="text-gray-600">
-          No students have enrolled yet. Check back later.
+          No student accounts are available yet.
         </p>
-      </motion.div>
+      </Motion.div>
     );
   }
 
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="mt-8 md:mt-12"
     >
       <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
         {/* Header */}
-        <div className="p-4 md:p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
+        <div className="p-4 md:p-6 border-b border-gray-200 bg-slate-50">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="admin-title text-xl md:text-2xl font-bold text-gray-900">
@@ -146,7 +157,7 @@ const StudentsTable = () => {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none text-sm"
+                className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none text-sm"
               />
             </div>
           </div>
@@ -160,7 +171,7 @@ const StudentsTable = () => {
                 <th className="px-6 py-4 text-left">
                   <button
                     onClick={() => handleSort("firstName")}
-                    className="flex items-center gap-2 font-bold text-gray-900 hover:text-emerald-600 transition-colors"
+                    className="flex items-center gap-2 font-bold text-gray-900 hover:text-blue-600 transition-colors"
                   >
                     <span>Name</span>
                     {sortField === "firstName" && (
@@ -178,7 +189,7 @@ const StudentsTable = () => {
                 <th className="px-6 py-4 text-left">
                   <button
                     onClick={() => handleSort("email")}
-                    className="flex items-center gap-2 font-bold text-gray-900 hover:text-emerald-600 transition-colors"
+                    className="flex items-center gap-2 font-bold text-gray-900 hover:text-blue-600 transition-colors"
                   >
                     <span>Email</span>
                     {sortField === "email" && (
@@ -196,7 +207,7 @@ const StudentsTable = () => {
                 <th className="px-6 py-4 text-left">
                   <button
                     onClick={() => handleSort("courses")}
-                    className="flex items-center gap-2 font-bold text-gray-900 hover:text-emerald-600 transition-colors"
+                    className="flex items-center gap-2 font-bold text-gray-900 hover:text-blue-600 transition-colors"
                   >
                     <span>Courses</span>
                     {sortField === "courses" && (
@@ -220,7 +231,7 @@ const StudentsTable = () => {
             <tbody>
               <AnimatePresence>
                 {paginatedStudents.map((student, idx) => (
-                  <motion.tr
+                  <Motion.tr
                     key={student._id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -243,8 +254,8 @@ const StudentsTable = () => {
 
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-                          <BookOpen className="w-4 h-4 text-emerald-600" />
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <BookOpen className="w-4 h-4 text-blue-600" />
                         </div>
                         <span className="font-semibold text-gray-900">
                           {student.courses?.length || 0}
@@ -257,7 +268,7 @@ const StudentsTable = () => {
                         ? new Date(student.createdAt).toLocaleDateString()
                         : "N/A"}
                     </td>
-                  </motion.tr>
+                  </Motion.tr>
                 ))}
               </AnimatePresence>
             </tbody>
@@ -268,13 +279,13 @@ const StudentsTable = () => {
         <div className="md:hidden p-4 space-y-3">
           <AnimatePresence>
             {paginatedStudents.map((student, idx) => (
-              <motion.div
+              <Motion.div
                 key={student._id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ delay: idx * 0.05 }}
-                className="p-4 border border-gray-200 rounded-xl hover:border-emerald-300 hover:shadow-sm transition-all"
+                className="p-4 border border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-sm transition-all"
               >
                 <div className="mb-3">
                   <h4 className="font-bold text-gray-900 mb-1">
@@ -288,8 +299,8 @@ const StudentsTable = () => {
 
                 <div className="flex items-center justify-between pt-3 border-t border-gray-200">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-                      <BookOpen className="w-4 h-4 text-emerald-600" />
+                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <BookOpen className="w-4 h-4 text-blue-600" />
                     </div>
                     <span className="text-sm text-gray-600">
                       {student.courses?.length || 0} course
@@ -302,7 +313,7 @@ const StudentsTable = () => {
                       : "N/A"}
                   </span>
                 </div>
-              </motion.div>
+              </Motion.div>
             ))}
           </AnimatePresence>
         </div>
@@ -343,7 +354,7 @@ const StudentsTable = () => {
                       onClick={() => setCurrentPage(pageNum)}
                       className={`w-8 h-8 rounded-lg font-bold transition-all ${
                         currentPage === pageNum
-                          ? "bg-emerald-600 text-white"
+                          ? "bg-blue-600 text-white"
                           : "border border-gray-200 text-gray-700 hover:bg-white"
                       }`}
                     >
@@ -364,7 +375,7 @@ const StudentsTable = () => {
           </div>
         )}
       </div>
-    </motion.div>
+    </Motion.div>
   );
 };
 

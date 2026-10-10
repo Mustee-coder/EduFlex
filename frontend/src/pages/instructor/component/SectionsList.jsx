@@ -28,7 +28,7 @@ const SectionsList = ({
 }) => {
   if (!course.sections || course.sections.length === 0) {
     return (
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-2xl shadow-md border-2 border-dashed border-gray-300 p-8 md:p-12 text-center"
@@ -40,14 +40,14 @@ const SectionsList = ({
         <p className="text-gray-600 text-sm md:text-base">
           Create a section above to start building your course structure
         </p>
-      </motion.div>
+      </Motion.div>
     );
   }
 
   return (
     <AnimatePresence>
       {course.sections.map((section, sectionIndex) => (
-        <motion.div
+        <Motion.div
           key={section._id}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -73,7 +73,7 @@ const SectionsList = ({
           {/* Lessons */}
           <AnimatePresence>
             {expandedSections[section._id] && (
-              <motion.div
+              <Motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
@@ -94,10 +94,10 @@ const SectionsList = ({
                   handleDeleteSubSection={handleDeleteSubSection}
                   isUpdatingSubSection={isUpdatingSubSection}
                 />
-              </motion.div>
+              </Motion.div>
             )}
           </AnimatePresence>
-        </motion.div>
+        </Motion.div>
       ))}
     </AnimatePresence>
   );

@@ -182,12 +182,12 @@ const CourseBuilder = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <Motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
         >
-          <Loader className="w-12 h-12 text-emerald-600" />
+          <Loader className="w-12 h-12 text-[#6C5CE7]" />
         </Motion.div>
       </div>
     );
@@ -196,7 +196,7 @@ const CourseBuilder = () => {
   // Not Found State
   if (!course) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <Motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -205,8 +205,8 @@ const CourseBuilder = () => {
           <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900">Course Not Found</h1>
           <button
-            onClick={() => navigate("/instructor-courses")}
-            className="mt-6 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-all"
+            onClick={() => navigate("/courses")}
+            className="mt-6 bg-[#6C5CE7] hover:bg-[#5749C8] text-white px-6 py-3 rounded-xl font-bold transition-all"
           >
             Back to Courses
           </button>
@@ -233,11 +233,11 @@ const CourseBuilder = () => {
       }
 
       .input-animate:focus {
-        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+        box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.14);
       }
     `}</style>
 
-    <div className="builder-root min-h-screen overflow-x-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50 px-4 py-6 sm:px-6 lg:px-8 md:py-10">
+    <div className="builder-root min-h-screen overflow-x-hidden bg-slate-50 px-4 py-6 sm:px-6 lg:px-8 md:py-8">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
 
         {/* Header */}

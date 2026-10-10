@@ -12,14 +12,14 @@ const DeleteConfirmModal = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
           onClick={onCancel}
         >
-          <motion.div
+          <Motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
@@ -44,16 +44,16 @@ const DeleteConfirmModal = ({
 
             {/* Buttons */}
             <div className="flex gap-3">
-              <motion.button
+              <Motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={onCancel}
                 className="flex-1 rounded-xl border-2 border-gray-200 py-2.5 text-sm font-bold text-gray-700 transition-all hover:bg-gray-50 sm:py-3 sm:text-base"
               >
                 Cancel
-              </motion.button>
+              </Motion.button>
 
-              <motion.button
+              <Motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={onConfirm}
@@ -72,10 +72,10 @@ const DeleteConfirmModal = ({
                     Delete
                   </>
                 )}
-              </motion.button>
+              </Motion.button>
             </div>
-          </motion.div>
-        </motion.div>
+          </Motion.div>
+        </Motion.div>
       )}
     </AnimatePresence>
   );
