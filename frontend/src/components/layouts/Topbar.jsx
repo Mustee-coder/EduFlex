@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+// eslint-disable-next-line no-unused-vars -- Core ESLint does not count JSX member references.
+import { motion, AnimatePresence } from "framer-motion";
 import "@/index.css";
 import {
   Search, LogOut, Settings, User, Menu, X,
