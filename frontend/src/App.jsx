@@ -38,6 +38,7 @@ import Analytics from "@/pages/instructor/Analytics";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
+import UsersPage from "@/pages/admin/UsersPage";
 import LandingPage from "@/pages/LandingPage";
 
 
